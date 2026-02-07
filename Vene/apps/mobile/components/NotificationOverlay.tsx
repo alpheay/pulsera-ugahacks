@@ -132,7 +132,7 @@ function NotificationCard({ notification, onDismiss }: CardProps) {
           slideStyle,
           borderStyle,
           {
-            backgroundColor: "#1E293B",
+            backgroundColor: "#171717",
             borderRadius: 20,
             borderWidth: notification.type === "episode-alert" ? 2 : 0,
             padding: 20,
