@@ -92,6 +92,12 @@ struct DemoControlView: View {
             }
 
             Button {
+                episodeManager.startCalmingMusic()
+            } label: {
+                demoButtonLabel("Calming Music", color: .purple)
+            }
+
+            Button {
                 episodeManager.currentPhase = .reEvaluating
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     episodeManager.requestPhoneCheck()
@@ -215,6 +221,7 @@ struct DemoControlView: View {
         case .idle: return .green
         case .anomalyDetected: return .orange
         case .calming: return .cyan
+        case .calmingMusic: return .purple
         case .reEvaluating: return .yellow
         case .requestingPhoneCheck, .waitingForPhone: return .purple
         case .resolved: return .green
