@@ -4,36 +4,16 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import Map, { Marker } from "react-map-gl/maplibre";
 import type { MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import circle from "@turf/circle";
 import { MAP_VIEW, SAVED_PLACES } from "@/lib/simulatedData";
 import MapMarker from "./MapMarker";
 
 const FOCUS_ZOOM = 16;
 
-// Approximate circle polygon from center (lat, lng) and radius in meters
-function circleToPolygon(lat: number, lng: number, radiusMeters: number, points = 32): GeoJSON.Position[] {
-  const latRad = (lat * Math.PI) / 180;
-  const metersPerDegreeLat = 111320;
-  const metersPerDegreeLng = 111320 * Math.cos(latRad);
-  const ring: GeoJSON.Position[] = [];
-  for (let i = 0; i <= points; i++) {
-    const angle = (i / points) * 2 * Math.PI;
-    ring.push([
-      lng + (radiusMeters / metersPerDegreeLng) * Math.cos(angle),
-      lat + (radiusMeters / metersPerDegreeLat) * Math.sin(angle),
-    ]);
-  }
-  return ring;
-}
-
 function savedPlacesToGeoJSON(): GeoJSON.FeatureCollection {
-  const features: GeoJSON.Feature<GeoJSON.Polygon>[] = SAVED_PLACES.map((place) => ({
-    type: "Feature",
-    properties: {},
-    geometry: {
-      type: "Polygon",
-      coordinates: [circleToPolygon(place.latitude, place.longitude, place.radius)],
-    },
-  }));
+  const features = SAVED_PLACES.map((place) =>
+    circle([place.longitude, place.latitude], place.radius, { steps: 64, units: "meters" })
+  );
   return { type: "FeatureCollection", features };
 }
 
