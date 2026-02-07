@@ -101,6 +101,43 @@ export interface HealthUpdate {
   };
 }
 
+// --- Episode interfaces ---
+
+export interface EpisodeTimelineEntry {
+  phase: string;
+  timestamp: string;
+  data: Record<string, unknown>;
+}
+
+export interface EpisodeFusionResult {
+  decision: "escalate" | "false_positive" | "ambiguous";
+  watch_score: number;
+  presage_score: number | null;
+  combined_score: number;
+  explanation: string;
+  caregiver_report?: string;
+  likely_cause?: string;
+  confidence?: number;
+  analysis_engine?: "gemini" | "threshold";
+}
+
+export interface EpisodeData {
+  id: string;
+  device_id: string;
+  user_id: string;
+  group_id?: string;
+  phase: string;
+  trigger_data: Record<string, unknown>;
+  fusion_result?: EpisodeFusionResult;
+  fusion_decision?: string;
+  severity_score: number;
+  escalation_level: number;
+  timeline: EpisodeTimelineEntry[];
+  resolution?: string;
+  resolved_at?: string;
+  created_at: string;
+}
+
 // --- Group interfaces ---
 
 export interface GroupData {

@@ -13,6 +13,7 @@ dependencies = [
     "torch>=2.5.0",
     "numpy>=2.0.0",
     "websockets>=14.0",
+    "google-generativeai>=0.8.0",
 ]
 
 [project.optional-dependencies]

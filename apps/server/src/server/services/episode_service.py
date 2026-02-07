@@ -138,70 +138,17 @@ class EpisodeService:
 
         now = datetime.utcnow().isoformat()
 
-        # Calculate watch score from trigger data
-        trigger = episode.get("trigger_data", {})
-        heart_rate = trigger.get("heart_rate", trigger.get("heartRate", 80))
-        hrv = trigger.get("hrv", 50)
+        # Try Gemini AI analysis first, fall back to threshold
+        gemini_result = await self._try_gemini_fusion(episode)
 
-        # Normalize watch score: higher HR and lower HRV = higher score
-        hr_score = min(1.0, max(0.0, (heart_rate - 80) / 80))  # 80-160 → 0-1
-        hrv_score = min(1.0, max(0.0, (50 - hrv) / 40))  # 50-10 → 0-1
-        watch_score = hr_score * 0.7 + hrv_score * 0.3
-
-        presage = episode.get("presage_data")
-
-        if presage:
-            expression = presage.get("facial_expression", presage.get("facialExpression", "calm"))
-            eye_resp = presage.get("eye_responsiveness", presage.get("eyeResponsiveness", "normal"))
-            confidence = presage.get("confidence_score", presage.get("confidenceScore", 0.5))
-
-            # Presage scoring
-            expression_scores = {"calm": 0.1, "confused": 0.4, "distressed": 0.8, "pain": 0.95}
-            eye_scores = {"normal": 0.1, "slow": 0.5, "unresponsive": 0.95}
-
-            presage_score = (
-                expression_scores.get(expression, 0.5) * 0.6
-                + eye_scores.get(eye_resp, 0.3) * 0.4
-            ) * confidence
-
-            combined_score = watch_score * 0.5 + presage_score * 0.5
-
-            if combined_score >= 0.6:
-                decision = "escalate"
-            elif combined_score <= 0.3:
-                decision = "false_positive"
-            else:
-                decision = "ambiguous"
-
-            # Generate explanation
-            explanations = {
-                "escalate": f"Watch vitals elevated (HR={heart_rate}) and visual check shows {expression} expression with {eye_resp} eye response. Combined severity {combined_score:.1%} warrants escalation.",
-                "false_positive": f"Despite elevated watch readings, visual check shows {expression} expression with normal responsiveness. Likely exercise or stress — not a medical event.",
-                "ambiguous": f"Mixed signals: watch score {watch_score:.1%}, visual score {presage_score:.1%}. Monitoring recommended.",
-            }
-
-            fusion_result = {
-                "decision": decision,
-                "watch_score": round(watch_score, 3),
-                "presage_score": round(presage_score, 3),
-                "combined_score": round(combined_score, 3),
-                "explanation": explanations[decision],
-            }
+        if gemini_result:
+            fusion_result = self._build_gemini_fusion_result(episode, gemini_result)
+            decision = gemini_result["decision"]
+            combined_score = gemini_result["severity_score"]
         else:
-            # No presage data — ambiguous by default
-            combined_score = watch_score
-            if watch_score >= 0.7:
-                decision = "ambiguous"
-            else:
-                decision = "false_positive"
-
-            fusion_result = {
-                "decision": decision,
-                "watch_score": round(watch_score, 3),
-                "presage_score": None,
-                "combined_score": round(combined_score, 3),
-                "explanation": f"No visual check-in data available. Watch score: {watch_score:.1%}. {'Recommending escalation due to sustained elevated vitals.' if decision == 'ambiguous' else 'Watch-only data suggests false positive.'}",
-            }
+            fusion_result = self._run_threshold_fusion(episode)
+            decision = fusion_result["decision"]
+            combined_score = fusion_result["combined_score"]
 
         episode["fusion_result"] = fusion_result
         episode["fusion_decision"] = decision
@@ -245,6 +192,99 @@ class EpisodeService:
             logger.info(f"Episode {episode_id} → escalating (ambiguous)")
 
         return episode
+
+    async def _try_gemini_fusion(self, episode: dict) -> dict | None:
+        try:
+            from .gemini_service import analyze_episode
+            return await analyze_episode(episode)
+        except Exception as e:
+            logger.warning(f"Gemini fusion unavailable: {e}")
+            return None
+
+    def _build_gemini_fusion_result(self, episode: dict, gemini: dict) -> dict:
+        """Build a fusion_result dict from Gemini's analysis."""
+        trigger = episode.get("trigger_data", {})
+        heart_rate = trigger.get("heart_rate", trigger.get("heartRate", 80))
+        hrv = trigger.get("hrv", 50)
+        hr_score = min(1.0, max(0.0, (heart_rate - 80) / 80))
+        hrv_score = min(1.0, max(0.0, (50 - hrv) / 40))
+        watch_score = hr_score * 0.7 + hrv_score * 0.3
+
+        return {
+            "decision": gemini["decision"],
+            "watch_score": round(watch_score, 3),
+            "presage_score": None,
+            "combined_score": round(gemini["severity_score"], 3),
+            "explanation": gemini["reasoning"],
+            "caregiver_report": gemini["caregiver_report"],
+            "likely_cause": gemini["likely_cause"],
+            "confidence": gemini["confidence"],
+            "analysis_engine": "gemini",
+        }
+
+    def _run_threshold_fusion(self, episode: dict) -> dict:
+        """Original threshold-based fusion as fallback."""
+        trigger = episode.get("trigger_data", {})
+        heart_rate = trigger.get("heart_rate", trigger.get("heartRate", 80))
+        hrv = trigger.get("hrv", 50)
+
+        hr_score = min(1.0, max(0.0, (heart_rate - 80) / 80))
+        hrv_score = min(1.0, max(0.0, (50 - hrv) / 40))
+        watch_score = hr_score * 0.7 + hrv_score * 0.3
+
+        presage = episode.get("presage_data")
+
+        if presage:
+            expression = presage.get("facial_expression", presage.get("facialExpression", "calm"))
+            eye_resp = presage.get("eye_responsiveness", presage.get("eyeResponsiveness", "normal"))
+            confidence = presage.get("confidence_score", presage.get("confidenceScore", 0.5))
+
+            expression_scores = {"calm": 0.1, "confused": 0.4, "distressed": 0.8, "pain": 0.95}
+            eye_scores = {"normal": 0.1, "slow": 0.5, "unresponsive": 0.95}
+
+            presage_score = (
+                expression_scores.get(expression, 0.5) * 0.6
+                + eye_scores.get(eye_resp, 0.3) * 0.4
+            ) * confidence
+
+            combined_score = watch_score * 0.5 + presage_score * 0.5
+
+            if combined_score >= 0.6:
+                decision = "escalate"
+            elif combined_score <= 0.3:
+                decision = "false_positive"
+            else:
+                decision = "ambiguous"
+
+            explanations = {
+                "escalate": f"Watch vitals elevated (HR={heart_rate}) and visual check shows {expression} expression with {eye_resp} eye response. Combined severity {combined_score:.1%} warrants escalation.",
+                "false_positive": f"Despite elevated watch readings, visual check shows {expression} expression with normal responsiveness. Likely exercise or stress — not a medical event.",
+                "ambiguous": f"Mixed signals: watch score {watch_score:.1%}, visual score {presage_score:.1%}. Monitoring recommended.",
+            }
+
+            return {
+                "decision": decision,
+                "watch_score": round(watch_score, 3),
+                "presage_score": round(presage_score, 3),
+                "combined_score": round(combined_score, 3),
+                "explanation": explanations[decision],
+                "analysis_engine": "threshold",
+            }
+        else:
+            combined_score = watch_score
+            if watch_score >= 0.7:
+                decision = "ambiguous"
+            else:
+                decision = "false_positive"
+
+            return {
+                "decision": decision,
+                "watch_score": round(watch_score, 3),
+                "presage_score": None,
+                "combined_score": round(combined_score, 3),
+                "explanation": f"No visual check-in data available. Watch score: {watch_score:.1%}. {'Recommending escalation due to sustained elevated vitals.' if decision == 'ambiguous' else 'Watch-only data suggests false positive.'}",
+                "analysis_engine": "threshold",
+            }
 
     async def escalate(self, episode_id: str, level: int) -> None:
         episode = self._episode_by_id.get(episode_id)

@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     ELEVENLABS_API_KEY: str = ""
     ELEVENLABS_AGENT_ID: str = ""
 
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.0-flash"
+
     LLM_API_KEY: str = ""
     LLM_MODEL: str = "claude-sonnet-4-5-20250929"
 
