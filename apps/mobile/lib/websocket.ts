@@ -12,6 +12,9 @@ export type MessageType =
   | "group-alert"
   | "group-subscribed"
   | "anomaly_result"
+  | "ring-episode-alert"
+  | "ring-episode-resolved"
+  | "ring-pulse-checkin"
   | "pong"
   | "error"
   | "auth_error";
@@ -44,10 +47,39 @@ export interface AnomalyResult {
   is_anomaly: boolean;
 }
 
+export interface RingEpisodeAlert {
+  type: "ring-episode-alert";
+  episode_id: string;
+  member_name: string;
+  heart_rate: number;
+  trigger_type: string;
+  phase: string;
+  timestamp: string;
+}
+
+export interface RingEpisodeResolved {
+  type: "ring-episode-resolved";
+  episode_id: string;
+  member_name: string;
+  resolution: string;
+  timestamp: string;
+}
+
+export interface RingPulseCheckin {
+  type: "ring-pulse-checkin";
+  member_name: string;
+  photo_url: string;
+  message: string;
+  timestamp: string;
+}
+
 export type IncomingMessage =
   | GroupHealthUpdate
   | GroupAlert
   | AnomalyResult
+  | RingEpisodeAlert
+  | RingEpisodeResolved
+  | RingPulseCheckin
   | { type: string; [key: string]: unknown };
 
 export type MessageCallback = (message: IncomingMessage) => void;
