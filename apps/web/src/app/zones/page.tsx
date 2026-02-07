@@ -11,10 +11,22 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import Navbar from "@/components/Navbar";
 import PulseRing from "@/components/PulseRing";
-import { useWebSocket } from "@/lib/useWebSocket";
+import { useWS } from "@/lib/WebSocketContext";
 import { fetchAPI } from "@/lib/api";
+import PageTransition from "@/components/effects/PageTransition";
+import GradientText from "@/components/effects/GradientText";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const ZONE_NAMES: Record<string, string> = {
   "zone-downtown": "Downtown",
@@ -41,17 +53,14 @@ function ZonesContent() {
   const selectedZone = searchParams.get("id") || "zone-downtown";
   const [zone, setZone] = useState<ZoneDetail | null>(null);
   const [scoreHistory, setScoreHistory] = useState<Array<{ t: number; score: number }>>([]);
+  const { subscribe } = useWS();
 
-  const handleMessage = useCallback(
-    (data: Record<string, unknown>) => {
-      if (data.type === "health_update") {
-        loadZone();
-      }
-    },
-    [selectedZone]
-  );
-
-  const { connected } = useWebSocket(handleMessage);
+  useEffect(() => {
+    const unsub = subscribe("health_update", () => {
+      loadZone();
+    });
+    return unsub;
+  }, [subscribe, selectedZone]);
 
   async function loadZone() {
     try {
@@ -82,63 +91,66 @@ function ZonesContent() {
   }, [selectedZone]);
 
   return (
-    <div className="min-h-screen bg-[#0F172A]">
-      <Navbar connected={connected} />
+    <PageTransition className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      {/* Zone Tabs */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-4">
+          <GradientText colors={["#10B981", "#F59E0B", "#3B82F6", "#10B981"]}>
+            Zone Analysis
+          </GradientText>
+        </h1>
+        <Tabs value={selectedZone} className="w-full">
+          <TabsList className="bg-secondary">
+            {Object.entries(ZONE_NAMES).map(([id, name]) => (
+              <TabsTrigger key={id} value={id} asChild>
+                <a href={`/zones?id=${id}`}>{name}</a>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        {/* Zone Tabs */}
-        <div className="mb-6 flex gap-2">
-          {Object.entries(ZONE_NAMES).map(([id, name]) => (
-            <a
-              key={id}
-              href={`/zones?id=${id}`}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                selectedZone === id
-                  ? "bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30"
-                  : "bg-[#1E293B] text-[#94A3B8] hover:bg-[#334155] border border-[#334155]"
-              }`}
-            >
-              {name}
-            </a>
-          ))}
-        </div>
-
-        {zone && (
-          <>
-            {/* Zone Header */}
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-[#E2E8F0]">{zone.name}</h1>
-                <p className="text-sm text-[#94A3B8]">
-                  {zone.active_devices} active devices | {zone.anomalous_devices} anomalous
-                </p>
-              </div>
-              <PulseRing status={zone.status} size={80} score={zone.score} />
+      {zone && (
+        <>
+          {/* Zone Header */}
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">{zone.name}</h2>
+              <p className="text-sm text-muted-foreground">
+                {zone.active_devices} active devices | {zone.anomalous_devices} anomalous
+              </p>
             </div>
+            <PulseRing status={zone.status} size={80} score={zone.score} />
+          </div>
 
-            {zone.is_community_anomaly && (
-              <div className="mb-6 rounded-xl border border-[#EF4444]/30 bg-[#EF4444]/10 p-4">
-                <span className="font-bold text-[#EF4444]">
+          {zone.is_community_anomaly && (
+            <Card className="mb-6 border-[#EF4444]/30 bg-[#EF4444]/10">
+              <CardContent className="p-4">
+                <Badge variant="destructive" className="font-bold">
                   COMMUNITY ANOMALY — Multiple correlated distress signals in this zone
-                </span>
-              </div>
-            )}
+                </Badge>
+              </CardContent>
+            </Card>
+          )}
 
-            {/* Score History Chart */}
-            <div className="mb-6 rounded-xl bg-[#1E293B] p-6 border border-[#334155]">
-              <h2 className="mb-4 text-sm font-semibold text-[#94A3B8]">
+          {/* Score History Chart */}
+          <Card className="mb-6 bg-card/80 backdrop-blur-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-semibold text-muted-foreground">
                 Zone Anomaly Score Over Time
-              </h2>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               {scoreHistory.length > 0 ? (
                 <ResponsiveContainer width="100%" height={200}>
                   <LineChart data={scoreHistory}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                     <XAxis dataKey="t" stroke="#64748B" tick={{ fontSize: 10 }} />
                     <YAxis stroke="#64748B" tick={{ fontSize: 10 }} domain={[0, 1]} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "#1E293B",
-                        border: "1px solid #334155",
+                        border: "1px solid rgba(255,255,255,0.1)",
                         borderRadius: 8,
                       }}
                     />
@@ -152,55 +164,73 @@ function ZonesContent() {
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="flex h-48 items-center justify-center text-[#64748B]">
+                <div className="flex h-48 items-center justify-center text-muted-foreground">
                   No history data yet
                 </div>
               )}
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Device List */}
-            <div className="rounded-xl bg-[#1E293B] border border-[#334155] overflow-hidden">
-              <div className="px-4 py-3 border-b border-[#334155]">
-                <h2 className="text-sm font-semibold text-[#94A3B8]">Zone Members</h2>
-              </div>
-              {zone.devices && zone.devices.length > 0 ? (
-                zone.devices.map((device) => (
-                  <div
-                    key={device.device_id}
-                    className="flex items-center justify-between border-b border-[#334155] px-4 py-3 last:border-0"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="h-2.5 w-2.5 rounded-full bg-[#10B981]" />
-                      <span className="font-mono text-sm text-[#E2E8F0]">
-                        {device.device_id}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-[#94A3B8]">
-                      <span>User: {device.user_id?.slice(0, 12)}</span>
-                      {zone.device_scores && (
-                        <span className="font-mono text-[#F59E0B]">
-                          Score: {((zone.device_scores[device.device_id] || 0) * 100).toFixed(0)}%
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="p-8 text-center text-[#64748B]">
-                  No devices connected to this zone
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </main>
-    </div>
+          {/* Device Table */}
+          <Card className="bg-card/80 backdrop-blur-sm overflow-hidden">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-semibold text-muted-foreground">
+                Zone Members
+              </CardTitle>
+            </CardHeader>
+            {zone.devices && zone.devices.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/50 hover:bg-transparent">
+                    <TableHead className="text-muted-foreground">Device</TableHead>
+                    <TableHead className="text-muted-foreground">User</TableHead>
+                    <TableHead className="text-muted-foreground text-right">Score</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {zone.devices.map((device) => (
+                    <TableRow key={device.device_id} className="border-border/50">
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="h-2.5 w-2.5 rounded-full bg-[#10B981]" />
+                          <span className="font-mono text-sm text-foreground">{device.device_id}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {device.user_id?.slice(0, 12)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {zone.device_scores && (
+                          <span className="font-mono text-xs text-[#F59E0B]">
+                            {((zone.device_scores[device.device_id] || 0) * 100).toFixed(0)}%
+                          </span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <CardContent className="p-8 text-center text-muted-foreground">
+                No devices connected to this zone
+              </CardContent>
+            )}
+          </Card>
+        </>
+      )}
+    </PageTransition>
   );
 }
 
 export default function ZonesPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0F172A] flex items-center justify-center text-[#94A3B8]">Loading zones...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center text-muted-foreground">
+          Loading zones...
+        </div>
+      }
+    >
       <ZonesContent />
     </Suspense>
   );

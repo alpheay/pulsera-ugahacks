@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
 import SignalChart from "@/components/SignalChart";
 import AttentionHeatmap from "@/components/AttentionHeatmap";
-import { useWebSocket } from "@/lib/useWebSocket";
 import { fetchAPI, type PulseNetResult } from "@/lib/api";
+import GradientText from "@/components/effects/GradientText";
+import CountUp from "@/components/effects/CountUp";
+import PageTransition from "@/components/effects/PageTransition";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface ModelInfo {
   loaded: boolean;
@@ -36,7 +40,6 @@ interface TrainingHistory {
 }
 
 export default function PulseNetPage() {
-  const { connected } = useWebSocket();
   const [modelInfo, setModelInfo] = useState<ModelInfo | null>(null);
   const [architecture, setArchitecture] = useState<Architecture | null>(null);
   const [demoResult, setDemoResult] = useState<PulseNetResult | null>(null);
@@ -78,7 +81,6 @@ export default function PulseNetPage() {
       const data = await fetchAPI<PulseNetResult>("/api/pulsenet/demo");
       setDemoResult(data);
     } catch {
-      // Generate client-side demo data
       setDemoResult(generateClientDemo());
     } finally {
       setLoading(false);
@@ -133,111 +135,122 @@ export default function PulseNetPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F172A]">
-      <Navbar connected={connected} />
+    <PageTransition className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">
+          <GradientText colors={["#F59E0B", "#8B5CF6", "#3B82F6", "#F59E0B"]}>
+            PulseNet Visualizer
+          </GradientText>
+        </h1>
+        <p className="mt-1 text-muted-foreground">
+          Ground-up anomaly detection transformer — every parameter learned from scratch
+        </p>
+      </div>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#F59E0B]">PulseNet Visualizer</h1>
-          <p className="mt-1 text-[#94A3B8]">
-            Ground-up anomaly detection transformer — every parameter learned from scratch
-          </p>
-        </div>
-
-        {/* Model Info */}
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
-          <div className="rounded-xl bg-[#1E293B] p-4 border border-[#334155]">
-            <div className="text-xs uppercase tracking-wider text-[#64748B]">Status</div>
+      {/* Model Info */}
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <Card className="bg-card/80 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Status</div>
             <div className={`mt-1 text-lg font-bold ${modelInfo?.loaded ? "text-[#10B981]" : "text-[#F59E0B]"}`}>
               {modelInfo?.loaded ? "Loaded" : "Demo Mode"}
             </div>
-          </div>
-          <div className="rounded-xl bg-[#1E293B] p-4 border border-[#334155]">
-            <div className="text-xs uppercase tracking-wider text-[#64748B]">Parameters</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-card/80 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Parameters</div>
             <div className="mt-1 text-lg font-bold text-[#F59E0B]">
-              {(architecture?.parameters || 150000).toLocaleString()}
+              <CountUp end={architecture?.parameters || 150000} duration={2} />
             </div>
-          </div>
-          <div className="rounded-xl bg-[#1E293B] p-4 border border-[#334155]">
-            <div className="text-xs uppercase tracking-wider text-[#64748B]">Device</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-card/80 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Device</div>
             <div className="mt-1 text-lg font-bold text-[#8B5CF6]">
               {modelInfo?.device || "MPS"}
             </div>
-          </div>
-          <div className="rounded-xl bg-[#1E293B] p-4 border border-[#334155]">
-            <div className="text-xs uppercase tracking-wider text-[#64748B]">Pre-trained?</div>
-            <div className="mt-1 text-lg font-bold text-[#EF4444]">NO</div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-card/80 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Pre-trained?</div>
+            <Badge variant="destructive" className="mt-1 text-sm">NO</Badge>
+          </CardContent>
+        </Card>
+      </div>
 
-        {/* Run Demo Button */}
-        <div className="mb-6">
-          <button
-            onClick={runDemo}
-            disabled={loading}
-            className="rounded-xl bg-[#F59E0B] px-6 py-3 font-bold text-[#0F172A] hover:bg-[#D97706] transition-colors disabled:opacity-50"
-          >
-            {loading ? "Running Inference..." : "Run Live Inference Demo"}
-          </button>
-        </div>
+      {/* Run Demo Button */}
+      <div className="mb-6">
+        <Button
+          onClick={runDemo}
+          disabled={loading}
+          size="lg"
+          className="bg-[#F59E0B] text-[#0F172A] font-bold hover:bg-[#D97706]"
+        >
+          {loading ? "Running Inference..." : "Run Live Inference Demo"}
+        </Button>
+      </div>
 
-        {/* Demo Results */}
-        {demoResult && (
-          <div className="space-y-6">
-            {/* Score Summary */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className={`rounded-xl p-4 border ${
-                demoResult.is_anomaly
-                  ? "bg-[#EF4444]/10 border-[#EF4444]/30"
-                  : "bg-[#10B981]/10 border-[#10B981]/30"
-              }`}>
-                <div className="text-xs uppercase tracking-wider text-[#94A3B8]">Verdict</div>
-                <div className={`mt-1 text-2xl font-bold ${
-                  demoResult.is_anomaly ? "text-[#EF4444]" : "text-[#10B981]"
-                }`}>
+      {/* Demo Results */}
+      {demoResult && (
+        <div className="space-y-6">
+          {/* Score Summary */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Card className={`${demoResult.is_anomaly ? "border-[#EF4444]/30 bg-[#EF4444]/10" : "border-[#10B981]/30 bg-[#10B981]/10"}`}>
+              <CardContent className="p-4">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">Verdict</div>
+                <div className={`mt-1 text-2xl font-bold ${demoResult.is_anomaly ? "text-[#EF4444]" : "text-[#10B981]"}`}>
                   {demoResult.is_anomaly ? "ANOMALY DETECTED" : "NORMAL"}
                 </div>
-              </div>
-              <div className="rounded-xl bg-[#1E293B] p-4 border border-[#334155]">
-                <div className="text-xs uppercase tracking-wider text-[#64748B]">Overall Score</div>
+              </CardContent>
+            </Card>
+            <Card className="bg-card/80 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">Overall Score</div>
                 <div className="mt-1 text-2xl font-bold text-[#F59E0B]">
-                  {(demoResult.overall_score * 100).toFixed(1)}%
+                  <CountUp end={parseFloat((demoResult.overall_score * 100).toFixed(1))} duration={1.5} decimals={1} suffix="%" />
                 </div>
-              </div>
-              <div className="rounded-xl bg-[#1E293B] p-4 border border-[#334155]">
-                <div className="text-xs uppercase tracking-wider text-[#64748B]">
-                  Association Discrepancy
-                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-card/80 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">Association Discrepancy</div>
                 <div className="mt-1 text-2xl font-bold text-[#8B5CF6]">
-                  {demoResult.association_discrepancy.toFixed(3)}
+                  <CountUp end={parseFloat(demoResult.association_discrepancy.toFixed(3))} duration={1.5} decimals={3} />
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
+          </div>
 
-            {/* Signal Chart */}
-            {demoResult.input && (
-              <SignalChart
-                data={demoResult.input}
-                reconstruction={demoResult.reconstruction}
-                anomalyScores={demoResult.per_timestep_scores}
-                title="Input Signal vs Reconstruction (with Anomaly Scores)"
-              />
-            )}
+          {/* Signal Chart */}
+          {demoResult.input && (
+            <SignalChart
+              data={demoResult.input}
+              reconstruction={demoResult.reconstruction}
+              anomalyScores={demoResult.per_timestep_scores}
+              title="Input Signal vs Reconstruction (with Anomaly Scores)"
+            />
+          )}
 
-            {/* Attention Heatmap */}
-            {demoResult.attention_heatmap && (
-              <AttentionHeatmap
-                data={demoResult.attention_heatmap}
-                title="Self-Attention Heatmap (Last Layer) — Shows which timesteps the model attends to"
-              />
-            )}
+          {/* Attention Heatmap */}
+          {demoResult.attention_heatmap && (
+            <AttentionHeatmap
+              data={demoResult.attention_heatmap}
+              title="Self-Attention Heatmap (Last Layer) — Shows which timesteps the model attends to"
+            />
+          )}
 
-            {/* Per-Timestep Scores */}
-            <div className="rounded-xl bg-[#1E293B] p-4 border border-[#334155]">
-              <h3 className="mb-3 text-sm font-semibold text-[#94A3B8]">
+          {/* Per-Timestep Scores */}
+          <Card className="bg-card/80 backdrop-blur-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-semibold text-muted-foreground">
                 Per-Timestep Anomaly Scores
-              </h3>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               <div className="flex gap-0.5 items-end h-20">
                 {demoResult.per_timestep_scores.map((score, i) => (
                   <div
@@ -246,43 +259,44 @@ export default function PulseNetPage() {
                     style={{
                       height: `${score * 100}%`,
                       backgroundColor:
-                        score > 0.7
-                          ? "#EF4444"
-                          : score > 0.5
-                          ? "#F97316"
-                          : score > 0.3
-                          ? "#F59E0B"
-                          : "#10B981",
+                        score > 0.7 ? "#EF4444" :
+                        score > 0.5 ? "#F97316" :
+                        score > 0.3 ? "#F59E0B" :
+                        "#10B981",
                       opacity: 0.8,
                     }}
                     title={`t=${i}: ${(score * 100).toFixed(1)}%`}
                   />
                 ))}
               </div>
-              <div className="mt-1 flex justify-between text-xs text-[#64748B]">
+              <div className="mt-1 flex justify-between text-xs text-muted-foreground">
                 <span>t=0</span>
                 <span>t={demoResult.per_timestep_scores.length - 1}</span>
               </div>
-            </div>
-          </div>
-        )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-        {/* Architecture */}
-        {architecture && (
-          <div className="mt-8 rounded-xl bg-[#1E293B] p-6 border border-[#334155]">
-            <h2 className="mb-4 text-xl font-bold text-[#F59E0B]">Architecture: {architecture.name}</h2>
-            <p className="mb-4 text-sm italic text-[#F59E0B]">{architecture.tagline}</p>
-
+      {/* Architecture */}
+      {architecture && (
+        <Card className="mt-8 bg-card/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#F59E0B]">
+              Architecture: {architecture.name}
+            </CardTitle>
+            <p className="text-sm italic text-[#F59E0B]/70">{architecture.tagline}</p>
+          </CardHeader>
+          <CardContent>
             <div className="space-y-2">
               {architecture.layers.map((layer, i) => (
-                <div
-                  key={i}
-                  className="rounded-lg bg-[#0F172A] p-3 border border-[#334155]"
-                >
+                <div key={i} className="rounded-lg bg-background p-3 border border-border/50">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-sm text-[#E2E8F0]">{layer.name}</span>
+                    <span className="font-mono text-sm text-foreground">{layer.name}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-[#8B5CF6]">{layer.type}</span>
+                      <Badge variant="outline" className="bg-[#8B5CF6]/20 text-[#A78BFA] border-[#8B5CF6]/30 hover:bg-[#8B5CF6]/20">
+                        {layer.type}
+                      </Badge>
                       {layer.shape && (
                         <span className="font-mono text-xs text-[#F59E0B]">{layer.shape}</span>
                       )}
@@ -291,12 +305,9 @@ export default function PulseNetPage() {
                   {layer.components && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {layer.components.map((c, j) => (
-                        <span
-                          key={j}
-                          className="rounded bg-[#334155] px-2 py-0.5 text-xs text-[#94A3B8]"
-                        >
+                        <Badge key={j} variant="secondary" className="text-xs">
                           {c}
-                        </span>
+                        </Badge>
                       ))}
                     </div>
                   )}
@@ -307,21 +318,25 @@ export default function PulseNetPage() {
             <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
               {Object.entries(architecture.training).map(([key, value]) => (
                 <div key={key}>
-                  <span className="text-[#64748B]">{key}: </span>
-                  <span className="text-[#E2E8F0]">{value}</span>
+                  <span className="text-muted-foreground">{key}: </span>
+                  <span className="text-foreground">{value}</span>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Training History */}
-        {training?.available && training.history && (
-          <div className="mt-6 rounded-xl bg-[#1E293B] p-6 border border-[#334155]">
-            <h2 className="mb-4 text-lg font-bold text-[#E2E8F0]">Training Curves</h2>
+      {/* Training History */}
+      {training?.available && training.history && (
+        <Card className="mt-6 bg-card/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-lg font-bold text-foreground">Training Curves</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <h3 className="mb-2 text-sm text-[#94A3B8]">Loss</h3>
+                <h3 className="mb-2 text-sm text-muted-foreground">Loss</h3>
                 <div className="flex items-end gap-1 h-32">
                   {training.history.train_loss.map((loss, i) => (
                     <div
@@ -334,7 +349,7 @@ export default function PulseNetPage() {
                 </div>
               </div>
               <div>
-                <h3 className="mb-2 text-sm text-[#94A3B8]">AUC</h3>
+                <h3 className="mb-2 text-sm text-muted-foreground">AUC</h3>
                 <div className="flex items-end gap-1 h-32">
                   {training.history.val_anomaly_auc.map((auc, i) => (
                     <div
@@ -347,9 +362,9 @@ export default function PulseNetPage() {
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </main>
-    </div>
+          </CardContent>
+        </Card>
+      )}
+    </PageTransition>
   );
 }

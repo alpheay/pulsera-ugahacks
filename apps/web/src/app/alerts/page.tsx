@@ -1,30 +1,34 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
 import AlertCard from "@/components/AlertCard";
-import { useWebSocket } from "@/lib/useWebSocket";
+import { useWS } from "@/lib/WebSocketContext";
 import { fetchAPI, postAPI, type AlertData } from "@/lib/api";
+import GradientText from "@/components/effects/GradientText";
+import CountUp from "@/components/effects/CountUp";
+import PageTransition from "@/components/effects/PageTransition";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const [filter, setFilter] = useState<"all" | "active" | "resolved">("all");
+  const [filter, setFilter] = useState("all");
+  const { subscribe } = useWS();
 
-  const handleMessage = useCallback((data: Record<string, unknown>) => {
-    if (data.type === "alert") {
+  useEffect(() => {
+    const unsub1 = subscribe("alert", (data) => {
       const alert = data.alert as unknown as AlertData;
       setAlerts((prev) => [alert, ...prev]);
-    }
-    if (data.type === "alert_resolved") {
+    });
+    const unsub2 = subscribe("alert_resolved", (data) => {
       setAlerts((prev) =>
         prev.map((a) =>
           a.id === data.alert_id ? { ...a, is_active: false } : a
         )
       );
-    }
-  }, []);
-
-  const { connected } = useWebSocket(handleMessage);
+    });
+    return () => { unsub1(); unsub2(); };
+  }, [subscribe]);
 
   async function loadAlerts() {
     try {
@@ -61,58 +65,49 @@ export default function AlertsPage() {
   const activeCount = alerts.filter((a) => a.is_active).length;
 
   return (
-    <div className="min-h-screen bg-[#0F172A]">
-      <Navbar connected={connected} />
-
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-[#E2E8F0]">Alert Feed</h1>
-            <p className="text-sm text-[#94A3B8]">
-              {activeCount} active alert{activeCount !== 1 ? "s" : ""}
-            </p>
-          </div>
-
-          <div className="flex gap-2">
-            {(["all", "active", "resolved"] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  filter === f
-                    ? "bg-[#F59E0B]/10 text-[#F59E0B]"
-                    : "bg-[#1E293B] text-[#94A3B8] hover:bg-[#334155]"
-                }`}
-              >
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
-          </div>
+    <PageTransition className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">
+            <GradientText colors={["#EF4444", "#F97316", "#F59E0B", "#EF4444"]}>
+              Alert Feed
+            </GradientText>
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            <CountUp end={activeCount} duration={1} /> active alert{activeCount !== 1 ? "s" : ""}
+          </p>
         </div>
 
-        <div className="space-y-3">
-          {filtered.length === 0 ? (
-            <div className="rounded-xl bg-[#1E293B] border border-[#334155] p-12 text-center">
-              <div className="text-4xl mb-3">
-                {filter === "active" ? "" : ""}
-              </div>
-              <p className="text-[#64748B]">
+        <Tabs value={filter} onValueChange={setFilter}>
+          <TabsList className="bg-secondary">
+            <TabsTrigger value="all">All</TabsTrigger>
+            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="resolved">Resolved</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
+      <div className="space-y-3">
+        {filtered.length === 0 ? (
+          <Card className="bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-12 text-center">
+              <p className="text-muted-foreground">
                 {filter === "active"
                   ? "No active alerts. Community is safe."
                   : "No alerts recorded yet."}
               </p>
-            </div>
-          ) : (
-            filtered.map((alert) => (
-              <AlertCard
-                key={alert.id}
-                alert={alert}
-                onResolve={handleResolve}
-              />
-            ))
-          )}
-        </div>
-      </main>
-    </div>
+            </CardContent>
+          </Card>
+        ) : (
+          filtered.map((alert) => (
+            <AlertCard
+              key={alert.id}
+              alert={alert}
+              onResolve={handleResolve}
+            />
+          ))
+        )}
+      </div>
+    </PageTransition>
   );
 }
