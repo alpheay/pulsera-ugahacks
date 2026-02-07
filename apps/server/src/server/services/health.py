@@ -21,10 +21,10 @@ class HealthService:
     async def ingest_reading(self, reading: dict):
         device_id = reading["device_id"]
         entry = [
-            reading["heart_rate"],
-            reading["hrv"],
-            reading["acceleration"],
-            reading["skin_temp"],
+            reading.get("heart_rate", 0),
+            reading.get("hrv", 0),
+            reading.get("acceleration", 1.0),
+            reading.get("skin_temp", 36.5),
         ]
         self._buffers[device_id].append(entry)
         self._latest[device_id] = reading

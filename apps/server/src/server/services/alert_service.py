@@ -30,6 +30,13 @@ class AlertService:
                     if score > settings.ANOMALY_THRESHOLD:
                         await self._create_individual_alert(device_id, zone_id, score)
 
+    async def check_group_and_generate(self, group_id: str, group_type: str, member_user_ids: list[str]):
+        """Check a group and generate alerts based on group type."""
+        result = community_engine.compute_group_score(group_id, member_user_ids, group_type)
+
+        if result.get("is_group_anomaly"):
+            await self._create_group_alert(group_id, group_type, result)
+
     async def _create_community_alert(self, zone_id: str, zone_result: dict):
         alert_key = f"community_{zone_id}"
         if alert_key in self._active_alerts:
@@ -68,7 +75,59 @@ class AlertService:
 
         logger.warning(f"COMMUNITY ALERT: zone={zone_id}, score={zone_result['score']:.3f}")
 
-    async def _create_individual_alert(self, device_id: str, zone_id: str, score: float):
+    async def _create_group_alert(self, group_id: str, group_type: str, result: dict):
+        """Create an alert for a group (family or community)."""
+        alert_key = f"group_{group_id}"
+        if alert_key in self._active_alerts:
+            self._active_alerts[alert_key]["score"] = result["score"]
+            self._active_alerts[alert_key]["updated_at"] = datetime.utcnow().isoformat()
+            return
+
+        if group_type == "family":
+            severity = "critical" if result["max_score"] > 0.8 else "warning"
+            title = "Family member in distress"
+            description = (
+                f"{result['anomalous_members']} family member(s) showing elevated anomaly scores. "
+                f"Immediate attention may be needed."
+            )
+        else:
+            severity = "critical"
+            title = "Community group anomaly detected"
+            description = (
+                f"{result['anomalous_members']} of {result['active_members']} members "
+                f"showing elevated scores. Possible coordinated event."
+            )
+
+        alert = {
+            "id": str(uuid4()),
+            "type": "group",
+            "severity": severity,
+            "group_id": group_id,
+            "group_type": group_type,
+            "title": title,
+            "description": description,
+            "score": result["score"],
+            "affected_devices": list(result["device_scores"].keys()),
+            "is_active": True,
+            "created_at": datetime.utcnow().isoformat(),
+        }
+
+        self._alerts.append(alert)
+        self._active_alerts[alert_key] = alert
+
+        await connection_manager.broadcast_to_dashboards({
+            "type": "alert",
+            "alert": alert,
+        })
+        await connection_manager.broadcast_to_group(group_id, {
+            "type": "group-alert",
+            "groupId": group_id,
+            "alert": alert,
+        })
+
+        logger.warning(f"GROUP ALERT: group={group_id} ({group_type}), score={result['score']:.3f}")
+
+    async def _create_individual_alert(self, device_id: str, zone_id: str, score: float, group_id: str | None = None):
         alert_key = f"individual_{device_id}"
         if alert_key in self._active_alerts:
             self._active_alerts[alert_key]["score"] = score
@@ -80,6 +139,7 @@ class AlertService:
             "type": "individual",
             "severity": severity,
             "zone_id": zone_id,
+            "group_id": group_id,
             "device_id": device_id,
             "title": f"Individual distress detected",
             "description": f"Device {device_id[:8]}... showing anomaly score of {score:.2f}",
@@ -97,10 +157,17 @@ class AlertService:
             "alert": alert,
         })
 
+        if group_id:
+            await connection_manager.broadcast_to_group(group_id, {
+                "type": "group-alert",
+                "groupId": group_id,
+                "alert": alert,
+            })
+
         logger.warning(f"INDIVIDUAL ALERT: device={device_id}, score={score:.3f}")
 
     async def resolve_alert(self, alert_id: str, acknowledged_by: str | None = None):
-        for key, alert in self._active_alerts.items():
+        for key, alert in list(self._active_alerts.items()):
             if alert["id"] == alert_id:
                 alert["is_active"] = False
                 alert["resolved_at"] = datetime.utcnow().isoformat()
@@ -124,6 +191,9 @@ class AlertService:
 
     def get_zone_alerts(self, zone_id: str) -> list[dict]:
         return [a for a in self._alerts if a.get("zone_id") == zone_id]
+
+    def get_group_alerts(self, group_id: str) -> list[dict]:
+        return [a for a in self._alerts if a.get("group_id") == group_id]
 
 
 alert_service = AlertService()

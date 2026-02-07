@@ -1,5 +1,7 @@
 "use client";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 interface AttentionHeatmapProps {
   data: number[][];
   title?: string;
@@ -34,48 +36,54 @@ export default function AttentionHeatmap({ data, title }: AttentionHeatmapProps)
   }
 
   return (
-    <div className="rounded-xl bg-[#1E293B] p-4">
-      {title && <h3 className="mb-3 text-sm font-semibold text-[#94A3B8]">{title}</h3>}
-      <div className="overflow-auto">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
-            gap: 1,
-          }}
-        >
-          {data.map((row, i) =>
-            row.map((val, j) => (
+    <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+      {title && (
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-semibold text-muted-foreground">{title}</CardTitle>
+        </CardHeader>
+      )}
+      <CardContent className={title ? "pt-0" : "p-4"}>
+        <div className="overflow-auto">
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
+              gap: 1,
+            }}
+          >
+            {data.map((row, i) =>
+              row.map((val, j) => (
+                <div
+                  key={`${i}-${j}`}
+                  style={{
+                    width: cellSize,
+                    height: cellSize,
+                    backgroundColor: getColor(val),
+                    borderRadius: 1,
+                  }}
+                  title={`[${i},${j}]: ${val.toFixed(4)}`}
+                />
+              ))
+            )}
+          </div>
+        </div>
+        <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+          <span>Low attention</span>
+          <div className="flex gap-0.5">
+            {Array.from({ length: 20 }, (_, i) => (
               <div
-                key={`${i}-${j}`}
+                key={i}
                 style={{
-                  width: cellSize,
-                  height: cellSize,
-                  backgroundColor: getColor(val),
-                  borderRadius: 1,
+                  width: 12,
+                  height: 8,
+                  backgroundColor: getColor(minVal + (i / 19) * range),
                 }}
-                title={`[${i},${j}]: ${val.toFixed(4)}`}
               />
-            ))
-          )}
+            ))}
+          </div>
+          <span>High attention</span>
         </div>
-      </div>
-      <div className="mt-2 flex items-center justify-between text-xs text-[#64748B]">
-        <span>Low attention</span>
-        <div className="flex gap-0.5">
-          {Array.from({ length: 20 }, (_, i) => (
-            <div
-              key={i}
-              style={{
-                width: 12,
-                height: 8,
-                backgroundColor: getColor(minVal + (i / 19) * range),
-              }}
-            />
-          ))}
-        </div>
-        <span>High attention</span>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -5,6 +5,9 @@ from .zone_member import ZoneMember
 from .health_reading import HealthReading
 from .anomaly_event import AnomalyEvent
 from .alert import Alert
+from .group import Group
+from .group_member import GroupMember
+from .health_snapshot import HealthSnapshot
 
 __all__ = [
     "User",
@@ -14,4 +17,7 @@ __all__ = [
     "HealthReading",
     "AnomalyEvent",
     "Alert",
+    "Group",
+    "GroupMember",
+    "HealthSnapshot",
 ]

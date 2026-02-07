@@ -12,6 +12,7 @@ class Alert(SQLModel, table=True):
 
     id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
     zone_id: str | None = Field(default=None, foreign_key="zones.id", index=True)
+    group_id: str | None = Field(default=None, foreign_key="groups.id", index=True)
     alert_type: str = Field(default="individual")  # individual, community, environmental
     severity: str = Field(default="warning")  # info, warning, critical
     title: str

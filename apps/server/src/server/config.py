@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql+asyncpg://localhost:5432/pulsera"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./pulsera.db"
 
     PULSENET_CHECKPOINT_DIR: str = "checkpoints"
 
