@@ -83,10 +83,17 @@ struct PulseraWatchApp: App {
                 }
                 .onChange(of: episodeManager.currentPhase) { _, phase in
                     if phase == .calming {
+                        audioPlayerManager.stopCalmingTone()
                         audioPlayerManager.startEngine()
+                    } else if phase == .calmingMusic {
+                        audioPlayerManager.stopEngine()
+                        audioPlayerManager.playCalmingTone(frequency: 432.0)
                     } else {
                         if audioPlayerManager.isPlaying {
                             audioPlayerManager.stopEngine()
+                        }
+                        if audioPlayerManager.isPlayingTone {
+                            audioPlayerManager.stopCalmingTone()
                         }
                     }
                 }

@@ -75,6 +75,8 @@ struct ContentView: View {
             anomalyDetectedView
         case .calming:
             BreathingView()
+        case .calmingMusic:
+            CalmingMusicView()
         case .reEvaluating:
             reEvaluatingView
         case .requestingPhoneCheck, .waitingForPhone:

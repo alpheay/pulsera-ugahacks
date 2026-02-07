@@ -7,6 +7,7 @@ enum EpisodePhase: String, CaseIterable {
     case idle
     case anomalyDetected = "anomaly_detected"
     case calming
+    case calmingMusic = "calming_music"
     case reEvaluating = "re_evaluating"
     case requestingPhoneCheck = "visual_check"
     case waitingForPhone = "waiting_for_phone"
@@ -96,6 +97,37 @@ final class EpisodeManager: ObservableObject {
         }
     }
 
+    // MARK: - Calming Music Phase
+
+    func startCalmingMusic() {
+        DispatchQueue.main.async {
+            self.currentPhase = .calmingMusic
+            self.breathingProgress = 0
+            self.calmingStartTime = Date()
+        }
+
+        breathingTimer?.invalidate()
+        breathingTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] timer in
+            guard let self = self else { timer.invalidate(); return }
+            guard let start = self.calmingStartTime else { return }
+
+            let elapsed = Date().timeIntervalSince(start)
+            let progress = min(1.0, elapsed / self.calmingDuration)
+
+            DispatchQueue.main.async {
+                self.breathingProgress = progress
+            }
+
+            if elapsed >= self.calmingDuration {
+                timer.invalidate()
+                DispatchQueue.main.async {
+                    self.currentPhase = .reEvaluating
+                    self.breathingProgress = 1.0
+                }
+            }
+        }
+    }
+
     // MARK: - Phone Check Phase
 
     func requestPhoneCheck() {
@@ -170,6 +202,10 @@ final class EpisodeManager: ObservableObject {
         case "calming":
             if currentPhase != .calming {
                 startCalming()
+            }
+        case "calming_music":
+            if currentPhase != .calmingMusic {
+                startCalmingMusic()
             }
         case "visual_check":
             requestPhoneCheck()
