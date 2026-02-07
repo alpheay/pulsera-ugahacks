@@ -291,27 +291,27 @@ function FamilyMap({
   const homeMembers = members.filter((m) => m.address === "142 Oakwood Dr");
 
   return (
-    <div className="relative w-full h-full overflow-hidden rounded-2xl" style={{ background: "rgba(12, 6, 4, 0.9)" }}>
-      {/* Topographic grid background */}
-      <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+    <div className="relative w-full h-full overflow-hidden rounded-2xl" style={{ background: "#0f0505" }}>
+      {/* Topographic grid background - Red Stylized */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="topo-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#FFF1E6" strokeWidth="0.5" />
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E8524A" strokeWidth="0.5" />
           </pattern>
           <pattern id="topo-grid-lg" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
-            <path d="M 160 0 L 0 0 0 160" fill="none" stroke="#FFF1E6" strokeWidth="1" />
+            <path d="M 160 0 L 0 0 0 160" fill="none" stroke="#E8524A" strokeWidth="1" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#topo-grid)" className="animate-grid-fade" />
         <rect width="100%" height="100%" fill="url(#topo-grid-lg)" />
       </svg>
 
-      {/* Topographic contour rings */}
+      {/* Topographic contour rings - Red Stylized */}
       <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="contour-fade" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#FFF1E6" stopOpacity="0.06" />
-            <stop offset="100%" stopColor="#FFF1E6" stopOpacity="0" />
+            <stop offset="0%" stopColor="#E8524A" stopOpacity="0.06" />
+            <stop offset="100%" stopColor="#E8524A" stopOpacity="0" />
           </radialGradient>
         </defs>
         {/* Organic contour lines */}
@@ -323,7 +323,7 @@ function FamilyMap({
             rx={r}
             ry={r * 0.7}
             fill="none"
-            stroke="#FFF1E6"
+            stroke="#E8524A"
             strokeWidth="0.5"
             strokeDasharray="6 8"
             opacity={0.06 - i * 0.012}
@@ -340,7 +340,7 @@ function FamilyMap({
             rx={r}
             ry={r * 0.65}
             fill="none"
-            stroke="#FFF1E6"
+            stroke="#E8524A"
             strokeWidth="0.4"
             strokeDasharray="4 10"
             opacity={0.04}
@@ -356,7 +356,7 @@ function FamilyMap({
         style={{
           left: "36%", top: "40%",
           width: "180px", height: "180px",
-          background: "radial-gradient(circle, rgba(232,82,74,0.08) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(232,82,74,0.15) 0%, transparent 70%)",
           transform: "translate(-50%, -50%)",
         }}
       />
@@ -365,7 +365,7 @@ function FamilyMap({
         style={{
           left: "72%", top: "28%",
           width: "120px", height: "120px",
-          background: "radial-gradient(circle, rgba(123,143,78,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(232,82,74,0.1) 0%, transparent 70%)",
           transform: "translate(-50%, -50%)",
           animationDelay: "2s",
         }}
@@ -383,7 +383,7 @@ function FamilyMap({
                 y1={`${m.locationCoords.y}%`}
                 x2={`${next.locationCoords.x}%`}
                 y2={`${next.locationCoords.y}%`}
-                stroke="rgba(255,241,230,0.06)"
+                stroke="rgba(232,82,74,0.2)"
                 strokeWidth="1"
                 strokeDasharray="4 6"
                 style={{
@@ -396,33 +396,38 @@ function FamilyMap({
           })}
       </svg>
 
-      {/* Location labels */}
+      {/* Location labels - Red Stylized */}
       <div
-        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#FFF1E6]/20 pointer-events-none"
+        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#E8524A]/40 pointer-events-none"
         style={{ left: "28%", top: "33%", fontFamily: "'DM Sans', sans-serif" }}
       >
-        <Home size={8} className="inline mr-1 mb-0.5" />
+        <Home size={8} className="inline mr-1 mb-0.5 text-[#E8524A]/60" />
         Oakwood Dr
       </div>
       <div
-        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#FFF1E6]/20 pointer-events-none"
+        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#E8524A]/40 pointer-events-none"
         style={{ left: "66%", top: "20%", fontFamily: "'DM Sans', sans-serif" }}
       >
         Commerce District
       </div>
       <div
-        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#FFF1E6]/20 pointer-events-none"
+        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#E8524A]/40 pointer-events-none"
         style={{ left: "54%", top: "58%", fontFamily: "'DM Sans', sans-serif" }}
       >
         Athens Academy
       </div>
 
-      {/* Simulated roads / paths */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
-        <path d="M 10% 45% Q 30% 44% 50% 42% T 85% 35%" fill="none" stroke="#FFF1E6" strokeWidth="1.5" />
-        <path d="M 35% 15% Q 38% 35% 42% 55% T 48% 85%" fill="none" stroke="#FFF1E6" strokeWidth="1" />
-        <path d="M 50% 42% Q 58% 48% 62% 60%" fill="none" stroke="#FFF1E6" strokeWidth="0.8" />
-        <path d="M 65% 20% Q 68% 35% 75% 50%" fill="none" stroke="#FFF1E6" strokeWidth="0.8" />
+      {/* Simulated roads / paths - Enhanced & Red */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.15]" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 0% 45% L 100% 45%" fill="none" stroke="#E8524A" strokeWidth="1" />
+        <path d="M 45% 0% L 45% 100%" fill="none" stroke="#E8524A" strokeWidth="1" />
+        <path d="M 10% 45% Q 30% 44% 50% 42% T 85% 35%" fill="none" stroke="#E8524A" strokeWidth="1.5" />
+        <path d="M 35% 15% Q 38% 35% 42% 55% T 48% 85%" fill="none" stroke="#E8524A" strokeWidth="1" />
+        <path d="M 50% 42% Q 58% 48% 62% 60%" fill="none" stroke="#E8524A" strokeWidth="0.8" />
+        <path d="M 65% 20% Q 68% 35% 75% 50%" fill="none" stroke="#E8524A" strokeWidth="0.8" />
+        <path d="M 20% 0% L 25% 100%" fill="none" stroke="#E8524A" strokeWidth="0.5" strokeDasharray="4 4" />
+        <path d="M 0% 80% L 100% 75%" fill="none" stroke="#E8524A" strokeWidth="0.5" strokeDasharray="4 4" />
+        <circle cx="45%" cy="48%" r="100" fill="none" stroke="#E8524A" strokeWidth="0.5" opacity="0.5" />
       </svg>
 
       {/* Radar sweep from center */}
@@ -434,11 +439,11 @@ function FamilyMap({
           transform: "translate(-50%, -50%)",
         }}
       >
-        <svg viewBox="0 0 500 500" className="w-full h-full opacity-[0.03]">
+        <svg viewBox="0 0 500 500" className="w-full h-full opacity-[0.05]">
           <defs>
             <linearGradient id="sweep-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#FFF1E6" stopOpacity="0" />
-              <stop offset="100%" stopColor="#FFF1E6" stopOpacity="0.3" />
+              <stop offset="0%" stopColor="#E8524A" stopOpacity="0" />
+              <stop offset="100%" stopColor="#E8524A" stopOpacity="0.3" />
             </linearGradient>
           </defs>
           <path d="M 250 250 L 250 0 A 250 250 0 0 1 500 250 Z" fill="url(#sweep-grad)" />
@@ -466,48 +471,6 @@ function FamilyMap({
             onMouseEnter={() => setHoveredMember(member.id)}
             onMouseLeave={() => setHoveredMember(null)}
           >
-            {/* Outer ping ring for critical */}
-            {member.status === "critical" && (
-              <div
-                className="absolute inset-0 rounded-full animate-ping-slow"
-                style={{
-                  width: "56px",
-                  height: "56px",
-                  transform: "translate(-50%, -50%) translate(50%, 50%)",
-                  background: sc.glow,
-                  left: "-50%", top: "-50%",
-                }}
-              />
-            )}
-
-            {/* Selection ring */}
-            {isSelected && (
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="absolute rounded-full"
-                style={{
-                  width: "56px", height: "56px",
-                  border: `2px solid ${member.avatarColor}`,
-                  left: "50%", top: "50%",
-                  transform: "translate(-50%, -50%)",
-                  boxShadow: `0 0 20px ${member.avatarColor}40`,
-                }}
-              />
-            )}
-
-            {/* Status breathing ring */}
-            <div
-              className="absolute rounded-full"
-              style={{
-                width: "48px", height: "48px",
-                left: "50%", top: "50%",
-                transform: "translate(-50%, -50%)",
-                animation: member.status === "critical" ? "status-breathe 2s ease-in-out infinite" : "status-breathe 4s ease-in-out infinite",
-                ["--breathe-color" as string]: sc.glow,
-              }}
-            />
-
             {/* Pin body */}
             <div
               className="relative flex items-center justify-center transition-transform duration-300"
@@ -564,29 +527,29 @@ function FamilyMap({
           className="px-3 py-1.5 rounded-full text-[9px] font-medium tracking-[0.15em] uppercase flex items-center gap-1.5"
           style={{
             background: "rgba(12,6,4,0.8)",
-            border: "1px solid rgba(255,241,230,0.08)",
-            color: "#FFF1E6",
+            border: "1px solid rgba(232,82,74,0.15)",
+            color: "#E8524A",
             backdropFilter: "blur(12px)",
             fontFamily: "'DM Sans', sans-serif",
           }}
         >
           <Eye size={10} className="opacity-50" />
           Live View
-          <span className="w-1.5 h-1.5 rounded-full bg-[#7B8F4E] ml-1 animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E8524A] ml-1 animate-pulse" />
         </div>
       </div>
 
       {/* Map overlay - scale bar */}
       <div className="absolute bottom-4 left-4 flex items-center gap-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        <div className="flex items-center gap-1 text-[8px] text-[#FFF1E6]/25 tracking-wider uppercase">
-          <div className="w-12 h-px bg-[#FFF1E6]/20" />
+        <div className="flex items-center gap-1 text-[8px] text-[#E8524A]/40 tracking-wider uppercase">
+          <div className="w-12 h-px bg-[#E8524A]/30" />
           <span>0.5 mi</span>
         </div>
       </div>
 
       {/* Map overlay - coordinates */}
       <div
-        className="absolute bottom-4 right-4 text-[8px] text-[#FFF1E6]/20 tracking-wider"
+        className="absolute bottom-4 right-4 text-[8px] text-[#E8524A]/30 tracking-wider"
         style={{ fontFamily: "'DM Sans', sans-serif" }}
       >
         33.9519&deg; N, 83.3576&deg; W
