@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0F172A;
+  --foreground: #E2E8F0;
+  --surface: #1E293B;
+  --surface-hover: #334155;
+  --primary: #F59E0B;
+  --primary-dim: #D97706;
+  --safe: #10B981;
+  --warning: #F97316;
+  --critical: #EF4444;
+  --muted: #64748B;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-primary: var(--primary);
+  --color-primary-dim: var(--primary-dim);
+  --color-safe: var(--safe);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+  --color-muted: var(--muted);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+@keyframes pulse-ring-critical {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+.animate-pulse-ring-fast {
+  animation: pulse-ring-critical 1s ease-in-out infinite;
+}
