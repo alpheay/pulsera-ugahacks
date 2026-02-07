@@ -219,9 +219,6 @@ export default function Home() {
           <span className="text-xs tracking-[0.2em] uppercase text-[#FFF1E6]/20">
             Est. 2026
           </span>
-          <span className="text-xs tracking-[0.2em] uppercase text-[#FFF1E6]/20">
-            UGA Hacks
-          </span>
         </motion.footer>
       </div>
     </>
