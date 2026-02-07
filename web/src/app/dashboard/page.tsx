@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 
 const MapScreen = dynamic(() => import("@/components/MapScreen"), { ssr: false });
+import { FAMILY_MEMBERS, type FamilyMember } from "@/lib/simulatedData";
 
 /* ═══════════════════════════════════════════
    MOCK DATA & TYPES
@@ -41,125 +42,16 @@ const MapScreen = dynamic(() => import("@/components/MapScreen"), { ssr: false }
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-interface FamilyMember {
-  id: string;
-  name: string;
-  relation: string;
-  status: "normal" | "critical" | "warning";
-  device: string;
-  location: string;
-  locationCoords: { x: number; y: number }; // % positions on the map (legacy)
-  latitude: number;
-  longitude: number;
-  heartRate: number;
-  bloodOxygen: number;
-  temperature: number;
-  steps: number;
-  lastSync: string;
-  avatar: string;
-  avatarColor: string;
-  moving: boolean;
-  battery: number;
-  address: string;
-}
-
-const familyMembers: FamilyMember[] = [
-  {
-    id: "1",
-    name: "Grandma Helen",
-    relation: "Grandmother",
-    status: "normal",
-    device: "Pulsera Band",
-    location: "Home",
-    locationCoords: { x: 38, y: 42 },
-    latitude: 33.952,
-    longitude: -83.385,
-    heartRate: 72,
-    bloodOxygen: 98,
-    temperature: 98.6,
-    steps: 1240,
-    lastSync: "2m ago",
-    avatar: "GH",
-    avatarColor: "#E8524A",
-    moving: false,
-    battery: 85,
-    address: "142 Oakwood Dr",
-  },
-  {
-    id: "2",
-    name: "Dad (Robert)",
-    relation: "Father",
-    status: "normal",
-    device: "Pulsera Pro",
-    location: "Work",
-    locationCoords: { x: 72, y: 28 },
-    latitude: 33.95,
-    longitude: -83.38,
-    heartRate: 68,
-    bloodOxygen: 99,
-    temperature: 98.4,
-    steps: 4500,
-    lastSync: "5m ago",
-    avatar: "RD",
-    avatarColor: "#7B8F4E",
-    moving: false,
-    battery: 62,
-    address: "800 Commerce Blvd",
-  },
-  {
-    id: "3",
-    name: "Mom (Sarah)",
-    relation: "Mother",
-    status: "critical",
-    device: "Pulsera Band",
-    location: "Garden",
-    locationCoords: { x: 42, y: 58 },
-    latitude: 33.952,
-    longitude: -83.385,
-    heartRate: 115,
-    bloodOxygen: 95,
-    temperature: 99.1,
-    steps: 3200,
-    lastSync: "Just now",
-    avatar: "SD",
-    avatarColor: "#D4873E",
-    moving: true,
-    battery: 15,
-    address: "142 Oakwood Dr",
-  },
-  {
-    id: "4",
-    name: "Lily",
-    relation: "Daughter",
-    status: "normal",
-    device: "Pulsera Mini",
-    location: "School",
-    locationCoords: { x: 60, y: 65 },
-    latitude: 33.949,
-    longitude: -83.376,
-    heartRate: 82,
-    bloodOxygen: 99,
-    temperature: 98.2,
-    steps: 6800,
-    lastSync: "8m ago",
-    avatar: "LM",
-    avatarColor: "#8B6CC1",
-    moving: false,
-    battery: 91,
-    address: "Athens Academy",
-  },
-];
-
 const deviceEvents = [
   {
     id: "e1",
     icon: "battery" as const,
     priority: "high" as const,
     title: "Low Battery",
-    memberName: "Mom (Sarah)",
-    memberAvatar: "SD",
-    memberColor: "#D4873E",
-    detail: "Battery at 15% -- charge soon",
+    memberName: "Diego",
+    memberAvatar: "DG",
+    memberColor: "#f59e0b",
+    detail: "Battery at 31% -- charge soon",
     timestamp: "2m ago",
   },
   {
@@ -167,9 +59,9 @@ const deviceEvents = [
     icon: "sync" as const,
     priority: "low" as const,
     title: "Sync Complete",
-    memberName: "Dad (Robert)",
-    memberAvatar: "RD",
-    memberColor: "#7B8F4E",
+    memberName: "Carlos",
+    memberAvatar: "CG",
+    memberColor: "#0ea5e9",
     detail: "Health report uploaded",
     timestamp: "25m ago",
   },
@@ -178,9 +70,9 @@ const deviceEvents = [
     icon: "wifi" as const,
     priority: "medium" as const,
     title: "Weak Signal",
-    memberName: "Lily",
-    memberAvatar: "LM",
-    memberColor: "#8B6CC1",
+    memberName: "Sofia",
+    memberAvatar: "SG",
+    memberColor: "#22c55e",
     detail: "Connection intermittent",
     timestamp: "40m ago",
   },
@@ -189,9 +81,9 @@ const deviceEvents = [
     icon: "sync" as const,
     priority: "low" as const,
     title: "Sync Complete",
-    memberName: "Grandma Helen",
-    memberAvatar: "GH",
-    memberColor: "#E8524A",
+    memberName: "Maria",
+    memberAvatar: "MG",
+    memberColor: "#ec4899",
     detail: "Vitals updated",
     timestamp: "1h ago",
   },
@@ -204,15 +96,15 @@ const panicEvents = [
     type: "fall" as const,
     title: "Hard Fall Detected",
     resolved: false,
-    avatar: "SD",
-    avatarColor: "#D4873E",
-    memberName: "Mom (Sarah)",
-    location: "Garden",
+    avatar: "MG",
+    avatarColor: "#ec4899",
+    memberName: "Maria",
+    location: "Home",
     timestamp: "2m ago",
     detail: "Accelerometer detected sudden impact followed by lack of movement for 30 seconds.",
     metrics: [
       { label: "Impact Force", value: "4.2g" },
-      { label: "Heart Rate", value: "115 bpm" },
+      { label: "Heart Rate", value: "68 bpm" },
       { label: "Immobile", value: "30s" },
     ],
   },
@@ -222,14 +114,14 @@ const panicEvents = [
     type: "hr" as const,
     title: "High Heart Rate",
     resolved: true,
-    avatar: "GH",
-    avatarColor: "#E8524A",
-    memberName: "Grandma Helen",
-    location: "Kitchen",
+    avatar: "CG",
+    avatarColor: "#0ea5e9",
+    memberName: "Carlos",
+    location: "Ramsey Center",
     timestamp: "Yesterday",
     detail: "Heart rate exceeded threshold (120bpm) while stationary for over 5 minutes.",
     metrics: [
-      { label: "Peak HR", value: "124 bpm" },
+      { label: "Peak HR", value: "142 bpm" },
       { label: "Duration", value: "5m 12s" },
     ],
   },
@@ -244,10 +136,17 @@ const statusColor = (status: string) => {
     case "critical":
       return { bg: "rgba(232,82,74,0.2)", text: "#E8524A", dot: "#E8524A", glow: "rgba(232,82,74,0.4)" };
     case "warning":
+    case "elevated":
       return { bg: "rgba(212,135,62,0.2)", text: "#D4873E", dot: "#D4873E", glow: "rgba(212,135,62,0.4)" };
+    case "safe":
     default:
       return { bg: "rgba(123,143,78,0.2)", text: "#7B8F4E", dot: "#7B8F4E", glow: "rgba(123,143,78,0.4)" };
   }
+};
+
+const formatStatus = (status: string): string => {
+  if (!status) return status;
+  return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 };
 
 const eventPriorityColor = (priority: string) => {
@@ -346,7 +245,7 @@ function MemberDetailPanel({
                   className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
                   style={{ background: sc.bg, color: sc.text }}
                 >
-                  {member.status}
+                  {formatStatus(member.status)}
                 </span>
               </div>
             </div>
@@ -506,11 +405,11 @@ export default function Dashboard() {
       );
     };
     updateTime();
-    const interval = setInterval(updateTime, 60000);
+    const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  const selectedMemberData = familyMembers.find((m) => m.id === selectedMember);
+  const selectedMemberData = FAMILY_MEMBERS.find((m) => m.id === selectedMember);
   const activeAlerts = panicEvents.filter((e) => !e.resolved);
 
   return (
@@ -560,7 +459,7 @@ export default function Dashboard() {
                 className="text-sm font-bold text-[#FFF1E6]/90 tracking-tight"
                 style={{ fontFamily: "var(--font-garet), sans-serif" }}
               >
-                Family Dashboard
+                Ring Dashboard
               </h1>
               <span
                 className="text-[8px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-full"
@@ -575,7 +474,7 @@ export default function Dashboard() {
         {/* Right: Time + Status */}
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-3">
-            {familyMembers.map((m) => {
+            {FAMILY_MEMBERS.map((m) => {
               const sc = statusColor(m.status);
               return (
                 <button
@@ -638,7 +537,7 @@ export default function Dashboard() {
       {/* ── MAIN CONTENT AREA ── */}
       <main className="relative z-10 flex-1 flex gap-0 px-4 md:px-6 pb-4 min-h-0">
         {/* ══════════════════════════════════
-            LEFT SIDEBAR - Family + Events
+            LEFT SIDEBAR - Ring + Events
             ══════════════════════════════════ */}
         <motion.aside
           initial={{ opacity: 0, x: -20 }}
@@ -662,17 +561,17 @@ export default function Dashboard() {
                   className="text-[11px] font-bold text-[#FFF1E6]/80 uppercase tracking-[0.12em]"
                   style={{ fontFamily: "'DM Sans', sans-serif" }}
                 >
-                  Family Circle
+                  Ring
                 </h2>
               </div>
               <span className="text-[9px] text-[#FFF1E6]/30">
-                {familyMembers.filter((m) => m.status === "normal").length}/{familyMembers.length} ok
+                {FAMILY_MEMBERS.filter((m) => m.status === "safe").length}/{FAMILY_MEMBERS.length} Safe
               </span>
             </div>
 
             <ScrollArea className="flex-1">
               <div className="px-3 pb-3 space-y-1.5">
-                {familyMembers.map((member, i) => {
+                {FAMILY_MEMBERS.map((member, i) => {
                   const sc = statusColor(member.status);
                   const isSelected = selectedMember === member.id;
                   return (
@@ -748,7 +647,7 @@ export default function Dashboard() {
                               className="text-[8px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded-full"
                               style={{ background: sc.bg, color: sc.text }}
                             >
-                              {member.status}
+                              {formatStatus(member.status)}
                             </span>
                           </div>
                         </div>
@@ -835,7 +734,7 @@ export default function Dashboard() {
             }}
           >
             <MapScreen
-              members={familyMembers}
+              members={FAMILY_MEMBERS}
               selectedMember={selectedMember}
               onSelectMember={setSelectedMember}
             />
