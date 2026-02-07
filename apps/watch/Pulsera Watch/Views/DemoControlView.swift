@@ -5,6 +5,7 @@ struct DemoControlView: View {
     @EnvironmentObject var webSocketManager: WebSocketManager
     @EnvironmentObject var episodeManager: EpisodeManager
     @EnvironmentObject var hapticManager: HapticManager
+    @EnvironmentObject var elevenLabsManager: ElevenLabsManager
 
     var body: some View {
         ScrollView {
@@ -159,6 +160,15 @@ struct DemoControlView: View {
                     .foregroundColor(.white.opacity(0.7))
             }
 
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(elevenLabsManager.isConnected ? .green : .gray)
+                    .frame(width: 8, height: 8)
+                Text("ElevenLabs")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.7))
+            }
+
             if let episodeId = episodeManager.currentEpisodeId {
                 Text("ID: \(episodeId.prefix(8))...")
                     .font(.system(size: 10, design: .monospaced))
@@ -235,4 +245,5 @@ struct DemoControlView: View {
         .environmentObject(WebSocketManager())
         .environmentObject(EpisodeManager())
         .environmentObject(HapticManager())
+        .environmentObject(ElevenLabsManager())
 }

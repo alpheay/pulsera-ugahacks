@@ -64,11 +64,47 @@ struct HeartRateView: View {
     }
 }
 
+// MARK: - Compact Heart Rate Pill (for overlay screens)
+
+struct HeartRatePill: View {
+    let heartRate: Double
+
+    @State private var beatScale: CGFloat = 1.0
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "heart.fill")
+                .font(.system(size: 10))
+                .foregroundColor(.red)
+                .scaleEffect(beatScale)
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                        beatScale = 1.2
+                    }
+                }
+
+            Text("\(Int(heartRate))")
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                .monospacedDigit()
+
+            Text("BPM")
+                .font(.system(size: 9, weight: .medium))
+                .foregroundColor(.gray)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 4)
+        .background(Color.white.opacity(0.1))
+        .cornerRadius(12)
+    }
+}
+
 #Preview {
     VStack(spacing: 16) {
         HeartRateView(heartRate: 72, status: .normal)
         HeartRateView(heartRate: 130, status: .elevated)
         HeartRateView(heartRate: 165, status: .critical)
         HeartRateView(heartRate: 0, status: .normal)
+        HeartRatePill(heartRate: 82)
     }
 }

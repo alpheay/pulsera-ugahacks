@@ -8,6 +8,7 @@ struct PulseraWatchApp: App {
     @StateObject private var localAnomalyDetector = LocalAnomalyDetector()
     @StateObject private var episodeManager = EpisodeManager()
     @StateObject private var audioPlayerManager = AudioPlayerManager()
+    @StateObject private var elevenLabsManager = ElevenLabsManager()
 
     var body: some Scene {
         WindowGroup {
@@ -18,9 +19,11 @@ struct PulseraWatchApp: App {
                 .environmentObject(localAnomalyDetector)
                 .environmentObject(episodeManager)
                 .environmentObject(audioPlayerManager)
+                .environmentObject(elevenLabsManager)
                 .onAppear {
-                    healthKitManager.requestAuthorization()
+                    healthKitManager.startDemoMode()
                     webSocketManager.connectIfConfigured()
+                    elevenLabsManager.audioPlayerManager = audioPlayerManager
                 }
                 .onChange(of: healthKitManager.latestData) { _, newData in
                     guard let data = newData else { return }
@@ -82,18 +85,34 @@ struct PulseraWatchApp: App {
                     }
                 }
                 .onChange(of: episodeManager.currentPhase) { _, phase in
-                    if phase == .calming {
-                        audioPlayerManager.stopCalmingTone()
+                    if phase == .anomalyDetected {
+                        // Start HR decline when episode triggers
+                        healthKitManager.setDemoDecline()
+                    } else if phase == .calming {
+                        audioPlayerManager.stopCalmingTrack()
                         audioPlayerManager.startEngine()
+                        elevenLabsManager.startSession()
                     } else if phase == .calmingMusic {
+                        elevenLabsManager.stopSession()
                         audioPlayerManager.stopEngine()
-                        audioPlayerManager.playCalmingTone(frequency: 432.0)
-                    } else {
+                        audioPlayerManager.playCalmingTrack(AudioPlayerManager.calmingTracks[0])
+                    } else if phase == .idle {
+                        elevenLabsManager.stopSession()
                         if audioPlayerManager.isPlaying {
                             audioPlayerManager.stopEngine()
                         }
-                        if audioPlayerManager.isPlayingTone {
-                            audioPlayerManager.stopCalmingTone()
+                        if audioPlayerManager.isPlayingTrack {
+                            audioPlayerManager.stopCalmingTrack()
+                        }
+                        // Restart demo simulation for next run
+                        healthKitManager.startDemoMode()
+                    } else {
+                        elevenLabsManager.stopSession()
+                        if audioPlayerManager.isPlaying {
+                            audioPlayerManager.stopEngine()
+                        }
+                        if audioPlayerManager.isPlayingTrack {
+                            audioPlayerManager.stopCalmingTrack()
                         }
                     }
                 }

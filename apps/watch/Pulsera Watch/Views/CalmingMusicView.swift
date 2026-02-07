@@ -4,6 +4,7 @@ struct CalmingMusicView: View {
     @EnvironmentObject var episodeManager: EpisodeManager
     @EnvironmentObject var audioPlayerManager: AudioPlayerManager
     @EnvironmentObject var hapticManager: HapticManager
+    @EnvironmentObject var healthKitManager: HealthKitManager
 
     @State private var animateWaveform = false
     @State private var elapsedSeconds: Int = 0
@@ -25,15 +26,15 @@ struct CalmingMusicView: View {
                 HStack(spacing: 4) {
                     ForEach(0..<5, id: \.self) { index in
                         WaveformBar(
-                            isAnimating: audioPlayerManager.isPlayingTone,
+                            isAnimating: audioPlayerManager.isPlayingTrack,
                             barIndex: index
                         )
                     }
                 }
                 .frame(height: 50)
 
-                // Frequency label
-                Text("\(Int(audioPlayerManager.currentFrequency)) Hz — \(currentToneName)")
+                // Track name
+                Text(audioPlayerManager.currentTrack.name)
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
                     .foregroundColor(.purple)
 
@@ -41,17 +42,44 @@ struct CalmingMusicView: View {
                     .font(.system(size: 11, weight: .regular, design: .rounded))
                     .foregroundColor(.gray.opacity(0.7))
 
-                // Play / Pause button
-                Button {
-                    togglePlayback()
-                } label: {
-                    Image(systemName: audioPlayerManager.isPlayingTone ? "pause.circle.fill" : "play.circle.fill")
-                        .font(.system(size: 36))
-                        .foregroundColor(.purple)
+                // Playback controls: previous / play-pause / next
+                HStack(spacing: 20) {
+                    Button {
+                        audioPlayerManager.previousTrack()
+                        hapticManager.playTap()
+                    } label: {
+                        Image(systemName: "backward.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.purple)
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        togglePlayback()
+                    } label: {
+                        Image(systemName: audioPlayerManager.isPlayingTrack ? "pause.circle.fill" : "play.circle.fill")
+                            .font(.system(size: 36))
+                            .foregroundColor(.purple)
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        audioPlayerManager.nextTrack()
+                        hapticManager.playTap()
+                    } label: {
+                        Image(systemName: "forward.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.purple)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
 
                 Spacer()
+
+                // Heart rate pill
+                if let hr = healthKitManager.latestData?.heartRate {
+                    HeartRatePill(heartRate: hr)
+                }
 
                 // Progress bar
                 GeometryReader { geo in
@@ -88,12 +116,6 @@ struct CalmingMusicView: View {
 
     // MARK: - Helpers
 
-    private var currentToneName: String {
-        AudioPlayerManager.calmingFrequencies
-            .first { $0.hz == audioPlayerManager.currentFrequency }?
-            .name ?? "Calm"
-    }
-
     private var formattedElapsed: String {
         let minutes = elapsedSeconds / 60
         let seconds = elapsedSeconds % 60
@@ -101,10 +123,10 @@ struct CalmingMusicView: View {
     }
 
     private func togglePlayback() {
-        if audioPlayerManager.isPlayingTone {
-            audioPlayerManager.stopCalmingTone()
+        if audioPlayerManager.isPlayingTrack {
+            audioPlayerManager.stopCalmingTrack()
         } else {
-            audioPlayerManager.playCalmingTone(frequency: audioPlayerManager.currentFrequency)
+            audioPlayerManager.playCalmingTrack(audioPlayerManager.currentTrack)
         }
         hapticManager.playTap()
     }
@@ -170,4 +192,5 @@ private struct WaveformBar: View {
         .environmentObject(EpisodeManager())
         .environmentObject(AudioPlayerManager())
         .environmentObject(HapticManager())
+        .environmentObject(HealthKitManager())
 }

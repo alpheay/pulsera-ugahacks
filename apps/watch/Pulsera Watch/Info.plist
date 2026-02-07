@@ -22,6 +22,8 @@
 	<string>Pulsera needs access to your heart rate and heart rate variability data to monitor your safety in real time and alert your community if anomalies are detected.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Pulsera records health metrics to provide continuous safety monitoring and anomaly detection for your community group.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Pulsera uses the microphone so you can talk to the calming voice assistant during breathing exercises.</string>
 	<key>WKApplication</key>
 	<true/>
 	<key>WKWatchOnly</key>

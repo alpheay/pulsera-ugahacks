@@ -55,6 +55,38 @@ struct ContentView: View {
                     status: currentStatus
                 )
 
+                // Start demo button — visible when HR is elevated and no active episode
+                if episodeManager.currentPhase == .idle,
+                   let hr = healthKitManager.latestData?.heartRate, hr >= 80 {
+                    Button {
+                        let data = HealthData(
+                            heartRate: hr, hrv: 20, acceleration: 0.1,
+                            skinTemp: 37.2, status: .elevated
+                        )
+                        episodeManager.startEpisode(trigger: .sustainedElevatedHR, data: data)
+                        healthKitManager.setDemoDecline()
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 14))
+                            Text("Start")
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            LinearGradient(
+                                colors: [.orange, .red.opacity(0.8)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(12)
+                    }
+                    .padding(.horizontal, 8)
+                }
+
                 StatusView(
                     connectionState: webSocketManager.connectionState,
                     anomalyScore: webSocketManager.latestAnomalyScore,
@@ -92,6 +124,8 @@ struct ContentView: View {
         ZStack {
             Color.black.ignoresSafeArea()
             VStack(spacing: 12) {
+                Spacer()
+
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 36))
                     .foregroundColor(.orange)
@@ -107,6 +141,13 @@ struct ContentView: View {
                 ProgressView()
                     .progressViewStyle(.circular)
                     .tint(.orange)
+
+                Spacer()
+
+                if let hr = healthKitManager.latestData?.heartRate {
+                    HeartRatePill(heartRate: hr)
+                        .padding(.bottom, 12)
+                }
             }
         }
     }
@@ -115,6 +156,8 @@ struct ContentView: View {
         ZStack {
             Color.black.ignoresSafeArea()
             VStack(spacing: 12) {
+                Spacer()
+
                 Image(systemName: "waveform.path.ecg")
                     .font(.system(size: 36))
                     .foregroundColor(.cyan)
@@ -130,6 +173,13 @@ struct ContentView: View {
                 ProgressView()
                     .progressViewStyle(.circular)
                     .tint(.cyan)
+
+                Spacer()
+
+                if let hr = healthKitManager.latestData?.heartRate {
+                    HeartRatePill(heartRate: hr)
+                        .padding(.bottom, 12)
+                }
             }
         }
     }
@@ -138,6 +188,8 @@ struct ContentView: View {
         ZStack {
             Color.black.ignoresSafeArea()
             VStack(spacing: 12) {
+                Spacer()
+
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 40))
                     .foregroundColor(.green)
@@ -147,6 +199,13 @@ struct ContentView: View {
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 16)
+
+                Spacer()
+
+                if let hr = healthKitManager.latestData?.heartRate {
+                    HeartRatePill(heartRate: hr)
+                        .padding(.bottom, 12)
+                }
             }
         }
     }

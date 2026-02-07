@@ -164,7 +164,81 @@ final class HealthKitManager: ObservableObject {
         }
     }
 
+    // MARK: - Scripted Demo Heart Rate Simulation
+
+    enum DemoSimPhase {
+        case resting    // 55-60 bpm
+        case rising     // climbing to 90-100 bpm
+        case declining  // slowly dropping back to resting
+    }
+
+    private var demoTimer: Timer?
+    private var demoHR: Double = 58
+    @Published var demoSimPhase: DemoSimPhase = .resting
+
+    func startDemoMode() {
+        stopMonitoring() // don't use real HealthKit
+        demoHR = 58
+        demoSimPhase = .resting
+        publishDemoData()
+
+        demoTimer?.invalidate()
+        demoTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.tickDemo()
+        }
+
+        // Start rising after 4 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
+            guard self?.demoSimPhase == .resting else { return }
+            self?.demoSimPhase = .rising
+        }
+    }
+
+    func setDemoDecline() {
+        demoSimPhase = .declining
+    }
+
+    private func tickDemo() {
+        switch demoSimPhase {
+        case .resting:
+            demoHR = 58 + Double.random(in: -1.5...1.5)
+        case .rising:
+            if demoHR < 95 {
+                demoHR += Double.random(in: 2.5...4.5)
+                demoHR = min(demoHR, 100)
+            } else {
+                demoHR = 95 + Double.random(in: -2...3)
+            }
+        case .declining:
+            if demoHR > 62 {
+                demoHR -= Double.random(in: 0.8...2.0)
+            } else {
+                demoHR = 58 + Double.random(in: -1.5...1.5)
+            }
+        }
+        publishDemoData()
+    }
+
+    private func publishDemoData() {
+        let status: HealthStatus
+        if demoHR >= 85 { status = .elevated }
+        else if demoHR >= 70 { status = .normal }
+        else { status = .normal }
+
+        let data = HealthData(
+            heartRate: demoHR,
+            hrv: 45 + Double.random(in: -5...5),
+            acceleration: 0.3,
+            skinTemp: 36.5,
+            status: status
+        )
+        DispatchQueue.main.async {
+            self.latestData = data
+        }
+    }
+
     deinit {
         stopMonitoring()
+        demoTimer?.invalidate()
     }
 }
