@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import PulseraIcon from "@/components/PulseraIcon";
-import Navbar from "@/components/Navbar";
+import PulseraLogo from "@/components/PulseraLogo";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Bell,
@@ -148,11 +147,11 @@ const panicEvents = [
 const statusColor = (status: string) => {
   switch (status) {
     case "critical":
-      return { bg: "rgba(232,82,74,0.15)", text: "#E8524A", dot: "#E8524A" };
+      return { bg: "rgba(232,82,74,0.25)", text: "#E8524A", dot: "#E8524A" };
     case "warning":
-      return { bg: "rgba(212,135,62,0.15)", text: "#D4873E", dot: "#D4873E" };
+      return { bg: "rgba(212,135,62,0.25)", text: "#D4873E", dot: "#D4873E" };
     default:
-      return { bg: "rgba(123,143,78,0.15)", text: "#7B8F4E", dot: "#7B8F4E" };
+      return { bg: "rgba(123,143,78,0.25)", text: "#7B8F4E", dot: "#7B8F4E" };
   }
 };
 
@@ -221,9 +220,41 @@ export default function Dashboard() {
   const [expandedPanic, setExpandedPanic] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] flex flex-col">
-      {/* Header */}
-      <Navbar variant="light" />
+    <div
+      className="min-h-screen flex flex-col relative"
+      style={{
+        background: "linear-gradient(135deg, rgba(20, 8, 6, 0.95) 0%, rgba(35, 12, 10, 0.92) 50%, rgba(20, 8, 6, 0.95) 100%)",
+        backdropFilter: "blur(32px) saturate(1.4)",
+        WebkitBackdropFilter: "blur(32px) saturate(1.4)",
+      }}
+    >
+      {/* Background grain texture overlay */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* Pulsera Logo - Top Right Home Button */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease }}
+        className="absolute top-6 right-6 md:top-8 md:right-10 z-50"
+      >
+        <Link
+          href="/"
+          className="group flex items-center gap-2 px-4 py-2.5 rounded-full transition-all duration-300 hover:scale-[1.02]"
+          style={{
+            background: "linear-gradient(135deg, rgba(255, 241, 230, 0.08) 0%, rgba(255, 241, 230, 0.04) 100%)",
+            border: "1px solid rgba(255, 241, 230, 0.1)",
+            boxShadow: "0 4px 24px rgba(0, 0, 0, 0.2)",
+          }}
+        >
+          <PulseraLogo size={22} color="#FFF1E6" />
+        </Link>
+      </motion.div>
 
       {/* ── Page title ── */}
       <motion.div
@@ -239,12 +270,12 @@ export default function Dashboard() {
             </p>
             <h1
               style={{ fontFamily: "'Playfair Display', serif" }}
-              className="text-2xl md:text-3xl font-bold text-[#2D2418] leading-tight"
+              className="text-2xl md:text-3xl font-bold text-[#FFF1E6] leading-tight"
             >
               Everyone at <span className="italic font-normal text-[#E8524A]/80">a glance</span>
             </h1>
           </div>
-          <div className="hidden md:flex items-center gap-2 text-[10px] text-[#2D2418]/30">
+          <div className="hidden md:flex items-center gap-2 text-[10px] text-[#FFF1E6]/30 mr-36">
             <div className="w-1.5 h-1.5 rounded-full bg-[#7B8F4E] animate-pulse" />
             <span>Live sync active</span>
           </div>
@@ -267,8 +298,9 @@ export default function Dashboard() {
             <div
               className="rounded-2xl overflow-hidden relative"
               style={{
-                background: "linear-gradient(135deg, rgba(45,36,24,0.04) 0%, rgba(45,36,24,0.01) 100%)",
-                border: "1px solid rgba(45,36,24,0.06)",
+                background: "linear-gradient(135deg, rgba(255,241,230,0.06) 0%, rgba(255,241,230,0.02) 100%)",
+                border: "1px solid rgba(255,241,230,0.08)",
+                boxShadow: "0 4px 32px rgba(0, 0, 0, 0.2)",
               }}
             >
               <div className="p-5 pb-3 flex items-center justify-between">
@@ -276,12 +308,12 @@ export default function Dashboard() {
                   <Shield size={14} className="text-[#E8524A]/70" />
                   <h2
                     style={{ fontFamily: "'Playfair Display', serif" }}
-                    className="text-sm font-bold text-[#2D2418]/90"
+                    className="text-sm font-bold text-[#FFF1E6]/90"
                   >
                     Family Circle
                   </h2>
                 </div>
-                <span className="text-[10px] text-[#2D2418]/40 tracking-wide">
+                <span className="text-[10px] text-[#FFF1E6]/40 tracking-wide">
                   {familyMembers.filter((m) => m.status === "normal").length}/{familyMembers.length} normal
                 </span>
               </div>
@@ -304,9 +336,9 @@ export default function Dashboard() {
                           className="rounded-xl p-4 transition-all duration-300"
                           style={{
                             background: isSelected
-                              ? "rgba(45,36,24,0.06)"
-                              : "rgba(45,36,24,0.02)",
-                            border: `1px solid ${isSelected ? "rgba(45,36,24,0.1)" : "rgba(45,36,24,0.03)"}`,
+                              ? "rgba(255,241,230,0.08)"
+                              : "rgba(255,241,230,0.03)",
+                            border: `1px solid ${isSelected ? "rgba(255,241,230,0.12)" : "rgba(255,241,230,0.05)"}`,
                           }}
                         >
                           <div className="flex items-start gap-3.5">
@@ -327,7 +359,7 @@ export default function Dashboard() {
                                 <div
                                   className="w-3.5 h-3.5 rounded-full flex items-center justify-center"
                                   style={{
-                                    background: "#FAFAF7",
+                                    background: "rgba(20, 8, 6, 0.9)",
                                     border: `2px solid ${sc.dot}`,
                                   }}
                                 >
@@ -351,7 +383,7 @@ export default function Dashboard() {
                             {/* Info */}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between mb-1">
-                                <h3 className="text-sm font-semibold text-[#2D2418]/90 truncate">
+                                <h3 className="text-sm font-semibold text-[#FFF1E6]/90 truncate">
                                   {member.name}
                                 </h3>
                                 <span
@@ -362,16 +394,16 @@ export default function Dashboard() {
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 mb-2.5">
-                                <span className="text-[10px] text-[#2D2418]/50">
+                                <span className="text-[10px] text-[#FFF1E6]/50">
                                   {member.relation}
                                 </span>
-                                <span className="text-[#2D2418]/20">|</span>
-                                <span className="text-[10px] text-[#2D2418]/50 flex items-center gap-1">
+                                <span className="text-[#FFF1E6]/20">|</span>
+                                <span className="text-[10px] text-[#FFF1E6]/50 flex items-center gap-1">
                                   <Watch size={9} />
                                   {member.device}
                                 </span>
-                                <span className="text-[#2D2418]/20">|</span>
-                                <span className="text-[10px] text-[#2D2418]/50 flex items-center gap-1">
+                                <span className="text-[#FFF1E6]/20">|</span>
+                                <span className="text-[10px] text-[#FFF1E6]/50 flex items-center gap-1">
                                   <MapPin size={9} />
                                   {member.location}
                                 </span>
@@ -379,50 +411,50 @@ export default function Dashboard() {
 
                               {/* Vitals row */}
                               <div className="grid grid-cols-4 gap-2">
-                                <div className="flex flex-col items-center rounded-lg py-1.5 px-1" style={{ background: "rgba(45,36,24,0.02)" }}>
+                                <div className="flex flex-col items-center rounded-lg py-1.5 px-1" style={{ background: "rgba(255,241,230,0.04)" }}>
                                   <Heart
                                     size={11}
                                     className="mb-0.5"
                                     style={{
-                                      color: member.status === "critical" ? "#E8524A" : "#2D2418",
+                                      color: member.status === "critical" ? "#E8524A" : "#FFF1E6",
                                       opacity: member.status === "critical" ? 1 : 0.3,
                                       animation: member.status === "critical" ? "heartbeat 1.5s infinite" : "none",
                                     }}
                                   />
                                   <span
                                     className="text-[11px] font-bold"
-                                    style={{ color: member.heartRate > 100 ? "#E8524A" : "#2D2418", opacity: member.heartRate > 100 ? 1 : 0.7 }}
+                                    style={{ color: member.heartRate > 100 ? "#E8524A" : "#FFF1E6", opacity: member.heartRate > 100 ? 1 : 0.7 }}
                                   >
                                     {member.heartRate}
                                   </span>
-                                  <span className="text-[8px] text-[#2D2418]/40 uppercase">bpm</span>
+                                  <span className="text-[8px] text-[#FFF1E6]/40 uppercase">bpm</span>
                                 </div>
-                                <div className="flex flex-col items-center rounded-lg py-1.5 px-1" style={{ background: "rgba(45,36,24,0.02)" }}>
-                                  <Droplets size={11} className="text-[#2D2418]/30 mb-0.5" />
+                                <div className="flex flex-col items-center rounded-lg py-1.5 px-1" style={{ background: "rgba(255,241,230,0.04)" }}>
+                                  <Droplets size={11} className="text-[#FFF1E6]/30 mb-0.5" />
                                   <span
                                     className="text-[11px] font-bold"
-                                    style={{ color: member.bloodOxygen < 94 ? "#E8524A" : "#2D2418", opacity: member.bloodOxygen < 94 ? 1 : 0.7 }}
+                                    style={{ color: member.bloodOxygen < 94 ? "#E8524A" : "#FFF1E6", opacity: member.bloodOxygen < 94 ? 1 : 0.7 }}
                                   >
                                     {member.bloodOxygen}%
                                   </span>
-                                  <span className="text-[8px] text-[#2D2418]/40 uppercase">SpO2</span>
+                                  <span className="text-[8px] text-[#FFF1E6]/40 uppercase">SpO2</span>
                                 </div>
-                                <div className="flex flex-col items-center rounded-lg py-1.5 px-1" style={{ background: "rgba(45,36,24,0.02)" }}>
-                                  <Thermometer size={11} className="text-[#2D2418]/30 mb-0.5" />
+                                <div className="flex flex-col items-center rounded-lg py-1.5 px-1" style={{ background: "rgba(255,241,230,0.04)" }}>
+                                  <Thermometer size={11} className="text-[#FFF1E6]/30 mb-0.5" />
                                   <span
                                     className="text-[11px] font-bold"
-                                    style={{ color: member.temperature > 99.5 ? "#E8524A" : "#2D2418", opacity: member.temperature > 99.5 ? 1 : 0.7 }}
+                                    style={{ color: member.temperature > 99.5 ? "#E8524A" : "#FFF1E6", opacity: member.temperature > 99.5 ? 1 : 0.7 }}
                                   >
                                     {member.temperature}
                                   </span>
-                                  <span className="text-[8px] text-[#2D2418]/40 uppercase">&deg;F</span>
+                                  <span className="text-[8px] text-[#FFF1E6]/40 uppercase">&deg;F</span>
                                 </div>
-                                <div className="flex flex-col items-center rounded-lg py-1.5 px-1" style={{ background: "rgba(45,36,24,0.02)" }}>
-                                  <Footprints size={11} className="text-[#2D2418]/30 mb-0.5" />
-                                  <span className="text-[11px] font-bold text-[#2D2418]/70">
+                                <div className="flex flex-col items-center rounded-lg py-1.5 px-1" style={{ background: "rgba(255,241,230,0.04)" }}>
+                                  <Footprints size={11} className="text-[#FFF1E6]/30 mb-0.5" />
+                                  <span className="text-[11px] font-bold text-[#FFF1E6]/70">
                                     {(member.steps / 1000).toFixed(1)}k
                                   </span>
-                                  <span className="text-[8px] text-[#2D2418]/40 uppercase">steps</span>
+                                  <span className="text-[8px] text-[#FFF1E6]/40 uppercase">steps</span>
                                 </div>
                               </div>
                             </div>
@@ -438,15 +470,15 @@ export default function Dashboard() {
                                 transition={{ duration: 0.3, ease }}
                                 className="overflow-hidden"
                               >
-                                <div className="pt-3 mt-3 border-t border-[#2D2418]/5">
+                                <div className="pt-3 mt-3 border-t border-[#FFF1E6]/10">
                                   <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-[10px] text-[#2D2418]/40">
+                                    <div className="flex items-center gap-2 text-[10px] text-[#FFF1E6]/40">
                                       <Clock size={10} />
                                       Last synced {member.lastSync}
                                     </div>
                                     <button
                                       className="text-[10px] font-medium text-[#E8524A]/70 hover:text-[#E8524A] transition-colors flex items-center gap-1 px-2.5 py-1 rounded-full"
-                                      style={{ background: "rgba(232,82,74,0.08)" }}
+                                      style={{ background: "rgba(232,82,74,0.15)" }}
                                     >
                                       View Details
                                       <ChevronRight size={10} />
@@ -478,8 +510,9 @@ export default function Dashboard() {
               transition={{ duration: 0.8, delay: 0.35, ease }}
               className="rounded-2xl overflow-hidden relative"
               style={{
-                background: "linear-gradient(135deg, rgba(45,36,24,0.035) 0%, rgba(45,36,24,0.01) 100%)",
-                border: "1px solid rgba(45,36,24,0.06)",
+                background: "linear-gradient(135deg, rgba(255,241,230,0.06) 0%, rgba(255,241,230,0.02) 100%)",
+                border: "1px solid rgba(255,241,230,0.08)",
+                boxShadow: "0 4px 32px rgba(0, 0, 0, 0.2)",
               }}
             >
               <div className="p-5 pb-3 flex items-center justify-between">
@@ -487,13 +520,13 @@ export default function Dashboard() {
                   <Zap size={14} className="text-[#D4873E]/70" />
                   <h2
                     style={{ fontFamily: "'Playfair Display', serif" }}
-                    className="text-sm font-bold text-[#2D2418]/90"
+                    className="text-sm font-bold text-[#FFF1E6]/90"
                   >
                     Device Events
                   </h2>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] text-[#2D2418]/40 tracking-wide">
+                  <span className="text-[10px] text-[#FFF1E6]/40 tracking-wide">
                     Apple Watch & iPhone
                   </span>
                 </div>
@@ -510,20 +543,20 @@ export default function Dashboard() {
                         initial={{ opacity: 0, x: 10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.4, delay: 0.4 + i * 0.04, ease }}
-                        className="group flex items-start gap-3 py-2.5 border-b border-[#2D2418]/[0.03] last:border-0 hover:bg-[#2D2418]/[0.02] px-2 -mx-2 rounded-lg transition-colors cursor-default"
+                        className="group flex items-start gap-3 py-2.5 border-b border-[#FFF1E6]/[0.05] last:border-0 hover:bg-[#FFF1E6]/[0.03] px-2 -mx-2 rounded-lg transition-colors cursor-default"
                       >
                         <div
                           className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
                           style={{
-                            background: `${priorityColor}15`,
-                            border: `1px solid ${priorityColor}20`,
+                            background: `${priorityColor}20`,
+                            border: `1px solid ${priorityColor}30`,
                           }}
                         >
                           <IconComp size={13} style={{ color: priorityColor }} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-0.5">
-                            <span className="text-xs font-medium text-[#2D2418]/80 truncate">
+                            <span className="text-xs font-medium text-[#FFF1E6]/80 truncate">
                               {event.title}
                             </span>
                             {event.priority === "high" && (
@@ -533,11 +566,11 @@ export default function Dashboard() {
                               />
                             )}
                           </div>
-                          <p className="text-[10px] text-[#2D2418]/40 truncate">
+                          <p className="text-[10px] text-[#FFF1E6]/40 truncate">
                             {event.memberName} &middot; {event.detail}
                           </p>
                         </div>
-                        <span className="text-[9px] text-[#2D2418]/30 flex-shrink-0 mt-1">
+                        <span className="text-[9px] text-[#FFF1E6]/30 flex-shrink-0 mt-1">
                           {event.timestamp}
                         </span>
                       </motion.div>
@@ -556,8 +589,9 @@ export default function Dashboard() {
               transition={{ duration: 0.8, delay: 0.5, ease }}
               className="rounded-2xl overflow-hidden relative"
               style={{
-                background: "linear-gradient(135deg, rgba(232,82,74,0.04) 0%, rgba(255,241,230,0.01) 100%)",
-                border: "1px solid rgba(232,82,74,0.1)",
+                background: "linear-gradient(135deg, rgba(232,82,74,0.08) 0%, rgba(255,241,230,0.02) 100%)",
+                border: "1px solid rgba(232,82,74,0.15)",
+                boxShadow: "0 4px 32px rgba(0, 0, 0, 0.2)",
               }}
             >
               <div className="p-5 pb-3 flex items-center justify-between">
@@ -574,14 +608,14 @@ export default function Dashboard() {
                   </div>
                   <h2
                     style={{ fontFamily: "'Playfair Display', serif" }}
-                    className="text-sm font-bold text-[#2D2418]/90"
+                    className="text-sm font-bold text-[#FFF1E6]/90"
                   >
                     Panic & Stress Alerts
                   </h2>
                   <span
                     className="text-[10px] font-bold px-2 py-0.5 rounded-full"
                     style={{
-                      background: "rgba(232,82,74,0.15)",
+                      background: "rgba(232,82,74,0.25)",
                       color: "#E8524A",
                     }}
                   >
@@ -639,7 +673,7 @@ export default function Dashboard() {
 
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs font-semibold text-[#2D2418]/90">
+                                  <span className="text-xs font-semibold text-[#FFF1E6]/90">
                                     {event.title}
                                   </span>
                                   <span
@@ -657,21 +691,21 @@ export default function Dashboard() {
                                     </span>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-2 text-[10px] text-[#2D2418]/40">
+                                <div className="flex items-center gap-2 text-[10px] text-[#FFF1E6]/40">
                                   <span
                                     className="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold"
                                     style={{
-                                      background: `${event.avatarColor}25`,
+                                      background: `${event.avatarColor}35`,
                                       color: event.avatarColor,
                                     }}
                                   >
                                     {event.avatar}
                                   </span>
                                   <span>{event.memberName}</span>
-                                  <span className="text-[#2D2418]/20">|</span>
+                                  <span className="text-[#FFF1E6]/20">|</span>
                                   <MapPin size={9} />
                                   <span>{event.location}</span>
-                                  <span className="text-[#2D2418]/20">|</span>
+                                  <span className="text-[#FFF1E6]/20">|</span>
                                   <Clock size={9} />
                                   <span>{event.timestamp}</span>
                                 </div>
@@ -679,7 +713,7 @@ export default function Dashboard() {
 
                               <ChevronRight
                                 size={14}
-                                className="text-[#2D2418]/30 flex-shrink-0 mt-1 transition-transform duration-300"
+                                className="text-[#FFF1E6]/30 flex-shrink-0 mt-1 transition-transform duration-300"
                                 style={{
                                   transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
                                 }}
@@ -697,7 +731,7 @@ export default function Dashboard() {
                                   className="overflow-hidden"
                                 >
                                   <div className="pt-3 mt-3 border-t" style={{ borderColor: `${style.border}` }}>
-                                    <p className="text-[11px] text-[#2D2418]/60 leading-relaxed mb-3">
+                                    <p className="text-[11px] text-[#FFF1E6]/60 leading-relaxed mb-3">
                                       {event.detail}
                                     </p>
 
@@ -708,14 +742,14 @@ export default function Dashboard() {
                                           key={metric.label}
                                           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg"
                                           style={{
-                                            background: "rgba(45,36,24,0.03)",
-                                            border: "1px solid rgba(45,36,24,0.05)",
+                                            background: "rgba(255,241,230,0.06)",
+                                            border: "1px solid rgba(255,241,230,0.08)",
                                           }}
                                         >
-                                          <span className="text-[9px] text-[#2D2418]/40 uppercase tracking-wide">
+                                          <span className="text-[9px] text-[#FFF1E6]/40 uppercase tracking-wide">
                                             {metric.label}
                                           </span>
-                                          <span className="text-[11px] font-bold text-[#2D2418]/80">
+                                          <span className="text-[11px] font-bold text-[#FFF1E6]/80">
                                             {metric.value}
                                           </span>
                                         </div>
@@ -735,10 +769,10 @@ export default function Dashboard() {
                                           Contact {event.memberName.split(" ")[0]}
                                         </button>
                                         <button
-                                          className="text-[10px] font-medium px-3 py-1.5 rounded-lg transition-all duration-300 text-[#2D2418]/50 hover:text-[#2D2418]/80"
+                                          className="text-[10px] font-medium px-3 py-1.5 rounded-lg transition-all duration-300 text-[#FFF1E6]/50 hover:text-[#FFF1E6]/80"
                                           style={{
-                                            background: "rgba(45,36,24,0.04)",
-                                            border: "1px solid rgba(45,36,24,0.06)",
+                                            background: "rgba(255,241,230,0.06)",
+                                            border: "1px solid rgba(255,241,230,0.1)",
                                           }}
                                           onClick={(e) => e.stopPropagation()}
                                         >
@@ -770,13 +804,13 @@ export default function Dashboard() {
         className="relative z-10 px-6 md:px-10 pb-6 pt-2 flex items-center justify-between"
       >
         <span
-          className="text-[9px] tracking-[0.3em] uppercase text-[#2D2418]/20"
+          className="text-[9px] tracking-[0.3em] uppercase text-[#FFF1E6]/20"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
           Pulsera &mdash; Est. 2026
         </span>
         <div className="flex items-center gap-4">
-          <span className="text-[9px] text-[#2D2418]/20">
+          <span className="text-[9px] text-[#FFF1E6]/20">
             All data is mocked for demonstration
           </span>
         </div>
