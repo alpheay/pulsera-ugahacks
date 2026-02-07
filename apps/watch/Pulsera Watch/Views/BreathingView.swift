@@ -3,6 +3,8 @@ import SwiftUI
 struct BreathingView: View {
     @EnvironmentObject var episodeManager: EpisodeManager
     @EnvironmentObject var hapticManager: HapticManager
+    @EnvironmentObject var elevenLabsManager: ElevenLabsManager
+    @EnvironmentObject var healthKitManager: HealthKitManager
 
     @State private var breatheIn = true
     @State private var circleScale: CGFloat = 0.6
@@ -68,6 +70,21 @@ struct BreathingView: View {
 
                 Spacer()
 
+                // Heart rate pill
+                if let hr = healthKitManager.latestData?.heartRate {
+                    HeartRatePill(heartRate: hr)
+                }
+
+                // ElevenLabs status
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(elevenLabsManager.isConnected ? .green : .gray)
+                        .frame(width: 6, height: 6)
+                    Text(elevenLabsManager.isConnected ? "Voice active" : "Connecting...")
+                        .font(.system(size: 9, design: .rounded))
+                        .foregroundColor(.gray)
+                }
+
                 // Progress bar
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
@@ -101,7 +118,7 @@ struct BreathingView: View {
     }
 
     private var timeRemaining: String {
-        let remaining = max(0, Int((1 - episodeManager.breathingProgress) * 75))
+        let remaining = max(0, Int((1 - episodeManager.breathingProgress) * 30))
         let minutes = remaining / 60
         let seconds = remaining % 60
         return minutes > 0 ? "\(minutes):\(String(format: "%02d", seconds))" : "\(seconds)s left"
@@ -146,4 +163,6 @@ struct BreathingView: View {
     BreathingView()
         .environmentObject(EpisodeManager())
         .environmentObject(HapticManager())
+        .environmentObject(ElevenLabsManager())
+        .environmentObject(HealthKitManager())
 }

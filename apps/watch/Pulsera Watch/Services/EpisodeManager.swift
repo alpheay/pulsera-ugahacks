@@ -26,7 +26,8 @@ final class EpisodeManager: ObservableObject {
 
     private var calmingTimer: Timer?
     private var breathingTimer: Timer?
-    private let calmingDuration: TimeInterval = 75     // seconds
+    private let calmingDuration: TimeInterval = 30     // seconds (demo-friendly)
+    private let musicDuration: TimeInterval = 25       // seconds (demo-friendly)
     private var calmingStartTime: Date?
 
     // MARK: - Episode Lifecycle
@@ -84,9 +85,9 @@ final class EpisodeManager: ObservableObject {
         breathingTimer?.invalidate()
         breathingTimer = nil
 
+        // Auto-advance to calming music
         DispatchQueue.main.async {
-            self.currentPhase = .reEvaluating
-            self.breathingProgress = 1.0
+            self.startCalmingMusic()
         }
     }
 
@@ -112,18 +113,15 @@ final class EpisodeManager: ObservableObject {
             guard let start = self.calmingStartTime else { return }
 
             let elapsed = Date().timeIntervalSince(start)
-            let progress = min(1.0, elapsed / self.calmingDuration)
+            let progress = min(1.0, elapsed / self.musicDuration)
 
             DispatchQueue.main.async {
                 self.breathingProgress = progress
             }
 
-            if elapsed >= self.calmingDuration {
+            if elapsed >= self.musicDuration {
                 timer.invalidate()
-                DispatchQueue.main.async {
-                    self.currentPhase = .reEvaluating
-                    self.breathingProgress = 1.0
-                }
+                self.resolveEpisode(reason: "calming_resolved")
             }
         }
     }
