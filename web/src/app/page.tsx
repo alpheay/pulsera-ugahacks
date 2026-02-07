@@ -88,7 +88,7 @@ export default function Home() {
                     style={{ fontFamily: "'DM Sans', sans-serif" }}
                     className="text-lg md:text-xl text-[#FFF1E6]/50 max-w-lg leading-relaxed mb-10"
                   >
-                    Real-time vitals from Apple Watch, cross-checked with iPhone computer vision to build a complete health picture. Shared family location, smart dashboards, and automatic alerts.
+                    Apple Watch vitals cross-checked with iPhone computer vision to build complete health dashboards. When distress is detected, Pulsera intervenes automatically — before it ever reaches a caregiver. Family map and geofencing built in.
                   </motion.p>
 
                   <motion.div
