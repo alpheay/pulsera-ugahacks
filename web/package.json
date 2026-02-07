@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "maplibre-gl": "^4.7.1",
+    "react-map-gl": "^7.1.7",
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",
     "@types/three": "^0.182.0",
