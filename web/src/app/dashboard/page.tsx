@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "motion/react";
 import PulseraLogo from "@/components/PulseraLogo";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -32,6 +33,8 @@ import {
   Eye,
 } from "lucide-react";
 
+const MapScreen = dynamic(() => import("@/components/MapScreen"), { ssr: false });
+
 /* ═══════════════════════════════════════════
    MOCK DATA & TYPES
    ═══════════════════════════════════════════ */
@@ -45,7 +48,9 @@ interface FamilyMember {
   status: "normal" | "critical" | "warning";
   device: string;
   location: string;
-  locationCoords: { x: number; y: number }; // % positions on the map
+  locationCoords: { x: number; y: number }; // % positions on the map (legacy)
+  latitude: number;
+  longitude: number;
   heartRate: number;
   bloodOxygen: number;
   temperature: number;
@@ -67,6 +72,8 @@ const familyMembers: FamilyMember[] = [
     device: "Pulsera Band",
     location: "Home",
     locationCoords: { x: 38, y: 42 },
+    latitude: 33.952,
+    longitude: -83.385,
     heartRate: 72,
     bloodOxygen: 98,
     temperature: 98.6,
@@ -86,6 +93,8 @@ const familyMembers: FamilyMember[] = [
     device: "Pulsera Pro",
     location: "Work",
     locationCoords: { x: 72, y: 28 },
+    latitude: 33.95,
+    longitude: -83.38,
     heartRate: 68,
     bloodOxygen: 99,
     temperature: 98.4,
@@ -105,6 +114,8 @@ const familyMembers: FamilyMember[] = [
     device: "Pulsera Band",
     location: "Garden",
     locationCoords: { x: 42, y: 58 },
+    latitude: 33.952,
+    longitude: -83.385,
     heartRate: 115,
     bloodOxygen: 95,
     temperature: 99.1,
@@ -124,6 +135,8 @@ const familyMembers: FamilyMember[] = [
     device: "Pulsera Mini",
     location: "School",
     locationCoords: { x: 60, y: 65 },
+    latitude: 33.949,
+    longitude: -83.376,
     heartRate: 82,
     bloodOxygen: 99,
     temperature: 98.2,
@@ -271,292 +284,6 @@ const panicTypeIcon = (type: string) => {
     default: return AlertTriangle;
   }
 };
-
-/* ═══════════════════════════════════════════
-   MAP COMPONENT
-   ═══════════════════════════════════════════ */
-
-function FamilyMap({
-  members,
-  selectedMember,
-  onSelectMember,
-}: {
-  members: FamilyMember[];
-  selectedMember: string | null;
-  onSelectMember: (id: string | null) => void;
-}) {
-  const [hoveredMember, setHoveredMember] = useState<string | null>(null);
-
-  // Draw connection lines between family members at home
-  const homeMembers = members.filter((m) => m.address === "142 Oakwood Dr");
-
-  return (
-    <div className="relative w-full h-full overflow-hidden rounded-2xl" style={{ background: "#0f0505" }}>
-      {/* Topographic grid background - Red Stylized */}
-      <svg className="absolute inset-0 w-full h-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="topo-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E8524A" strokeWidth="0.5" />
-          </pattern>
-          <pattern id="topo-grid-lg" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
-            <path d="M 160 0 L 0 0 0 160" fill="none" stroke="#E8524A" strokeWidth="1" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#topo-grid)" className="animate-grid-fade" />
-        <rect width="100%" height="100%" fill="url(#topo-grid-lg)" />
-      </svg>
-
-      {/* Topographic contour rings - Red Stylized */}
-      <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="contour-fade" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#E8524A" stopOpacity="0.06" />
-            <stop offset="100%" stopColor="#E8524A" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        {/* Organic contour lines */}
-        {[180, 250, 340, 420].map((r, i) => (
-          <ellipse
-            key={i}
-            cx="45%"
-            cy="48%"
-            rx={r}
-            ry={r * 0.7}
-            fill="none"
-            stroke="#E8524A"
-            strokeWidth="0.5"
-            strokeDasharray="6 8"
-            opacity={0.06 - i * 0.012}
-            className="animate-contour-drift"
-            style={{ animationDelay: `${i * 3}s`, animationDuration: `${25 + i * 5}s` }}
-          />
-        ))}
-        {/* Second cluster of contours */}
-        {[120, 200].map((r, i) => (
-          <ellipse
-            key={`b-${i}`}
-            cx="72%"
-            cy="30%"
-            rx={r}
-            ry={r * 0.65}
-            fill="none"
-            stroke="#E8524A"
-            strokeWidth="0.4"
-            strokeDasharray="4 10"
-            opacity={0.04}
-            className="animate-contour-drift"
-            style={{ animationDelay: `${i * 4 + 2}s`, animationDuration: `${30 + i * 8}s` }}
-          />
-        ))}
-      </svg>
-
-      {/* Ambient glow spots for key locations */}
-      <div
-        className="absolute rounded-full animate-glow-pulse"
-        style={{
-          left: "36%", top: "40%",
-          width: "180px", height: "180px",
-          background: "radial-gradient(circle, rgba(232,82,74,0.15) 0%, transparent 70%)",
-          transform: "translate(-50%, -50%)",
-        }}
-      />
-      <div
-        className="absolute rounded-full animate-glow-pulse"
-        style={{
-          left: "72%", top: "28%",
-          width: "120px", height: "120px",
-          background: "radial-gradient(circle, rgba(232,82,74,0.1) 0%, transparent 70%)",
-          transform: "translate(-50%, -50%)",
-          animationDelay: "2s",
-        }}
-      />
-
-      {/* Connection lines between family members at same address */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-        {homeMembers.length >= 2 &&
-          homeMembers.slice(0, -1).map((m, i) => {
-            const next = homeMembers[i + 1];
-            return (
-              <line
-                key={`conn-${m.id}-${next.id}`}
-                x1={`${m.locationCoords.x}%`}
-                y1={`${m.locationCoords.y}%`}
-                x2={`${next.locationCoords.x}%`}
-                y2={`${next.locationCoords.y}%`}
-                stroke="rgba(232,82,74,0.2)"
-                strokeWidth="1"
-                strokeDasharray="4 6"
-                style={{
-                  animation: "connection-line-draw 2s ease-out forwards",
-                  strokeDashoffset: 200,
-                  strokeDasharray: "200",
-                }}
-              />
-            );
-          })}
-      </svg>
-
-      {/* Location labels - Red Stylized */}
-      <div
-        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#E8524A]/40 pointer-events-none"
-        style={{ left: "28%", top: "33%", fontFamily: "'DM Sans', sans-serif" }}
-      >
-        <Home size={8} className="inline mr-1 mb-0.5 text-[#E8524A]/60" />
-        Oakwood Dr
-      </div>
-      <div
-        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#E8524A]/40 pointer-events-none"
-        style={{ left: "66%", top: "20%", fontFamily: "'DM Sans', sans-serif" }}
-      >
-        Commerce District
-      </div>
-      <div
-        className="absolute text-[9px] tracking-[0.2em] uppercase text-[#E8524A]/40 pointer-events-none"
-        style={{ left: "54%", top: "58%", fontFamily: "'DM Sans', sans-serif" }}
-      >
-        Athens Academy
-      </div>
-
-      {/* Simulated roads / paths - Enhanced & Red */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.15]" xmlns="http://www.w3.org/2000/svg">
-        <path d="M 0% 45% L 100% 45%" fill="none" stroke="#E8524A" strokeWidth="1" />
-        <path d="M 45% 0% L 45% 100%" fill="none" stroke="#E8524A" strokeWidth="1" />
-        <path d="M 10% 45% Q 30% 44% 50% 42% T 85% 35%" fill="none" stroke="#E8524A" strokeWidth="1.5" />
-        <path d="M 35% 15% Q 38% 35% 42% 55% T 48% 85%" fill="none" stroke="#E8524A" strokeWidth="1" />
-        <path d="M 50% 42% Q 58% 48% 62% 60%" fill="none" stroke="#E8524A" strokeWidth="0.8" />
-        <path d="M 65% 20% Q 68% 35% 75% 50%" fill="none" stroke="#E8524A" strokeWidth="0.8" />
-        <path d="M 20% 0% L 25% 100%" fill="none" stroke="#E8524A" strokeWidth="0.5" strokeDasharray="4 4" />
-        <path d="M 0% 80% L 100% 75%" fill="none" stroke="#E8524A" strokeWidth="0.5" strokeDasharray="4 4" />
-        <circle cx="45%" cy="48%" r="100" fill="none" stroke="#E8524A" strokeWidth="0.5" opacity="0.5" />
-      </svg>
-
-      {/* Radar sweep from center */}
-      <div
-        className="absolute animate-subtle-rotate pointer-events-none"
-        style={{
-          left: "45%", top: "48%",
-          width: "500px", height: "500px",
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        <svg viewBox="0 0 500 500" className="w-full h-full opacity-[0.05]">
-          <defs>
-            <linearGradient id="sweep-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#E8524A" stopOpacity="0" />
-              <stop offset="100%" stopColor="#E8524A" stopOpacity="0.3" />
-            </linearGradient>
-          </defs>
-          <path d="M 250 250 L 250 0 A 250 250 0 0 1 500 250 Z" fill="url(#sweep-grad)" />
-        </svg>
-      </div>
-
-      {/* Family member pins */}
-      {members.map((member, i) => {
-        const sc = statusColor(member.status);
-        const isSelected = selectedMember === member.id;
-        const isHovered = hoveredMember === member.id;
-
-        return (
-          <div
-            key={member.id}
-            className="absolute cursor-pointer"
-            style={{
-              left: `${member.locationCoords.x}%`,
-              top: `${member.locationCoords.y}%`,
-              transform: "translate(-50%, -50%)",
-              zIndex: isSelected ? 30 : isHovered ? 20 : 10,
-              animation: `map-pin-drop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.3 + i * 0.15}s both`,
-            }}
-            onClick={() => onSelectMember(isSelected ? null : member.id)}
-            onMouseEnter={() => setHoveredMember(member.id)}
-            onMouseLeave={() => setHoveredMember(null)}
-          >
-            {/* Pin body */}
-            <div
-              className="relative flex items-center justify-center transition-transform duration-300"
-              style={{
-                width: "40px", height: "40px",
-                borderRadius: "50%",
-                background: `linear-gradient(135deg, ${member.avatarColor}30, ${member.avatarColor}60)`,
-                border: `2px solid ${member.avatarColor}90`,
-                boxShadow: `0 4px 16px ${member.avatarColor}30, inset 0 1px 0 ${member.avatarColor}40`,
-                transform: isHovered ? "scale(1.15)" : "scale(1)",
-                backdropFilter: "blur(8px)",
-              }}
-            >
-              <span className="text-[11px] font-bold tracking-wide" style={{ color: "#FFF1E6" }}>
-                {member.avatar}
-              </span>
-
-              {/* Moving indicator */}
-              {member.moving && (
-                <div className="absolute -top-1 -right-1">
-                  <Navigation size={10} className="text-[#FFF1E6]" style={{ filter: `drop-shadow(0 0 4px ${member.avatarColor})` }} />
-                </div>
-              )}
-            </div>
-
-            {/* Name label below pin */}
-            <div
-              className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none transition-opacity duration-300"
-              style={{
-                top: "calc(100% + 6px)",
-                opacity: isSelected || isHovered ? 1 : 0.7,
-              }}
-            >
-              <div
-                className="px-2 py-0.5 rounded-full text-[9px] font-medium tracking-wide"
-                style={{
-                  background: "rgba(12,6,4,0.85)",
-                  border: `1px solid ${member.avatarColor}40`,
-                  color: "#FFF1E6",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                {member.name.split(" ")[0]}
-                <span className="ml-1 opacity-50">{member.location}</span>
-              </div>
-            </div>
-          </div>
-        );
-      })}
-
-      {/* Map overlay - top bar with zoom controls */}
-      <div className="absolute top-4 left-4 flex items-center gap-2">
-        <div
-          className="px-3 py-1.5 rounded-full text-[9px] font-medium tracking-[0.15em] uppercase flex items-center gap-1.5"
-          style={{
-            background: "rgba(12,6,4,0.8)",
-            border: "1px solid rgba(232,82,74,0.15)",
-            color: "#E8524A",
-            backdropFilter: "blur(12px)",
-            fontFamily: "'DM Sans', sans-serif",
-          }}
-        >
-          <Eye size={10} className="opacity-50" />
-          Live View
-          <span className="w-1.5 h-1.5 rounded-full bg-[#E8524A] ml-1 animate-pulse" />
-        </div>
-      </div>
-
-      {/* Map overlay - scale bar */}
-      <div className="absolute bottom-4 left-4 flex items-center gap-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-        <div className="flex items-center gap-1 text-[8px] text-[#E8524A]/40 tracking-wider uppercase">
-          <div className="w-12 h-px bg-[#E8524A]/30" />
-          <span>0.5 mi</span>
-        </div>
-      </div>
-
-      {/* Map overlay - coordinates */}
-      <div
-        className="absolute bottom-4 right-4 text-[8px] text-[#E8524A]/30 tracking-wider"
-        style={{ fontFamily: "'DM Sans', sans-serif" }}
-      >
-        33.9519&deg; N, 83.3576&deg; W
-      </div>
-    </div>
-  );
-}
 
 /* ═══════════════════════════════════════════
    MEMBER DETAIL PANEL
@@ -1107,11 +834,29 @@ export default function Dashboard() {
               boxShadow: "0 8px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,241,230,0.05)",
             }}
           >
-            <FamilyMap
+            <MapScreen
               members={familyMembers}
               selectedMember={selectedMember}
               onSelectMember={setSelectedMember}
             />
+
+            {/* Live View pill overlay */}
+            <div className="absolute top-4 left-4 flex items-center gap-2 z-10 pointer-events-none">
+              <div
+                className="px-3 py-1.5 rounded-full text-[9px] font-medium tracking-[0.15em] uppercase flex items-center gap-1.5"
+                style={{
+                  background: "rgba(12,6,4,0.8)",
+                  border: "1px solid rgba(232,82,74,0.15)",
+                  color: "#E8524A",
+                  backdropFilter: "blur(12px)",
+                  fontFamily: "'DM Sans', sans-serif",
+                }}
+              >
+                <Eye size={10} className="opacity-50" />
+                Live View
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E8524A] ml-1 animate-pulse" />
+              </div>
+            </div>
 
             {/* Mobile tab switcher overlay */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 lg:hidden flex items-center gap-1 p-1 rounded-full" style={{ background: "rgba(12,6,4,0.85)", border: "1px solid rgba(255,241,230,0.08)", backdropFilter: "blur(12px)" }}>
@@ -1148,7 +893,7 @@ export default function Dashboard() {
         <AnimatePresence mode="wait">
           {(selectedMember || activeTab === "alerts") && (
             <motion.aside
-              key={selectedMember ? `member-${selectedMember}` : "alerts"}
+              key={selectedMember ? "member-detail" : "alerts"}
               initial={{ opacity: 0, width: 0 }}
               animate={{ opacity: 1, width: 340 }}
               exit={{ opacity: 0, width: 0 }}
