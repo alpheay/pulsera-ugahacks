@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import BraceletLogo from "@/components/BraceletLogo";
+import PulseraIcon from "@/components/PulseraIcon";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Heart,
@@ -483,7 +483,7 @@ export default function Dashboard() {
         >
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative">
-              <BraceletLogo size={28} color="#FFF1E6" />
+              <PulseraIcon size={28} color="#FFF1E6" />
               <div
                 className="absolute -inset-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                 style={{ background: "radial-gradient(circle, rgba(232,82,74,0.2) 0%, transparent 70%)" }}

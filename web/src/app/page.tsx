@@ -46,7 +46,7 @@ export default function Home() {
           className="flex items-center justify-between px-8 md:px-16 pt-8 pb-4"
         >
           <div className="flex items-center gap-3">
-            <BraceletLogo size={36} color="#FFF1E6" />
+            <PulseraIcon size={36} color="#FFF1E6" />
             <span
               style={{ fontFamily: "'Work Sans', sans-serif", fontWeight: 700, letterSpacing: "-0.02em" }}
               className="text-xl text-[#FFF1E6]"
