@@ -8,13 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		13863EECD4A90E1B0184EA02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C966550B3F674C93C72FBB33 /* Assets.xcassets */; };
+		4A9B199C199A457B95417C2A /* BreathingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13FB9D3148BE288BFECFD52 /* BreathingView.swift */; };
 		53F86A0BCEDE096B018FEFC4 /* PulseRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8375639FC9B56C3C096EC1B /* PulseRingView.swift */; };
+		5F5E969CD263B2B74F597A1B /* EpisodeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */; };
 		668A5C9F8B27375C5CBE10BB /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08182F8BC0D082C6C92CD1FC /* StatusView.swift */; };
 		7BF7BF0132B6023BE14EAFC9 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2819C14592F377D43DEA4637 /* HapticManager.swift */; };
 		9044A35B1DF69202FBBD5974 /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C33FC2115C30BF7D7C4617 /* WebSocketManager.swift */; };
+		9045EDD92C04CFA45227DD8D /* PhoneCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A934043D0B18210DD3EB78C3 /* PhoneCheckView.swift */; };
 		B1D0071C04C2F34D419B1129 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334E504B0C0534957C748ADD /* ConnectionState.swift */; };
 		BC36D68D35B390255DF64FF3 /* HeartRateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8C300144655F4CACA3AC10 /* HeartRateView.swift */; };
 		C657803F5D0EB3B71897A36D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28CF14664F63F4A123F725D /* ContentView.swift */; };
+		DBB0673C4C018E3FE57C465E /* LocalAnomalyDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B4FA00EAB2DB5FF14F31A2 /* LocalAnomalyDetector.swift */; };
 		E5B740E6459F21D8B3C62761 /* HealthData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256C13607E6DDBBBE728CCD9 /* HealthData.swift */; };
 		F05D1877FABF44E6A21F1689 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47578671D3677671063AA10 /* HealthKitManager.swift */; };
 		F2363818A4D5F4E99C3577CA /* PulseraWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668B2E7470760CF6EA562B53 /* PulseraWatchApp.swift */; };
@@ -22,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		04B4FA00EAB2DB5FF14F31A2 /* LocalAnomalyDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAnomalyDetector.swift; sourceTree = "<group>"; };
 		08182F8BC0D082C6C92CD1FC /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		1448846B83C8792389BD0C54 /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
 		17C33FC2115C30BF7D7C4617 /* WebSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketManager.swift; sourceTree = "<group>"; };
@@ -32,18 +37,23 @@
 		668B2E7470760CF6EA562B53 /* PulseraWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseraWatchApp.swift; sourceTree = "<group>"; };
 		A28CF14664F63F4A123F725D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A8375639FC9B56C3C096EC1B /* PulseRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseRingView.swift; sourceTree = "<group>"; };
+		A934043D0B18210DD3EB78C3 /* PhoneCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneCheckView.swift; sourceTree = "<group>"; };
+		A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeManager.swift; sourceTree = "<group>"; };
 		C47578671D3677671063AA10 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
 		C966550B3F674C93C72FBB33 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CDE15FC1FEE7943201479CAA /* Pulsera Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pulsera Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC8C300144655F4CACA3AC10 /* HeartRateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateView.swift; sourceTree = "<group>"; };
+		F13FB9D3148BE288BFECFD52 /* BreathingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		445C4ECA49724A5BD954B542 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F13FB9D3148BE288BFECFD52 /* BreathingView.swift */,
 				EC8C300144655F4CACA3AC10 /* HeartRateView.swift */,
 				1448846B83C8792389BD0C54 /* PairingView.swift */,
+				A934043D0B18210DD3EB78C3 /* PhoneCheckView.swift */,
 				A8375639FC9B56C3C096EC1B /* PulseRingView.swift */,
 				08182F8BC0D082C6C92CD1FC /* StatusView.swift */,
 			);
@@ -92,8 +102,10 @@
 		85F59D13215370E94CC82778 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */,
 				2819C14592F377D43DEA4637 /* HapticManager.swift */,
 				C47578671D3677671063AA10 /* HealthKitManager.swift */,
+				04B4FA00EAB2DB5FF14F31A2 /* LocalAnomalyDetector.swift */,
 				17C33FC2115C30BF7D7C4617 /* WebSocketManager.swift */,
 			);
 			path = Services;
@@ -169,13 +181,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A9B199C199A457B95417C2A /* BreathingView.swift in Sources */,
 				B1D0071C04C2F34D419B1129 /* ConnectionState.swift in Sources */,
 				C657803F5D0EB3B71897A36D /* ContentView.swift in Sources */,
+				5F5E969CD263B2B74F597A1B /* EpisodeManager.swift in Sources */,
 				7BF7BF0132B6023BE14EAFC9 /* HapticManager.swift in Sources */,
 				E5B740E6459F21D8B3C62761 /* HealthData.swift in Sources */,
 				F05D1877FABF44E6A21F1689 /* HealthKitManager.swift in Sources */,
 				BC36D68D35B390255DF64FF3 /* HeartRateView.swift in Sources */,
+				DBB0673C4C018E3FE57C465E /* LocalAnomalyDetector.swift in Sources */,
 				F2F859BA6EE4BABE986CC7AD /* PairingView.swift in Sources */,
+				9045EDD92C04CFA45227DD8D /* PhoneCheckView.swift in Sources */,
 				53F86A0BCEDE096B018FEFC4 /* PulseRingView.swift in Sources */,
 				F2363818A4D5F4E99C3577CA /* PulseraWatchApp.swift in Sources */,
 				668A5C9F8B27375C5CBE10BB /* StatusView.swift in Sources */,

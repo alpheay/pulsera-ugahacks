@@ -24,6 +24,23 @@ export default function RootLayout() {
             headerTintColor: "#E2E8F0",
           }}
         />
+        <Stack.Screen
+          name="checkin"
+          options={{
+            presentation: "fullScreenModal",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="episode/[id]"
+          options={{
+            presentation: "modal",
+            headerShown: true,
+            headerTitle: "Episode Details",
+            headerStyle: { backgroundColor: "#1E293B" },
+            headerTintColor: "#E2E8F0",
+          }}
+        />
       </Stack>
     </>
   );

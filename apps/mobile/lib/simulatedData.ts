@@ -1,6 +1,8 @@
 // Simulated data for Life360-style tracking demo
 // All locations are around UGA campus in Athens, GA
 
+import { type Episode } from "./episodeSimulator";
+
 export interface MemberLocation {
   id: string;
   name: string;
@@ -12,6 +14,7 @@ export interface MemberLocation {
   lastUpdated: Date;
   batteryLevel: number;
   isWearingWatch: boolean;
+  activeEpisode?: Episode;
   health: {
     heartRate: number;
     hrv: number;

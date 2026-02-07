@@ -8,6 +8,7 @@ from .alert import Alert
 from .group import Group
 from .group_member import GroupMember
 from .health_snapshot import HealthSnapshot
+from .episode import Episode
 
 __all__ = [
     "User",
@@ -20,4 +21,5 @@ __all__ = [
     "Group",
     "GroupMember",
     "HealthSnapshot",
+    "Episode",
 ]

@@ -1,6 +1,15 @@
 import Foundation
 import Combine
 
+// MARK: - Episode Update Model
+
+struct EpisodeUpdate: Equatable {
+    let episodeId: String
+    let phase: String
+    let instructions: String?
+    let fusionDecision: String?
+}
+
 final class WebSocketManager: ObservableObject {
 
     // MARK: - Published State
@@ -8,6 +17,7 @@ final class WebSocketManager: ObservableObject {
     @Published var connectionState: ConnectionState = .disconnected
     @Published var latestAnomalyScore: Double?
     @Published var latestGroupAlert: GroupAlert?
+    @Published var latestEpisodeUpdate: EpisodeUpdate?
 
     // MARK: - Configuration Keys
 
@@ -166,6 +176,33 @@ final class WebSocketManager: ObservableObject {
         sendJSON(payload)
     }
 
+    // MARK: - Episode Messages
+
+    func sendEpisodeStart(triggerData: [String: Any]) {
+        guard connectionState.isConnected else { return }
+
+        let payload: [String: Any] = [
+            "type": "episode-start",
+            "device_id": deviceID,
+            "user_id": userID,
+            "trigger_data": triggerData,
+        ]
+
+        sendJSON(payload)
+    }
+
+    func sendCalmingResult(episodeId: String, postVitals: [String: Any]) {
+        guard connectionState.isConnected else { return }
+
+        let payload: [String: Any] = [
+            "type": "episode-calming-done",
+            "episode_id": episodeId,
+            "post_vitals": postVitals,
+        ]
+
+        sendJSON(payload)
+    }
+
     // MARK: - Send JSON
 
     private func sendJSON(_ dict: [String: Any]) {
@@ -238,6 +275,31 @@ final class WebSocketManager: ObservableObject {
             )
             DispatchQueue.main.async {
                 self.latestGroupAlert = alert
+            }
+
+        case "episode-started":
+            if let episode = json["episode"] as? [String: Any],
+               let episodeId = episode["id"] as? String {
+                let update = EpisodeUpdate(
+                    episodeId: episodeId,
+                    phase: episode["phase"] as? String ?? "anomaly_detected",
+                    instructions: nil,
+                    fusionDecision: nil
+                )
+                DispatchQueue.main.async {
+                    self.latestEpisodeUpdate = update
+                }
+            }
+
+        case "episode-phase-update":
+            let update = EpisodeUpdate(
+                episodeId: json["episode_id"] as? String ?? "",
+                phase: json["phase"] as? String ?? "",
+                instructions: json["instructions"] as? String,
+                fusionDecision: json["fusion_decision"] as? String
+            )
+            DispatchQueue.main.async {
+                self.latestEpisodeUpdate = update
             }
 
         default:

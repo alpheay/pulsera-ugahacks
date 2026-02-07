@@ -10,6 +10,8 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 from .connection_manager import connection_manager
 from ..services.health import health_service
 from ..services.anomaly_detection import anomaly_detection_service
+from ..services.episode_service import episode_service
+from ..services.escalation_service import escalation_service
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +55,18 @@ async def handle_message(ws: WebSocket, data: dict):
             "type": "dashboard_subscribed",
             "status": connection_manager.get_status(),
         })
+
+    elif msg_type == "episode-start":
+        await handle_episode_start(ws, data)
+
+    elif msg_type == "episode-calming-done":
+        await handle_episode_calming_done(ws, data)
+
+    elif msg_type == "episode-presage-result":
+        await handle_episode_presage_result(ws, data)
+
+    elif msg_type == "episode-resolve":
+        await handle_episode_resolve(ws, data)
 
     elif msg_type == "ping":
         await ws.send_json({"type": "pong", "timestamp": datetime.utcnow().isoformat()})
@@ -252,4 +266,180 @@ async def handle_health_batch(ws: WebSocket, data: dict):
         "type": "inference_result",
         "device_id": device_id,
         "result": result,
+    })
+
+
+async def handle_episode_start(ws: WebSocket, data: dict):
+    """Handle episode-start from watch: create episode and notify."""
+    device_id = data.get("device_id")
+    user_id = data.get("user_id")
+    trigger_data = data.get("trigger_data", {})
+    group_id = data.get("group_id")
+
+    if not device_id or not user_id:
+        await ws.send_json({"type": "error", "message": "device_id and user_id required"})
+        return
+
+    # Don't start duplicate episodes
+    existing = episode_service.get_active_episode(device_id)
+    if existing:
+        await ws.send_json({"type": "episode-started", "episode": existing})
+        return
+
+    episode = await episode_service.start_episode(device_id, user_id, trigger_data, group_id)
+
+    # Move to calming phase immediately
+    await episode_service.update_phase(episode["id"], "calming")
+
+    # Send back to watch
+    await ws.send_json({
+        "type": "episode-started",
+        "episode": episode,
+    })
+
+    # Send phase update to watch
+    await ws.send_json({
+        "type": "episode-phase-update",
+        "episode_id": episode["id"],
+        "phase": "calming",
+        "instructions": "start_breathing",
+    })
+
+    # Broadcast to group subscribers
+    if group_id:
+        await connection_manager.broadcast_to_group(group_id, {
+            "type": "episode-update",
+            "episode": episode,
+        })
+
+    await connection_manager.broadcast_to_dashboards({
+        "type": "episode-update",
+        "episode": episode,
+    })
+
+
+async def handle_episode_calming_done(ws: WebSocket, data: dict):
+    """Handle post-calming vitals from watch."""
+    episode_id = data.get("episode_id")
+    post_vitals = data.get("post_vitals", {})
+
+    if not episode_id:
+        await ws.send_json({"type": "error", "message": "episode_id required"})
+        return
+
+    episode = await episode_service.submit_calming_result(episode_id, post_vitals)
+    if not episode:
+        await ws.send_json({"type": "error", "message": "Episode not found"})
+        return
+
+    phase = episode["phase"]
+
+    if phase == "resolved":
+        await ws.send_json({
+            "type": "episode-phase-update",
+            "episode_id": episode_id,
+            "phase": "resolved",
+            "instructions": "calming_resolved",
+        })
+    elif phase == "visual_check":
+        await ws.send_json({
+            "type": "episode-phase-update",
+            "episode_id": episode_id,
+            "phase": "visual_check",
+            "instructions": "request_phone_check",
+        })
+
+    # Broadcast updates
+    group_id = episode.get("group_id")
+    if group_id:
+        await connection_manager.broadcast_to_group(group_id, {
+            "type": "episode-update",
+            "episode": episode,
+        })
+    await connection_manager.broadcast_to_dashboards({
+        "type": "episode-update",
+        "episode": episode,
+    })
+
+
+async def handle_episode_presage_result(ws: WebSocket, data: dict):
+    """Handle visual check-in result from phone."""
+    episode_id = data.get("episode_id")
+    presage_data = data.get("presage_data", {})
+
+    if not episode_id:
+        await ws.send_json({"type": "error", "message": "episode_id required"})
+        return
+
+    episode = await episode_service.submit_presage_data(episode_id, presage_data)
+    if not episode:
+        await ws.send_json({"type": "error", "message": "Episode not found"})
+        return
+
+    phase = episode["phase"]
+
+    # Notify watch of result
+    device_id = episode.get("device_id")
+    if device_id:
+        await connection_manager.send_to_device(device_id, {
+            "type": "episode-phase-update",
+            "episode_id": episode_id,
+            "phase": phase,
+            "fusion_decision": episode.get("fusion_decision"),
+            "instructions": "fusion_complete",
+        })
+
+    # If escalating, start escalation chain
+    if phase == "escalating":
+        await escalation_service.start_escalation(episode_id, episode)
+
+    # Broadcast updates
+    group_id = episode.get("group_id")
+    if group_id:
+        await connection_manager.broadcast_to_group(group_id, {
+            "type": "episode-update",
+            "episode": episode,
+        })
+    await connection_manager.broadcast_to_dashboards({
+        "type": "episode-update",
+        "episode": episode,
+    })
+
+
+async def handle_episode_resolve(ws: WebSocket, data: dict):
+    """Handle caregiver resolving an episode."""
+    episode_id = data.get("episode_id")
+    resolution = data.get("resolution", "caregiver_acknowledged")
+
+    if not episode_id:
+        await ws.send_json({"type": "error", "message": "episode_id required"})
+        return
+
+    await escalation_service.cancel_escalation(episode_id)
+    episode = await episode_service.resolve(episode_id, resolution)
+    if not episode:
+        await ws.send_json({"type": "error", "message": "Episode not found"})
+        return
+
+    # Notify watch
+    device_id = episode.get("device_id")
+    if device_id:
+        await connection_manager.send_to_device(device_id, {
+            "type": "episode-phase-update",
+            "episode_id": episode_id,
+            "phase": "resolved",
+            "instructions": "episode_resolved",
+        })
+
+    await ws.send_json({"type": "episode-resolved", "episode": episode})
+
+    group_id = episode.get("group_id")
+    if group_id:
+        await connection_manager.broadcast_to_group(group_id, {
+            "type": "episode-update",
+            "episode": episode,
+        })
+    await connection_manager.broadcast_to_dashboards({
+        "type": "episode-update",
+        "episode": episode,
     })
