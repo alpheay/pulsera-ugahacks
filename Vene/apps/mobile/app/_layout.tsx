@@ -212,10 +212,10 @@ export default function RootLayout() {
 
   if (isPending) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#000000" }}>
+      <View style={{ flex: 1, backgroundColor: "#0A0A0A" }}>
         <SafeAreaProvider>
           <View className="flex-1 items-center justify-center bg-background">
-            <ActivityIndicator size="large" color="#2563EB" />
+            <ActivityIndicator size="large" color="#3b82f6" />
             <Text className="text-foreground/70 mt-4">Loading...</Text>
             <StatusBar style="light" />
           </View>
@@ -226,7 +226,7 @@ export default function RootLayout() {
 
   if (error) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#000000" }}>
+      <View style={{ flex: 1, backgroundColor: "#0A0A0A" }}>
         <SafeAreaProvider>
           <View className="flex-1 items-center justify-center bg-background px-6">
             <Text className="text-destructive text-headline mb-2">Auth Error</Text>
@@ -239,12 +239,12 @@ export default function RootLayout() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#000000" }}>
+    <View style={{ flex: 1, backgroundColor: "#0A0A0A" }}>
       <SafeAreaProvider>
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: "#000000" },
+            contentStyle: { backgroundColor: "#0A0A0A" },
           }}
         >
           <Stack.Screen name="index" />
