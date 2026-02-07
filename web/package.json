@@ -9,20 +9,21 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "maplibre-gl": "^4.7.1",
-    "react-map-gl": "^7.1.7",
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",
+    "@turf/circle": "^7.3.3",
     "@types/three": "^0.182.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.563.0",
+    "maplibre-gl": "^4.7.1",
     "motion": "^12.33.0",
     "next": "16.1.6",
     "postprocessing": "^6.38.2",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-map-gl": "^7.1.7",
     "tailwind-merge": "^3.4.0",
     "three": "^0.182.0"
   },
