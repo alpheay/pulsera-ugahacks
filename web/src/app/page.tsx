@@ -170,27 +170,6 @@ export default function Home() {
                 transition={{ duration: 1.2, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="relative"
               >
-                {/* Bracelet ring decoration */}
-                <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
-                  {/* Outer glow ring */}
-                  <div
-                    className="absolute inset-0 rounded-full"
-                    style={{
-                      border: "2px solid rgba(232, 82, 74, 0.15)",
-                      boxShadow: "0 0 80px rgba(232, 82, 74, 0.08), inset 0 0 40px rgba(232, 82, 74, 0.03)",
-                    }}
-                  />
-                  {/* Inner ring */}
-                  <div
-                    className="absolute inset-4 rounded-full"
-                    style={{
-                      border: "1px solid rgba(255, 241, 230, 0.06)",
-                      background: "radial-gradient(circle, rgba(232, 82, 74, 0.04) 0%, transparent 70%)",
-                    }}
-                  />
-                  <BraceletLogo size={120} color="#FFF1E6" />
-                </div>
-
                 {/* Vertical text accent */}
                 <div
                   className="absolute -right-8 top-1/2 -translate-y-1/2"
