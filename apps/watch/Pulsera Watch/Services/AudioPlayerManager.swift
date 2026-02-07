@@ -1,4 +1,13 @@
 import AVFoundation
+import os
+
+private let audioLog = Logger(subsystem: "com.pulsera.watchapp", category: "AudioPlayer")
+
+struct CalmingTrack: Identifiable, Equatable {
+    let id: String
+    let name: String
+    let filename: String
+}
 
 final class AudioPlayerManager: ObservableObject {
 
@@ -15,20 +24,20 @@ final class AudioPlayerManager: ObservableObject {
 
     @Published var isPlaying = false
 
-    // MARK: - Calming Tone Generator
+    // MARK: - Calming Track Playback
 
-    private var toneEngine: AVAudioEngine?
-    private var toneSourceNode: AVAudioSourceNode?
-    private var tonePhase: Double = 0.0
-
-    @Published var isPlayingTone = false
-    @Published var currentFrequency: Double = 432.0
-
-    static let calmingFrequencies: [(hz: Double, name: String)] = [
-        (432.0, "Deep Calm"),
-        (528.0, "Healing"),
-        (396.0, "Anxiety Relief"),
+    static let calmingTracks: [CalmingTrack] = [
+        CalmingTrack(id: "deep_calm", name: "Deep Calm", filename: "deep_calm"),
+        CalmingTrack(id: "ocean_drift", name: "Ocean Drift", filename: "ocean_drift"),
+        CalmingTrack(id: "starlight", name: "Starlight", filename: "starlight"),
     ]
+
+    private var trackPlayer: AVAudioPlayer?
+
+    @Published var isPlayingTrack = false
+    @Published var currentTrack: CalmingTrack = calmingTracks[0]
+
+    // MARK: - Engine lifecycle
 
     func startEngine() {
         guard audioEngine == nil else { return }
@@ -37,12 +46,11 @@ final class AudioPlayerManager: ObservableObject {
         let player = AVAudioPlayerNode()
 
         engine.attach(player)
-
-        // Connect player → main mixer with the PCM format
         engine.connect(player, to: engine.mainMixerNode, format: pcmFormat)
 
         do {
             let session = AVAudioSession.sharedInstance()
+            // Start with .playback — safe on simulator and real device
             try session.setCategory(.playback, mode: .default)
             try session.setActive(true)
             try engine.start()
@@ -50,8 +58,9 @@ final class AudioPlayerManager: ObservableObject {
             self.audioEngine = engine
             self.playerNode = player
             isPlaying = true
+            audioLog.info("engine started (.playback mode)")
         } catch {
-            print("AudioPlayerManager: Failed to start engine — \(error)")
+            audioLog.error("Failed to start engine: \(error.localizedDescription)")
         }
     }
 
@@ -61,12 +70,24 @@ final class AudioPlayerManager: ObservableObject {
         playerNode = nil
         audioEngine = nil
         isPlaying = false
+        pcmLogCount = 0
 
         try? AVAudioSession.sharedInstance().setActive(false)
+        audioLog.info("engine stopped")
     }
 
+    // MARK: - PCM Playback
+
+    private var pcmLogCount = 0
+
     func playPCMData(_ data: Data) {
-        guard let player = playerNode, let engine = audioEngine, engine.isRunning else { return }
+        guard let player = playerNode, let engine = audioEngine, engine.isRunning else {
+            pcmLogCount += 1
+            if pcmLogCount <= 5 {
+                audioLog.warning("playPCMData SKIPPED — node=\(self.playerNode != nil) engine=\(self.audioEngine != nil) running=\(self.audioEngine?.isRunning ?? false)")
+            }
+            return
+        }
 
         let frameCount = UInt32(data.count / MemoryLayout<Int16>.size)
         guard frameCount > 0,
@@ -74,7 +95,6 @@ final class AudioPlayerManager: ObservableObject {
 
         buffer.frameLength = frameCount
 
-        // Copy raw PCM bytes into the buffer
         data.withUnsafeBytes { rawPtr in
             guard let src = rawPtr.baseAddress else { return }
             if let dst = buffer.int16ChannelData?[0] {
@@ -83,70 +103,68 @@ final class AudioPlayerManager: ObservableObject {
         }
 
         player.scheduleBuffer(buffer, completionHandler: nil)
+
+        pcmLogCount += 1
+        if pcmLogCount <= 3 {
+            audioLog.info("playPCMData: scheduled \(data.count) bytes (\(frameCount) frames)")
+        }
     }
 
-    // MARK: - Calming Tone Playback
+    // MARK: - Calming Track Playback
 
-    func playCalmingTone(frequency: Double) {
-        stopCalmingTone()
+    func playCalmingTrack(_ track: CalmingTrack) {
+        stopCalmingTrack()
 
-        let sampleRate: Double = 44100.0
-        tonePhase = 0.0
-
-        DispatchQueue.main.async {
-            self.currentFrequency = frequency
+        guard let url = Bundle.main.url(forResource: track.filename, withExtension: "m4a") else {
+            audioLog.warning("Track file not found: \(track.filename).m4a")
+            return
         }
-
-        let engine = AVAudioEngine()
-        let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)!
-
-        let sourceNode = AVAudioSourceNode { [weak self] _, _, frameCount, audioBufferList -> OSStatus in
-            guard let self = self else { return noErr }
-            let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
-            let phaseIncrement = 2.0 * Double.pi * frequency / sampleRate
-
-            for frame in 0..<Int(frameCount) {
-                let sample = Float(sin(self.tonePhase) * 0.3)
-                for buffer in ablPointer {
-                    let buf = UnsafeMutableBufferPointer<Float>(buffer)
-                    buf[frame] = sample
-                }
-                self.tonePhase += phaseIncrement
-                if self.tonePhase >= 2.0 * Double.pi {
-                    self.tonePhase -= 2.0 * Double.pi
-                }
-            }
-            return noErr
-        }
-
-        engine.attach(sourceNode)
-        engine.connect(sourceNode, to: engine.mainMixerNode, format: format)
 
         do {
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.playback, mode: .default)
             try session.setActive(true)
-            try engine.start()
-            self.toneEngine = engine
-            self.toneSourceNode = sourceNode
+
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.numberOfLoops = -1
+            player.play()
+            self.trackPlayer = player
             DispatchQueue.main.async {
-                self.isPlayingTone = true
+                self.currentTrack = track
+                self.isPlayingTrack = true
             }
         } catch {
-            print("AudioPlayerManager: Failed to start tone engine — \(error)")
+            audioLog.error("Failed to play track: \(error.localizedDescription)")
         }
     }
 
-    func stopCalmingTone() {
-        toneEngine?.stop()
-        if let node = toneSourceNode {
-            toneEngine?.detach(node)
-        }
-        toneEngine = nil
-        toneSourceNode = nil
-        tonePhase = 0.0
+    func stopCalmingTrack() {
+        trackPlayer?.stop()
+        trackPlayer = nil
         DispatchQueue.main.async {
-            self.isPlayingTone = false
+            self.isPlayingTrack = false
+        }
+    }
+
+    func nextTrack() {
+        let tracks = Self.calmingTracks
+        guard let idx = tracks.firstIndex(where: { $0.id == currentTrack.id }) else { return }
+        let next = tracks[(idx + 1) % tracks.count]
+        if isPlayingTrack {
+            playCalmingTrack(next)
+        } else {
+            currentTrack = next
+        }
+    }
+
+    func previousTrack() {
+        let tracks = Self.calmingTracks
+        guard let idx = tracks.firstIndex(where: { $0.id == currentTrack.id }) else { return }
+        let prev = tracks[(idx - 1 + tracks.count) % tracks.count]
+        if isPlayingTrack {
+            playCalmingTrack(prev)
+        } else {
+            currentTrack = prev
         }
     }
 }
