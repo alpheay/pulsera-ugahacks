@@ -8,24 +8,25 @@ import BraceletLogo from "@/components/BraceletLogo";
 const Dither = dynamic(() => import("@/components/Dither"), { ssr: false });
 
 /**
- * Landing Page: EDITORIAL / MAGAZINE
- * 
- * Aesthetic: High-fashion editorial spread meets healthcare warmth.
- * Typography: Playfair Display (display) + DM Sans (body) - classic editorial pairing.
- * Layout: Asymmetric two-column with dramatic vertical text and generous whitespace.
- * Color: Deep charcoal text on the dithered yellow, with amber accents.
- * Vibe: Like opening a premium wellness magazine — refined, aspirational, human.
+ * Landing Page: WARM EMBER
+ *
+ * Aesthetic: Deep charcoal meets rich crimson — premium health-tech with hearth-like warmth.
+ * Typography: Playfair Display (headlines) + DM Sans (body) + Work Sans (logo).
+ * Layout: Asymmetric editorial with a frosted glass midlayer for text readability.
+ * Color: Crimson/vermillion dither waves, ivory text on frosted dark panels.
+ * Vibe: A smoldering coal — intense, warm, alive with quiet energy.
  */
 export default function Home() {
   return (
     <>
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Work+Sans:wght@400;500;600;700;800&display=swap');
       `}</style>
 
+      {/* Dither background — deep crimson/vermillion waves */}
       <Dither
-        waveColor={[1.0, 0.898, 0.478]}
-        waveSpeed={0.03}
+        waveColor={[0.72, 0.11, 0.09]}
+        waveSpeed={0.02}
         waveFrequency={2}
         waveAmplitude={0.3}
         colorNum={4}
@@ -35,108 +36,162 @@ export default function Home() {
       />
 
       <div className="relative z-10 min-h-screen flex flex-col overflow-hidden">
-        {/* Top bar */}
+        {/* ── Top bar ── */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="flex items-center justify-between px-8 md:px-16 pt-8"
+          className="flex items-center justify-between px-8 md:px-16 pt-8 pb-4"
         >
           <div className="flex items-center gap-3">
-            <BraceletLogo size={36} color="#2D2418" />
+            <BraceletLogo size={36} color="#FFF1E6" />
             <span
-              style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700 }}
-              className="text-xl tracking-tight text-[#2D2418]"
+              style={{ fontFamily: "'Work Sans', sans-serif", fontWeight: 700, letterSpacing: "-0.02em" }}
+              className="text-xl text-[#FFF1E6]"
             >
               Pulsera
             </span>
           </div>
-          <nav className="hidden md:flex items-center gap-8" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            <span className="text-sm font-medium text-[#2D2418]/60 tracking-wide uppercase">About</span>
-            <span className="text-sm font-medium text-[#2D2418]/60 tracking-wide uppercase">Features</span>
-            <span className="text-sm font-medium text-[#2D2418]/60 tracking-wide uppercase">Contact</span>
+          <nav
+            className="hidden md:flex items-center gap-8"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+          >
+            {["About", "Features", "Contact"].map((item, i) => (
+              <motion.span
+                key={item}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="text-sm font-medium text-[#FFF1E6]/50 tracking-wide uppercase cursor-pointer hover:text-[#FFF1E6]/90 transition-colors duration-300"
+              >
+                {item}
+              </motion.span>
+            ))}
           </nav>
         </motion.header>
 
-        {/* Main content - asymmetric editorial layout */}
-        <main className="flex-1 flex items-center px-8 md:px-16 lg:px-24">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 w-full max-w-7xl mx-auto">
-            {/* Left column - large display text */}
+        {/* ── Main content — frosted glass midlayer ── */}
+        <main className="flex-1 flex items-center px-6 md:px-12 lg:px-20 py-8">
+          <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10">
+
+            {/* Left column — text content with frosted backdrop */}
             <div className="md:col-span-7 flex flex-col justify-center">
               <motion.div
-                initial={{ opacity: 0, x: -60 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0, y: 40, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 1, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                className="relative"
               >
-                <p
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                  className="text-sm font-medium tracking-[0.3em] uppercase text-[#8B6914] mb-6"
-                >
-                  Community Health Tracking
-                </p>
-                <h1
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                  className="text-5xl md:text-7xl lg:text-8xl font-900 leading-[0.9] text-[#2D2418] mb-8"
-                >
-                  Care
-                  <br />
-                  <span className="italic font-normal text-[#8B6914]">that</span>
-                  <br />
-                  connects.
-                </h1>
-              </motion.div>
+                {/* Frosted glass panel — the readability midlayer */}
+                <div
+                  className="absolute -inset-8 md:-inset-12 rounded-3xl"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(20, 8, 6, 0.72) 0%, rgba(35, 12, 10, 0.58) 50%, rgba(20, 8, 6, 0.65) 100%)",
+                    backdropFilter: "blur(32px) saturate(1.4)",
+                    WebkitBackdropFilter: "blur(32px) saturate(1.4)",
+                    border: "1px solid rgba(255, 241, 230, 0.06)",
+                    boxShadow: "0 8px 64px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 241, 230, 0.04)",
+                  }}
+                />
 
-              <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                style={{ fontFamily: "'DM Sans', sans-serif" }}
-                className="text-lg md:text-xl text-[#2D2418]/70 max-w-md leading-relaxed mb-10"
-              >
-                A wearable health platform for families. Monitor vitals, share wellness insights, and keep the people you love within reach.
-              </motion.p>
+                {/* Content on top of frosted panel */}
+                <div className="relative z-10">
+                  <p
+                    style={{ fontFamily: "'DM Sans', sans-serif" }}
+                    className="text-sm font-medium tracking-[0.3em] uppercase text-[#E8524A] mb-6"
+                  >
+                    Community Health Tracking
+                  </p>
+                  <h1
+                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] text-[#FFF1E6] mb-8"
+                  >
+                    Care
+                    <br />
+                    <span className="italic font-normal text-[#E8524A]">that</span>
+                    <br />
+                    connects.
+                  </h1>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="flex items-center gap-6"
-              >
-                <Link
-                  href="/dashboard"
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                  className="inline-flex items-center gap-3 px-8 py-4 bg-[#2D2418] text-[#FFE57A] rounded-full text-sm font-semibold tracking-wide uppercase hover:bg-[#1a150e] transition-all duration-500 hover:shadow-2xl hover:shadow-[#2D2418]/20 hover:scale-[1.02]"
-                >
-                  Open Dashboard
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="ml-1">
-                    <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
-                <span
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                  className="text-sm text-[#2D2418]/40 tracking-wide"
-                >
-                  Free for families
-                </span>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ fontFamily: "'DM Sans', sans-serif" }}
+                    className="text-lg md:text-xl text-[#FFF1E6]/60 max-w-md leading-relaxed mb-10"
+                  >
+                    A wearable health platform for families. Monitor vitals, share wellness insights, and keep the people you love within reach.
+                  </motion.p>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex items-center gap-6"
+                  >
+                    <Link
+                      href="/dashboard"
+                      style={{ fontFamily: "'DM Sans', sans-serif" }}
+                      className="group inline-flex items-center gap-3 px-8 py-4 bg-[#E8524A] text-[#FFF1E6] rounded-full text-sm font-semibold tracking-wide uppercase transition-all duration-500 hover:bg-[#D4403A] hover:shadow-2xl hover:shadow-[#E8524A]/25 hover:scale-[1.02]"
+                    >
+                      Open Dashboard
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        className="ml-1 transition-transform duration-300 group-hover:translate-x-1"
+                      >
+                        <path
+                          d="M3 8H13M13 8L9 4M13 8L9 12"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </Link>
+                    <span
+                      style={{ fontFamily: "'DM Sans', sans-serif" }}
+                      className="text-sm text-[#FFF1E6]/30 tracking-wide"
+                    >
+                      Free for families
+                    </span>
+                  </motion.div>
+                </div>
               </motion.div>
             </div>
 
-            {/* Right column - decorative vertical text + bracelet illustration */}
+            {/* Right column — decorative bracelet + vertical accent */}
             <div className="md:col-span-5 flex items-center justify-center relative">
               <motion.div
                 initial={{ opacity: 0, rotate: -3, scale: 0.9 }}
                 animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 1.2, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="relative"
               >
-                {/* Large decorative bracelet */}
+                {/* Bracelet ring decoration */}
                 <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
-                  <div className="absolute inset-0 rounded-full bg-[#2D2418]/5 border-2 border-[#2D2418]/10" />
-                  <div className="absolute inset-4 rounded-full bg-[#2D2418]/3 border border-[#2D2418]/5" />
-                  <BraceletLogo size={120} color="#2D2418" />
+                  {/* Outer glow ring */}
+                  <div
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      border: "2px solid rgba(232, 82, 74, 0.15)",
+                      boxShadow: "0 0 80px rgba(232, 82, 74, 0.08), inset 0 0 40px rgba(232, 82, 74, 0.03)",
+                    }}
+                  />
+                  {/* Inner ring */}
+                  <div
+                    className="absolute inset-4 rounded-full"
+                    style={{
+                      border: "1px solid rgba(255, 241, 230, 0.06)",
+                      background: "radial-gradient(circle, rgba(232, 82, 74, 0.04) 0%, transparent 70%)",
+                    }}
+                  />
+                  <BraceletLogo size={120} color="#FFF1E6" />
                 </div>
 
-                {/* Vertical text on the right */}
+                {/* Vertical text accent */}
                 <div
                   className="absolute -right-8 top-1/2 -translate-y-1/2"
                   style={{
@@ -144,7 +199,7 @@ export default function Home() {
                     fontFamily: "'Playfair Display', serif",
                   }}
                 >
-                  <span className="text-xs tracking-[0.5em] uppercase text-[#2D2418]/30 font-medium">
+                  <span className="text-xs tracking-[0.5em] uppercase text-[#FFF1E6]/20 font-medium">
                     Health & Wellness
                   </span>
                 </div>
@@ -153,18 +208,18 @@ export default function Home() {
           </div>
         </main>
 
-        {/* Bottom editorial detail */}
+        {/* ── Footer ── */}
         <motion.footer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="flex items-center justify-between px-8 md:px-16 pb-12"
+          transition={{ duration: 1, delay: 0.9 }}
+          className="flex items-center justify-between px-8 md:px-16 pb-10"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
-          <span className="text-xs tracking-[0.2em] uppercase text-[#2D2418]/30">
+          <span className="text-xs tracking-[0.2em] uppercase text-[#FFF1E6]/20">
             Est. 2026
           </span>
-          <span className="text-xs tracking-[0.2em] uppercase text-[#2D2418]/30">
+          <span className="text-xs tracking-[0.2em] uppercase text-[#FFF1E6]/20">
             UGA Hacks
           </span>
         </motion.footer>
