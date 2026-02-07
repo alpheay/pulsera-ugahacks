@@ -3,7 +3,9 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import BraceletLogo from "@/components/BraceletLogo";
+import PulseraWordmark from "@/components/PulseraWordmark";
+import PulseraIcon from "@/components/PulseraIcon";
+import Navbar from "@/components/Navbar";
 
 const Dither = dynamic(() => import("@/components/Dither"), { ssr: false });
 
@@ -172,10 +174,13 @@ export default function Home() {
               >
                 {/* Vertical text accent */}
                 <div
-                  className="absolute -right-8 top-1/2 -translate-y-1/2"
+                  className="absolute -inset-8 md:-inset-12 rounded-3xl"
                   style={{
-                    writingMode: "vertical-rl",
-                    fontFamily: "'Playfair Display', serif",
+                    background: "linear-gradient(135deg, rgba(20, 8, 6, 0.72) 0%, rgba(35, 12, 10, 0.58) 50%, rgba(20, 8, 6, 0.65) 100%)",
+                    backdropFilter: "blur(32px) saturate(1.4)",
+                    WebkitBackdropFilter: "blur(32px) saturate(1.4)",
+                    border: "1px solid rgba(255, 241, 230, 0.06)",
+                    boxShadow: "0 8px 64px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 241, 230, 0.04)",
                   }}
                 >
                   <span className="text-xs tracking-[0.5em] uppercase text-[#FFF1E6]/20 font-medium">
@@ -184,6 +189,9 @@ export default function Home() {
                 </div>
               </motion.div>
             </div>
+
+            {/* Right column — negative space */}
+            <div className="hidden md:block md:col-span-5" />
           </div>
         </main>
 
