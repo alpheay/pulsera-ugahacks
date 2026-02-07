@@ -14,6 +14,7 @@ import {
   type HealthUpdate,
   type GroupData,
 } from "@/lib/api";
+import EpisodePanel from "@/components/EpisodePanel";
 import GradientText from "@/components/effects/GradientText";
 import CountUp from "@/components/effects/CountUp";
 import ScrollFloat from "@/components/effects/ScrollFloat";
@@ -292,6 +293,9 @@ export default function Home() {
           ]}
         />
       </section>
+
+      {/* Episode Panel */}
+      <EpisodePanel />
 
       {/* Zone Overview - Circular Gallery */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 mb-12">

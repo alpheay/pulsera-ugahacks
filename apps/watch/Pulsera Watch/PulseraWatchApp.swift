@@ -7,6 +7,7 @@ struct PulseraWatchApp: App {
     @StateObject private var hapticManager = HapticManager()
     @StateObject private var localAnomalyDetector = LocalAnomalyDetector()
     @StateObject private var episodeManager = EpisodeManager()
+    @StateObject private var audioPlayerManager = AudioPlayerManager()
 
     var body: some Scene {
         WindowGroup {
@@ -16,6 +17,7 @@ struct PulseraWatchApp: App {
                 .environmentObject(hapticManager)
                 .environmentObject(localAnomalyDetector)
                 .environmentObject(episodeManager)
+                .environmentObject(audioPlayerManager)
                 .onAppear {
                     healthKitManager.requestAuthorization()
                     webSocketManager.connectIfConfigured()
@@ -73,6 +75,20 @@ struct PulseraWatchApp: App {
                         phase: update.phase,
                         instructions: update.instructions
                     )
+                }
+                .onChange(of: webSocketManager.incomingAudioData) { _, data in
+                    if let data = data {
+                        audioPlayerManager.playPCMData(data)
+                    }
+                }
+                .onChange(of: episodeManager.currentPhase) { _, phase in
+                    if phase == .calming {
+                        audioPlayerManager.startEngine()
+                    } else {
+                        if audioPlayerManager.isPlaying {
+                            audioPlayerManager.stopEngine()
+                        }
+                    }
                 }
         }
     }

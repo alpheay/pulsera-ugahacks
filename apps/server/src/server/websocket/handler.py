@@ -1,5 +1,6 @@
 """WebSocket handler — routes incoming messages from devices and dashboards."""
 
+import asyncio
 import json
 import logging
 from datetime import datetime
@@ -12,6 +13,7 @@ from ..services.health import health_service
 from ..services.anomaly_detection import anomaly_detection_service
 from ..services.episode_service import episode_service
 from ..services.escalation_service import escalation_service
+from ..services.elevenlabs_service import elevenlabs_service
 
 logger = logging.getLogger(__name__)
 
@@ -291,6 +293,11 @@ async def handle_episode_start(ws: WebSocket, data: dict):
     # Move to calming phase immediately
     await episode_service.update_phase(episode["id"], "calming")
 
+    # Start ElevenLabs calming voice
+    asyncio.create_task(
+        elevenlabs_service.start_calming(episode["id"], device_id)
+    )
+
     # Send back to watch
     await ws.send_json({
         "type": "episode-started",
@@ -326,6 +333,9 @@ async def handle_episode_calming_done(ws: WebSocket, data: dict):
     if not episode_id:
         await ws.send_json({"type": "error", "message": "episode_id required"})
         return
+
+    # Stop calming voice
+    asyncio.create_task(elevenlabs_service.stop_calming(episode_id))
 
     episode = await episode_service.submit_calming_result(episode_id, post_vitals)
     if not episode:
@@ -415,6 +425,7 @@ async def handle_episode_resolve(ws: WebSocket, data: dict):
         await ws.send_json({"type": "error", "message": "episode_id required"})
         return
 
+    asyncio.create_task(elevenlabs_service.stop_calming(episode_id))
     await escalation_service.cancel_escalation(episode_id)
     episode = await episode_service.resolve(episode_id, resolution)
     if not episode:

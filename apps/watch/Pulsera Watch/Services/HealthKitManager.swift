@@ -156,6 +156,14 @@ final class HealthKitManager: ObservableObject {
         }
     }
 
+    // MARK: - Simulator / Demo Support
+
+    func injectSimulatedData(_ data: HealthData) {
+        DispatchQueue.main.async {
+            self.latestData = data
+        }
+    }
+
     deinit {
         stopMonitoring()
     }

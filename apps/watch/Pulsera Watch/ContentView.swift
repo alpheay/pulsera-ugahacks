@@ -11,6 +11,7 @@ struct ContentView: View {
     enum Tab: Hashable {
         case pulse
         case pairing
+        case demo
     }
 
     var body: some View {
@@ -21,6 +22,9 @@ struct ContentView: View {
 
                 PairingView()
                     .tag(Tab.pairing)
+
+                DemoControlView()
+                    .tag(Tab.demo)
             }
             .tabViewStyle(.verticalPage)
 
@@ -29,6 +33,11 @@ struct ContentView: View {
                 episodeOverlay
                     .transition(.opacity)
                     .zIndex(100)
+            }
+        }
+        .onChange(of: webSocketManager.connectionState) { _, newState in
+            if newState.isConnected {
+                selectedTab = .pulse
             }
         }
     }

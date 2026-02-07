@@ -263,3 +263,12 @@ export function getBatteryColor(level: number): string {
   if (level > 20) return "#F59E0B";
   return "#EF4444";
 }
+
+export function attachEpisodeToMember(member: MemberLocation, episode: Episode): MemberLocation {
+  return { ...member, activeEpisode: episode };
+}
+
+export function clearEpisodeFromMember(member: MemberLocation): MemberLocation {
+  const { activeEpisode: _, ...rest } = member;
+  return rest as MemberLocation;
+}

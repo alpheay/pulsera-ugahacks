@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		13863EECD4A90E1B0184EA02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C966550B3F674C93C72FBB33 /* Assets.xcassets */; };
+		A1B2C3D4E5F60718A1B2C3D4 /* AudioPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C3B2A1E5F60718D4C3B2A1 /* AudioPlayerManager.swift */; };
+		D1E2F3A4B5C60798D1E2F3A4 /* DemoControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F3A4B5C6D70819E2F3A4B5 /* DemoControlView.swift */; };
 		4A9B199C199A457B95417C2A /* BreathingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13FB9D3148BE288BFECFD52 /* BreathingView.swift */; };
 		53F86A0BCEDE096B018FEFC4 /* PulseRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8375639FC9B56C3C096EC1B /* PulseRingView.swift */; };
 		5F5E969CD263B2B74F597A1B /* EpisodeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */; };
@@ -27,6 +29,8 @@
 
 /* Begin PBXFileReference section */
 		04B4FA00EAB2DB5FF14F31A2 /* LocalAnomalyDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAnomalyDetector.swift; sourceTree = "<group>"; };
+		D4C3B2A1E5F60718D4C3B2A1 /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
+		E2F3A4B5C6D70819E2F3A4B5 /* DemoControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoControlView.swift; sourceTree = "<group>"; };
 		08182F8BC0D082C6C92CD1FC /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
 		1448846B83C8792389BD0C54 /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
 		17C33FC2115C30BF7D7C4617 /* WebSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketManager.swift; sourceTree = "<group>"; };
@@ -51,6 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				F13FB9D3148BE288BFECFD52 /* BreathingView.swift */,
+				E2F3A4B5C6D70819E2F3A4B5 /* DemoControlView.swift */,
 				EC8C300144655F4CACA3AC10 /* HeartRateView.swift */,
 				1448846B83C8792389BD0C54 /* PairingView.swift */,
 				A934043D0B18210DD3EB78C3 /* PhoneCheckView.swift */,
@@ -102,6 +107,7 @@
 		85F59D13215370E94CC82778 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				D4C3B2A1E5F60718D4C3B2A1 /* AudioPlayerManager.swift */,
 				A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */,
 				2819C14592F377D43DEA4637 /* HapticManager.swift */,
 				C47578671D3677671063AA10 /* HealthKitManager.swift */,
@@ -181,9 +187,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3D4E5F60718A1B2C3D4 /* AudioPlayerManager.swift in Sources */,
 				4A9B199C199A457B95417C2A /* BreathingView.swift in Sources */,
 				B1D0071C04C2F34D419B1129 /* ConnectionState.swift in Sources */,
 				C657803F5D0EB3B71897A36D /* ContentView.swift in Sources */,
+				D1E2F3A4B5C60798D1E2F3A4 /* DemoControlView.swift in Sources */,
 				5F5E969CD263B2B74F597A1B /* EpisodeManager.swift in Sources */,
 				7BF7BF0132B6023BE14EAFC9 /* HapticManager.swift in Sources */,
 				E5B740E6459F21D8B3C62761 /* HealthData.swift in Sources */,

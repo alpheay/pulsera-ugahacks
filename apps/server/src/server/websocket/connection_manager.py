@@ -109,6 +109,14 @@ class ConnectionManager:
             except Exception as e:
                 logger.error(f"Failed to send to device {device_id}: {e}")
 
+    async def send_binary_to_device(self, device_id: str, data: bytes):
+        conn = self._devices.get(device_id)
+        if conn:
+            try:
+                await conn.websocket.send_bytes(data)
+            except Exception as e:
+                logger.error(f"Failed to send binary to device {device_id}: {e}")
+
     async def broadcast_to_zone(self, zone_id: str, message: dict):
         connections = self.get_devices_in_zone(zone_id)
         for conn in connections:

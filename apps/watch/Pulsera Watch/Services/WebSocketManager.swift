@@ -18,6 +18,7 @@ final class WebSocketManager: ObservableObject {
     @Published var latestAnomalyScore: Double?
     @Published var latestGroupAlert: GroupAlert?
     @Published var latestEpisodeUpdate: EpisodeUpdate?
+    @Published var incomingAudioData: Data?
 
     // MARK: - Configuration Keys
 
@@ -97,12 +98,19 @@ final class WebSocketManager: ObservableObject {
         self.webSocketTask = task
 
         task.resume()
-        sendAuthenticateMessage()
         listenForMessages()
 
-        DispatchQueue.main.async {
-            self.connectionState = .connected
-            self.reconnectAttempts = 0
+        // Verify handshake with ping, then authenticate
+        task.sendPing { [weak self] error in
+            guard let self = self else { return }
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.connectionState = .error("Handshake failed: \(error.localizedDescription)")
+                }
+                self.scheduleReconnect()
+            } else {
+                self.sendAuthenticateMessage()
+            }
         }
     }
 
@@ -228,7 +236,14 @@ final class WebSocketManager: ObservableObject {
 
             switch result {
             case .success(let message):
-                self.handleMessage(message)
+                switch message {
+                case .data(let data):
+                    self.handleBinaryMessage(data)
+                case .string(let text):
+                    self.handleJSONMessage(text)
+                @unknown default:
+                    break
+                }
                 self.listenForMessages()
 
             case .failure(let error):
@@ -242,26 +257,36 @@ final class WebSocketManager: ObservableObject {
         }
     }
 
-    private func handleMessage(_ message: URLSessionWebSocketTask.Message) {
-        var jsonString: String?
+    // MARK: - Binary Message (Audio)
 
-        switch message {
-        case .string(let text):
-            jsonString = text
-        case .data(let data):
-            jsonString = String(data: data, encoding: .utf8)
-        @unknown default:
-            return
+    private func handleBinaryMessage(_ data: Data) {
+        DispatchQueue.main.async {
+            self.incomingAudioData = data
         }
+    }
 
-        guard let text = jsonString,
-              let data = text.data(using: .utf8),
+    // MARK: - JSON Message
+
+    private func handleJSONMessage(_ text: String) {
+        guard let data = text.data(using: .utf8),
               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let type = json["type"] as? String else { return }
 
         switch type {
+        case "authenticated":
+            DispatchQueue.main.async {
+                self.connectionState = .connected
+                self.reconnectAttempts = 0
+            }
+
+        case "auth_error":
+            let message = json["message"] as? String ?? "Authentication failed"
+            DispatchQueue.main.async {
+                self.connectionState = .error(message)
+            }
+
         case "anomaly_result":
-            if let score = json["anomaly_score"] as? Double {
+            if let score = json["anomaly_score"] as? Double ?? json["score"] as? Double {
                 DispatchQueue.main.async {
                     self.latestAnomalyScore = score
                 }
