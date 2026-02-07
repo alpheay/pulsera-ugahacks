@@ -197,7 +197,8 @@ function DitheredWaves({
   mouseRadius,
 }: DitheredWavesProps) {
   const mesh = useRef<THREE.Mesh>(null);
-  const mouseRef = useRef(new THREE.Vector2());
+  const mouseTargetRef = useRef(new THREE.Vector2());
+  const mouseSmoothedRef = useRef(new THREE.Vector2());
   const { viewport, size, gl } = useThree();
 
   const waveUniformsRef = useRef({
@@ -222,8 +223,22 @@ function DitheredWaves({
     }
   }, [size, gl]);
 
+  useEffect(() => {
+    if (!enableMouseInteraction) return;
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = gl.domElement.getBoundingClientRect();
+      const dpr = gl.getPixelRatio();
+      mouseTargetRef.current.set(
+        (e.clientX - rect.left) * dpr,
+        (e.clientY - rect.top) * dpr
+      );
+    };
+    window.addEventListener("pointermove", handlePointerMove);
+    return () => window.removeEventListener("pointermove", handlePointerMove);
+  }, [enableMouseInteraction, gl]);
+
   const prevColor = useRef([...waveColor]);
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, delta) => {
     const u = waveUniformsRef.current;
 
     if (!disableAnimation) {
@@ -245,21 +260,11 @@ function DitheredWaves({
     u.mouseRadius.value = mouseRadius;
 
     if (enableMouseInteraction) {
-      u.mousePos.value.copy(mouseRef.current);
+      const t = 1 - Math.exp(-10 * delta);
+      mouseSmoothedRef.current.lerp(mouseTargetRef.current, t);
+      u.mousePos.value.copy(mouseSmoothedRef.current);
     }
   });
-
-  const handlePointerMove = (e: THREE.Event) => {
-    if (!enableMouseInteraction) return;
-    const rect = gl.domElement.getBoundingClientRect();
-    const dpr = gl.getPixelRatio();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ev = e as any;
-    mouseRef.current.set(
-      (ev.clientX - rect.left) * dpr,
-      (ev.clientY - rect.top) * dpr
-    );
-  };
 
   return (
     <>
@@ -275,16 +280,6 @@ function DitheredWaves({
       <EffectComposer>
         <RetroEffect colorNum={colorNum} pixelSize={pixelSize} />
       </EffectComposer>
-
-      <mesh
-        onPointerMove={handlePointerMove}
-        position={[0, 0, 0.01]}
-        scale={[viewport.width, viewport.height, 1]}
-        visible={false}
-      >
-        <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial transparent opacity={0} />
-      </mesh>
     </>
   );
 }

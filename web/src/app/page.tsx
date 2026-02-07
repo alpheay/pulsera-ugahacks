@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import PulseraWordmark from "@/components/PulseraWordmark";
-import PulseraIcon from "@/components/PulseraIcon";
 import Navbar from "@/components/Navbar";
 
 const Dither = dynamic(() => import("@/components/Dither"), { ssr: false });
@@ -34,7 +33,7 @@ export default function Home() {
         colorNum={4}
         pixelSize={3}
         enableMouseInteraction={true}
-        mouseRadius={1}
+        mouseRadius={0.3}
       />
 
       <div className="relative z-10 min-h-screen flex flex-col overflow-hidden pointer-events-none">
@@ -42,7 +41,7 @@ export default function Home() {
         <Navbar variant="dark" />
 
         {/* ── Main content — frosted glass midlayer ── */}
-        <main className="flex-1 flex items-center px-6 md:px-12 lg:px-20 py-8">
+        <main className="flex-1 flex items-start px-6 md:px-12 lg:px-20 pt-16 md:pt-24">
           <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10">
 
             {/* Left column — text content with frosted backdrop */}
@@ -67,7 +66,6 @@ export default function Home() {
 
                 {/* Content on top of frosted panel */}
                 <div className="relative z-10">
-                  <PulseraIcon size={28} color="#FFF1E6" className="opacity-25 mb-5" />
                   <p
                     style={{ fontFamily: "'DM Sans', sans-serif" }}
                     className="text-xs font-medium tracking-[0.3em] uppercase text-[#FFF1E6]/40 mb-6"
@@ -90,7 +88,7 @@ export default function Home() {
                     style={{ fontFamily: "'DM Sans', sans-serif" }}
                     className="text-lg md:text-xl text-[#FFF1E6]/50 max-w-lg leading-relaxed mb-10"
                   >
-                    Real-time vitals from Apple Watch. Smart iPhone check-ins. Shared family location. Pulsera watches over your loved ones — and steps in before you have to.
+                    Real-time vitals from Apple Watch, cross-checked with iPhone computer vision to build a complete health picture. Shared family location, smart dashboards, and automatic alerts.
                   </motion.p>
 
                   <motion.div
