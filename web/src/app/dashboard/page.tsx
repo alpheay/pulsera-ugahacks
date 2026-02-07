@@ -2,38 +2,499 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import PulseraIcon from "@/components/PulseraIcon";
-import Navbar from "@/components/Navbar";
+import { motion, AnimatePresence } from "motion/react";
+import BraceletLogo from "@/components/BraceletLogo";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Heart,
+  Activity,
+  Thermometer,
+  Watch,
+  AlertTriangle,
+  Phone,
+  MapPin,
+  Clock,
+  ChevronRight,
+  Zap,
+  Shield,
+  Bell,
+  Footprints,
+  Moon,
+  Droplets,
+  X,
+} from "lucide-react";
+
+/* ─────────────────────── MOCK DATA ─────────────────────── */
+
+interface FamilyMember {
+  id: string;
+  name: string;
+  relation: string;
+  avatar: string; // initials
+  avatarColor: string;
+  status: "normal" | "elevated" | "critical";
+  heartRate: number;
+  bloodOxygen: number;
+  temperature: number;
+  steps: number;
+  lastSync: string;
+  device: "Apple Watch" | "iPhone";
+  location: string;
+}
+
+const familyMembers: FamilyMember[] = [
+  {
+    id: "1",
+    name: "Margaret Chen",
+    relation: "Grandmother",
+    avatar: "MC",
+    avatarColor: "#E8524A",
+    status: "normal",
+    heartRate: 72,
+    bloodOxygen: 97,
+    temperature: 98.2,
+    steps: 3241,
+    lastSync: "2 min ago",
+    device: "Apple Watch",
+    location: "Home",
+  },
+  {
+    id: "2",
+    name: "David Chen",
+    relation: "Father",
+    avatar: "DC",
+    avatarColor: "#D4873E",
+    status: "elevated",
+    heartRate: 98,
+    bloodOxygen: 95,
+    temperature: 99.1,
+    steps: 8762,
+    lastSync: "Just now",
+    device: "Apple Watch",
+    location: "Office",
+  },
+  {
+    id: "3",
+    name: "Lily Chen",
+    relation: "Sister",
+    avatar: "LC",
+    avatarColor: "#7B8F4E",
+    status: "normal",
+    heartRate: 68,
+    bloodOxygen: 99,
+    temperature: 97.8,
+    steps: 12034,
+    lastSync: "5 min ago",
+    device: "iPhone",
+    location: "University",
+  },
+  {
+    id: "4",
+    name: "James Chen",
+    relation: "Grandfather",
+    avatar: "JC",
+    avatarColor: "#5B7BA5",
+    status: "critical",
+    heartRate: 112,
+    bloodOxygen: 91,
+    temperature: 100.4,
+    steps: 876,
+    lastSync: "1 min ago",
+    device: "Apple Watch",
+    location: "Home",
+  },
+  {
+    id: "5",
+    name: "Sophie Chen",
+    relation: "Mother",
+    avatar: "SC",
+    avatarColor: "#9B6B9E",
+    status: "normal",
+    heartRate: 74,
+    bloodOxygen: 98,
+    temperature: 98.0,
+    steps: 6543,
+    lastSync: "8 min ago",
+    device: "iPhone",
+    location: "Market",
+  },
+];
+
+interface DeviceEvent {
+  id: string;
+  memberId: string;
+  memberName: string;
+  type: "health" | "activity" | "system" | "location";
+  icon: "heart" | "steps" | "sleep" | "sync" | "location" | "blood" | "temp";
+  title: string;
+  detail: string;
+  timestamp: string;
+  priority: "low" | "medium" | "high";
+}
+
+const deviceEvents: DeviceEvent[] = [
+  {
+    id: "e1",
+    memberId: "4",
+    memberName: "James Chen",
+    type: "health",
+    icon: "heart",
+    title: "Elevated heart rate detected",
+    detail: "Heart rate reached 112 BPM during rest period",
+    timestamp: "1 min ago",
+    priority: "high",
+  },
+  {
+    id: "e2",
+    memberId: "2",
+    memberName: "David Chen",
+    type: "activity",
+    icon: "steps",
+    title: "Step goal reached",
+    detail: "Completed 8,762 steps - 87% of daily goal",
+    timestamp: "12 min ago",
+    priority: "low",
+  },
+  {
+    id: "e3",
+    memberId: "3",
+    memberName: "Lily Chen",
+    type: "activity",
+    icon: "steps",
+    title: "Daily step goal exceeded",
+    detail: "Lily has walked 12,034 steps today",
+    timestamp: "18 min ago",
+    priority: "low",
+  },
+  {
+    id: "e4",
+    memberId: "1",
+    memberName: "Margaret Chen",
+    type: "health",
+    icon: "blood",
+    title: "Blood oxygen stable",
+    detail: "SpO2 consistent at 97% over the last hour",
+    timestamp: "24 min ago",
+    priority: "low",
+  },
+  {
+    id: "e5",
+    memberId: "4",
+    memberName: "James Chen",
+    type: "health",
+    icon: "temp",
+    title: "Temperature elevated",
+    detail: "Body temperature reading 100.4\u00b0F",
+    timestamp: "32 min ago",
+    priority: "high",
+  },
+  {
+    id: "e6",
+    memberId: "5",
+    memberName: "Sophie Chen",
+    type: "location",
+    icon: "location",
+    title: "Left home zone",
+    detail: "Sophie left the home geofence at 10:23 AM",
+    timestamp: "45 min ago",
+    priority: "medium",
+  },
+  {
+    id: "e7",
+    memberId: "2",
+    memberName: "David Chen",
+    type: "system",
+    icon: "sync",
+    title: "Watch synced",
+    detail: "Apple Watch data synchronized successfully",
+    timestamp: "1 hr ago",
+    priority: "low",
+  },
+  {
+    id: "e8",
+    memberId: "3",
+    memberName: "Lily Chen",
+    type: "health",
+    icon: "sleep",
+    title: "Sleep report ready",
+    detail: "7h 42m total sleep, 89% sleep quality",
+    timestamp: "2 hr ago",
+    priority: "low",
+  },
+  {
+    id: "e9",
+    memberId: "1",
+    memberName: "Margaret Chen",
+    type: "location",
+    icon: "location",
+    title: "Arrived home",
+    detail: "Margaret entered the home geofence",
+    timestamp: "3 hr ago",
+    priority: "low",
+  },
+];
+
+interface PanicEvent {
+  id: string;
+  memberId: string;
+  memberName: string;
+  avatar: string;
+  avatarColor: string;
+  type: "panic" | "stress" | "fall" | "irregular";
+  severity: "warning" | "critical" | "resolved";
+  title: string;
+  detail: string;
+  timestamp: string;
+  location: string;
+  metrics: { label: string; value: string }[];
+  resolved: boolean;
+}
+
+const panicEvents: PanicEvent[] = [
+  {
+    id: "p1",
+    memberId: "4",
+    memberName: "James Chen",
+    avatar: "JC",
+    avatarColor: "#5B7BA5",
+    type: "irregular",
+    severity: "critical",
+    title: "Irregular heartbeat pattern",
+    detail:
+      "Apple Watch detected an irregular heart rhythm. Heart rate spiked to 112 BPM with arrhythmic patterns during a resting period. Duration: 4 minutes.",
+    timestamp: "1 min ago",
+    location: "Home - Living Room",
+    metrics: [
+      { label: "Heart Rate", value: "112 BPM" },
+      { label: "Duration", value: "4 min" },
+      { label: "SpO2", value: "91%" },
+    ],
+    resolved: false,
+  },
+  {
+    id: "p2",
+    memberId: "2",
+    memberName: "David Chen",
+    avatar: "DC",
+    avatarColor: "#D4873E",
+    type: "stress",
+    severity: "warning",
+    title: "Prolonged stress detected",
+    detail:
+      "Elevated heart rate variability and increased cortisol indicators over the past 2 hours. HRV dropped below baseline threshold.",
+    timestamp: "38 min ago",
+    location: "Office",
+    metrics: [
+      { label: "HRV", value: "22ms" },
+      { label: "Heart Rate", value: "98 BPM" },
+      { label: "Duration", value: "2 hr" },
+    ],
+    resolved: false,
+  },
+  {
+    id: "p3",
+    memberId: "1",
+    memberName: "Margaret Chen",
+    avatar: "MC",
+    avatarColor: "#E8524A",
+    type: "fall",
+    severity: "resolved",
+    title: "Fall detection triggered",
+    detail:
+      "Apple Watch detected a potential fall event. User confirmed they are okay via watch prompt. Automatic SOS was cancelled.",
+    timestamp: "3 hr ago",
+    location: "Home - Kitchen",
+    metrics: [
+      { label: "Impact", value: "Moderate" },
+      { label: "Response", value: "Self-cleared" },
+      { label: "Heart Rate", value: "89 BPM" },
+    ],
+    resolved: true,
+  },
+  {
+    id: "p4",
+    memberId: "4",
+    memberName: "James Chen",
+    avatar: "JC",
+    avatarColor: "#5B7BA5",
+    type: "panic",
+    severity: "resolved",
+    title: "SOS button activated",
+    detail:
+      "James triggered the emergency SOS from his Apple Watch. Emergency contacts were notified. Situation was resolved after check-in call.",
+    timestamp: "Yesterday, 8:12 PM",
+    location: "Home - Bedroom",
+    metrics: [
+      { label: "Heart Rate", value: "128 BPM" },
+      { label: "Response", value: "3 min" },
+      { label: "Contacts notified", value: "2" },
+    ],
+    resolved: true,
+  },
+];
+
+/* ─────────────────────── HELPERS ─────────────────────── */
+
+const statusColor = (status: FamilyMember["status"]) => {
+  switch (status) {
+    case "normal":
+      return { bg: "rgba(123,143,78,0.15)", dot: "#7B8F4E", text: "#7B8F4E" };
+    case "elevated":
+      return { bg: "rgba(212,135,62,0.15)", dot: "#D4873E", text: "#D4873E" };
+    case "critical":
+      return { bg: "rgba(232,82,74,0.15)", dot: "#E8524A", text: "#E8524A" };
+  }
+};
+
+const eventIconMap = {
+  heart: Heart,
+  steps: Footprints,
+  sleep: Moon,
+  sync: Watch,
+  location: MapPin,
+  blood: Droplets,
+  temp: Thermometer,
+};
+
+const eventPriorityColor = (priority: DeviceEvent["priority"]) => {
+  switch (priority) {
+    case "low":
+      return "#6B6B5E";
+    case "medium":
+      return "#D4873E";
+    case "high":
+      return "#E8524A";
+  }
+};
+
+const panicSeverityStyle = (severity: PanicEvent["severity"]) => {
+  switch (severity) {
+    case "critical":
+      return {
+        border: "rgba(232,82,74,0.4)",
+        bg: "rgba(232,82,74,0.06)",
+        badge: "#E8524A",
+        badgeBg: "rgba(232,82,74,0.15)",
+        pulse: true,
+      };
+    case "warning":
+      return {
+        border: "rgba(212,135,62,0.4)",
+        bg: "rgba(212,135,62,0.06)",
+        badge: "#D4873E",
+        badgeBg: "rgba(212,135,62,0.15)",
+        pulse: false,
+      };
+    case "resolved":
+      return {
+        border: "rgba(107,107,94,0.2)",
+        bg: "rgba(107,107,94,0.03)",
+        badge: "#6B6B5E",
+        badgeBg: "rgba(107,107,94,0.12)",
+        pulse: false,
+      };
+  }
+};
+
+const panicTypeIcon = (type: PanicEvent["type"]) => {
+  switch (type) {
+    case "panic":
+      return Phone;
+    case "stress":
+      return Activity;
+    case "fall":
+      return AlertTriangle;
+    case "irregular":
+      return Heart;
+  }
+};
+
+/* ─────────────────────── EASE ─────────────────────── */
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+/* ─────────────────────── COMPONENT ─────────────────────── */
 
 export default function Dashboard() {
-  return (
-    <div className="min-h-screen bg-[#FAFAF7] flex flex-col">
-      {/* Header */}
-      <Navbar variant="light" />
+  const [selectedMember, setSelectedMember] = useState<string | null>("4");
+  const [expandedPanic, setExpandedPanic] = useState<string | null>("p1");
 
-      {/* Empty dashboard content */}
-      <main className="flex-1 flex items-center justify-center px-8">
-        <div className="text-center max-w-md">
-          <div className="w-16 h-16 rounded-2xl bg-[#FFE57A]/20 flex items-center justify-center mx-auto mb-6">
-            <PulseraIcon size={32} color="#8B6914" />
-          </div>
-          <h1
-            className="text-2xl font-semibold text-[#2D2418] mb-3"
-            style={{ fontFamily: "system-ui, sans-serif" }}
-          >
-            Dashboard
-          </h1>
-          <p className="text-sm text-neutral-400 leading-relaxed mb-8">
-            Your family health overview will appear here. Connect your Pulsera device to get started.
-          </p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-[#8B6914] hover:text-[#6B4C2A] transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Back to home
+  const selected = familyMembers.find((m) => m.id === selectedMember);
+
+  return (
+    <>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&family=Work+Sans:wght@400;500;600;700;800&display=swap');
+
+        @keyframes pulse-ring {
+          0% { transform: scale(1); opacity: 0.6; }
+          70% { transform: scale(1.6); opacity: 0; }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        @keyframes heartbeat {
+          0%, 100% { transform: scale(1); }
+          14% { transform: scale(1.12); }
+          28% { transform: scale(1); }
+          42% { transform: scale(1.08); }
+          56% { transform: scale(1); }
+        }
+        .noise-overlay::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+          background-size: 256px;
+          pointer-events: none;
+          z-index: 1;
+          border-radius: inherit;
+        }
+        .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,241,230,0.1); border-radius: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(255,241,230,0.2); }
+      `}</style>
+
+      <div
+        className="min-h-screen flex flex-col relative noise-overlay"
+        style={{
+          background: "linear-gradient(145deg, #1A1410 0%, #0F0D0B 40%, #12100E 100%)",
+          fontFamily: "'DM Sans', sans-serif",
+        }}
+      >
+        {/* ── Background textures ── */}
+        <div
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 50% at 20% 20%, rgba(232,82,74,0.04) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 80% 80%, rgba(212,135,62,0.03) 0%, transparent 70%)",
+          }}
+        />
+
+        {/* ── Header ── */}
+        <motion.header
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease }}
+          className="relative z-20 flex items-center justify-between px-6 md:px-10 pt-6 pb-4"
+        >
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative">
+              <BraceletLogo size={28} color="#FFF1E6" />
+              <div
+                className="absolute -inset-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: "radial-gradient(circle, rgba(232,82,74,0.2) 0%, transparent 70%)" }}
+              />
+            </div>
+            <span
+              style={{ fontFamily: "'Work Sans', sans-serif", fontWeight: 700, letterSpacing: "-0.02em" }}
+              className="text-lg text-[#FFF1E6]"
+            >
+              Pulsera
+            </span>
           </Link>
 
           <div className="flex items-center gap-6">
