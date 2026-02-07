@@ -7,6 +7,7 @@
     "icon": "./assets/icon.png",
     "scheme": "pulsera",
     "userInterfaceStyle": "dark",
+    "backgroundColor": "#0F172A",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -25,12 +26,18 @@
       "package": "com.pulsera.app"
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

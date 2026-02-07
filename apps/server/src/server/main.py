@@ -21,6 +21,7 @@ from .routes.pulsenet import router as pulsenet_router
 from .routes.auth import router as auth_router
 from .routes.groups import router as groups_router
 from .routes.health_data import router as health_data_router
+from .routes.episodes import router as episodes_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -59,6 +60,7 @@ app.include_router(community_router)
 app.include_router(zones_router)
 app.include_router(alerts_router)
 app.include_router(pulsenet_router)
+app.include_router(episodes_router)
 
 app.add_api_websocket_route("/ws", websocket_endpoint)
 
