@@ -73,7 +73,7 @@ struct HeartRatePill: View {
         HStack(spacing: 4) {
             Image(systemName: "heart.fill")
                 .font(.system(size: 10))
-                .foregroundColor(.red)
+                .foregroundColor(PulseraTheme.accent)
                 .scaleEffect(beatScale)
                 .onAppear {
                     withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {

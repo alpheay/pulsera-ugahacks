@@ -190,6 +190,50 @@ export function simulateEpisodeProgression(episode: Episode): Episode {
   }
 }
 
+// Map real SmartSpectra SDK metrics to our PresageResult format
+export function mapSmartSpectraToPresage(raw: {
+  pulseRate: number;
+  pulseConfidence: number;
+  breathingRate: number;
+  breathingConfidence: number;
+  blinkRate: number;
+  isTalking: boolean;
+  hasData: boolean;
+}): PresageResult {
+  const hr = Math.round(raw.pulseRate);
+  const br = Math.round(raw.breathingRate);
+  const blink = Math.round(raw.blinkRate);
+  const confidence =
+    (raw.pulseConfidence + raw.breathingConfidence) / 2;
+
+  // Facial expression heuristic based on vitals
+  let facialExpression: PresageResult["facialExpression"] = "calm";
+  if (hr > 130 && br > 24) {
+    facialExpression = "pain";
+  } else if (hr > 110 && br > 20) {
+    facialExpression = "distressed";
+  } else if (blink < 5 || blink > 35) {
+    facialExpression = "confused";
+  }
+
+  // Eye responsiveness from blink rate
+  let eyeResponsiveness: PresageResult["eyeResponsiveness"] = "normal";
+  if (blink < 3) {
+    eyeResponsiveness = "unresponsive";
+  } else if (blink < 10) {
+    eyeResponsiveness = "slow";
+  }
+
+  return {
+    visualHeartRate: hr,
+    breathingRate: br,
+    facialExpression,
+    blinkRate: blink,
+    eyeResponsiveness,
+    confidenceScore: Math.min(1, Math.max(0, confidence)),
+  };
+}
+
 export function generatePresageData(isDistressed: boolean): PresageResult {
   if (isDistressed) {
     return {

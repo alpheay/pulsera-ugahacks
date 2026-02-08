@@ -178,7 +178,7 @@ final class HealthKitManager: ObservableObject {
 
     func startDemoMode() {
         stopMonitoring() // don't use real HealthKit
-        demoHR = 58
+        demoHR = Double.random(in: 55...60)
         demoSimPhase = .resting
         publishDemoData()
 
@@ -186,11 +186,33 @@ final class HealthKitManager: ObservableObject {
         demoTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             self?.tickDemo()
         }
+    }
 
-        // Start rising after 4 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
-            guard self?.demoSimPhase == .resting else { return }
-            self?.demoSimPhase = .rising
+    /// Gradually raises HR from resting (~55-60) to elevated over 5-7 seconds.
+    /// Calls `onElevated` once when HR first crosses the elevated threshold (85 BPM).
+    func startGradualRise(onElevated: (() -> Void)? = nil) {
+        demoSimPhase = .rising
+        var hasTriggered = false
+
+        demoTimer?.invalidate()
+        demoTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self else { timer.invalidate(); return }
+
+            if self.demoHR < 130 {
+                // ~4-7 BPM per second — reaches 85 (elevated) in about 5-6 seconds from 58
+                self.demoHR += Double.random(in: 4...7)
+                self.demoHR = min(self.demoHR, 135)
+            } else {
+                self.demoHR = 125 + Double.random(in: -3...5)
+            }
+            self.publishDemoData()
+
+            if !hasTriggered && self.demoHR >= 85 {
+                hasTriggered = true
+                DispatchQueue.main.async {
+                    onElevated?()
+                }
+            }
         }
     }
 
@@ -201,7 +223,7 @@ final class HealthKitManager: ObservableObject {
     private func tickDemo() {
         switch demoSimPhase {
         case .resting:
-            demoHR = 58 + Double.random(in: -1.5...1.5)
+            demoHR = 57 + Double.random(in: -2...3)
         case .rising:
             if demoHR < 95 {
                 demoHR += Double.random(in: 2.5...4.5)

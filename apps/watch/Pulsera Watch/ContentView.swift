@@ -61,13 +61,19 @@ struct ContentView: View {
                 // Start demo button — always visible when idle
                 if episodeManager.currentPhase == .idle {
                     Button {
-                        let hr = healthKitManager.latestData?.heartRate ?? 58
-                        let data = HealthData(
-                            heartRate: hr, hrv: 20, acceleration: 0.1,
-                            skinTemp: 37.2, status: .elevated
-                        )
-                        episodeManager.startEpisode(trigger: .sustainedElevatedHR, data: data)
-                        healthKitManager.setDemoDecline()
+                        healthKitManager.startGradualRise { [self] in
+                            let hr = healthKitManager.latestData?.heartRate ?? 95
+                            let data = HealthData(
+                                heartRate: hr, hrv: 20, acceleration: 0.1,
+                                skinTemp: 37.2, status: .elevated
+                            )
+                            episodeManager.startEpisode(trigger: .sustainedElevatedHR, data: data)
+                            webSocketManager.sendEpisodeStart(triggerData: [
+                                "heartRate": hr,
+                                "hrv": 20.0,
+                                "anomalyType": "sustained_elevated_hr"
+                            ])
+                        }
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "exclamationmark.triangle.fill")
@@ -80,20 +86,20 @@ struct ContentView: View {
                         .padding(.vertical, 10)
                         .background(
                             LinearGradient(
-                                colors: [PulseraTheme.warning, PulseraTheme.danger.opacity(0.8)],
+                                colors: [PulseraTheme.accent, PulseraTheme.accent.opacity(0.7)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
                         )
                         .cornerRadius(12)
                     }
+                    .buttonStyle(.plain)
                     .padding(.horizontal, 8)
                 }
 
                 StatusView(
                     connectionState: webSocketManager.connectionState,
-                    anomalyScore: webSocketManager.latestAnomalyScore,
-                    lastUpdated: healthKitManager.latestData?.timestamp
+                    anomalyScore: webSocketManager.latestAnomalyScore
                 )
             }
             .padding(.horizontal, 4)
@@ -131,7 +137,7 @@ struct ContentView: View {
 
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 36))
-                    .foregroundColor(PulseraTheme.warning)
+                    .foregroundColor(PulseraTheme.accent)
 
                 Text("Anomaly Detected")
                     .font(.system(size: 16, weight: .bold, design: .rounded))
@@ -143,7 +149,7 @@ struct ContentView: View {
 
                 ProgressView()
                     .progressViewStyle(.circular)
-                    .tint(PulseraTheme.warning)
+                    .tint(PulseraTheme.accent)
 
                 Spacer()
 
@@ -163,7 +169,7 @@ struct ContentView: View {
 
                 Image(systemName: "waveform.path.ecg")
                     .font(.system(size: 36))
-                    .foregroundColor(PulseraTheme.info)
+                    .foregroundColor(PulseraTheme.accent)
 
                 Text("Re-evaluating...")
                     .font(.system(size: 16, weight: .bold, design: .rounded))
@@ -175,7 +181,7 @@ struct ContentView: View {
 
                 ProgressView()
                     .progressViewStyle(.circular)
-                    .tint(PulseraTheme.info)
+                    .tint(PulseraTheme.accent)
 
                 Spacer()
 
@@ -223,9 +229,11 @@ struct ContentView: View {
                         "presage_data": presage
                     ])
                     pulseSent = true
-                    // Reset after 3s
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    // Return to start screen after brief confirmation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         pulseSent = false
+                        episodeManager.returnToIdle()
+                        healthKitManager.setDemoDecline()
                     }
                 } label: {
                     HStack(spacing: 6) {
@@ -240,10 +248,11 @@ struct ContentView: View {
                     .background(
                         pulseSent
                             ? PulseraTheme.safe.opacity(0.6)
-                            : PulseraTheme.interactive.opacity(0.8)
+                            : PulseraTheme.accent.opacity(0.9)
                     )
                     .cornerRadius(12)
                 }
+                .buttonStyle(.plain)
                 .padding(.horizontal, 16)
                 .disabled(pulseSent)
 

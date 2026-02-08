@@ -9,7 +9,7 @@ struct PhoneCheckView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            PulseraTheme.background.ignoresSafeArea()
 
             VStack(spacing: 14) {
                 Spacer()
@@ -17,7 +17,7 @@ struct PhoneCheckView: View {
                 // Animated phone icon
                 Image(systemName: "iphone.radiowaves.left.and.right")
                     .font(.system(size: 40))
-                    .foregroundColor(.cyan)
+                    .foregroundColor(PulseraTheme.accent)
                     .offset(y: phoneIconOffset)
                     .onAppear {
                         withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
@@ -27,16 +27,16 @@ struct PhoneCheckView: View {
 
                 Text("Quick Check-In")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(PulseraTheme.foreground)
 
                 Text("I'd like to check on\nyou a bit more.")
                     .font(.system(size: 13, weight: .regular, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(PulseraTheme.mutedForeground)
                     .multilineTextAlignment(.center)
 
                 Text("Open your phone for a\nquick visual check-in.")
                     .font(.system(size: 12, weight: .medium, design: .rounded))
-                    .foregroundColor(.cyan.opacity(0.8))
+                    .foregroundColor(PulseraTheme.accent.opacity(0.8))
                     .multilineTextAlignment(.center)
                     .padding(.top, 4)
 
@@ -46,11 +46,11 @@ struct PhoneCheckView: View {
                     HStack(spacing: 6) {
                         ProgressView()
                             .progressViewStyle(.circular)
-                            .tint(.cyan)
+                            .tint(PulseraTheme.accent)
                             .scaleEffect(0.7)
                         Text("Waiting for phone...")
                             .font(.system(size: 11, weight: .medium))
-                            .foregroundColor(.gray)
+                            .foregroundColor(PulseraTheme.mutedForeground)
                     }
                 } else {
                     // Skip button
@@ -60,10 +60,10 @@ struct PhoneCheckView: View {
                     }) {
                         Text("Skip")
                             .font(.system(size: 13, weight: .medium))
-                            .foregroundColor(.gray)
+                            .foregroundColor(PulseraTheme.mutedForeground)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 8)
-                            .background(Color.white.opacity(0.1))
+                            .background(PulseraTheme.glassBg)
                             .cornerRadius(20)
                     }
                     .buttonStyle(.plain)
