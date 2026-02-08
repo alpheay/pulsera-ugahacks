@@ -1,0 +1,93 @@
+import SwiftUI
+
+struct PhoneCheckView: View {
+    @EnvironmentObject var episodeManager: EpisodeManager
+    @EnvironmentObject var hapticManager: HapticManager
+
+    @State private var phoneIconOffset: CGFloat = 0
+    @State private var showSkip = false
+
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 14) {
+                Spacer()
+
+                // Animated phone icon
+                Image(systemName: "iphone.radiowaves.left.and.right")
+                    .font(.system(size: 40))
+                    .foregroundColor(.cyan)
+                    .offset(y: phoneIconOffset)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
+                            phoneIconOffset = -8
+                        }
+                    }
+
+                Text("Quick Check-In")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+
+                Text("I'd like to check on\nyou a bit more.")
+                    .font(.system(size: 13, weight: .regular, design: .rounded))
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
+
+                Text("Open your phone for a\nquick visual check-in.")
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundColor(.cyan.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 4)
+
+                Spacer()
+
+                if episodeManager.currentPhase == .waitingForPhone {
+                    HStack(spacing: 6) {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                            .tint(.cyan)
+                            .scaleEffect(0.7)
+                        Text("Waiting for phone...")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.gray)
+                    }
+                } else {
+                    // Skip button
+                    Button(action: {
+                        hapticManager.playTap()
+                        episodeManager.skipPhoneCheck()
+                    }) {
+                        Text("Skip")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 8)
+                            .background(Color.white.opacity(0.1))
+                            .cornerRadius(20)
+                    }
+                    .buttonStyle(.plain)
+                    .opacity(showSkip ? 1 : 0)
+                    .onAppear {
+                        // Show skip button after a delay
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            withAnimation(.easeIn(duration: 0.3)) {
+                                showSkip = true
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 12)
+        }
+        .onAppear {
+            hapticManager.playBreathing(phase: .phoneCheckRequest)
+        }
+    }
+}
+
+#Preview {
+    PhoneCheckView()
+        .environmentObject(EpisodeManager())
+        .environmentObject(HapticManager())
+}
