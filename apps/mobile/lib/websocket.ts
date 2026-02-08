@@ -84,7 +84,7 @@ export type IncomingMessage =
 
 export type MessageCallback = (message: IncomingMessage) => void;
 
-const DEFAULT_WS_URL = "ws://localhost:8000/ws";
+const DEFAULT_WS_URL = "ws://localhost:3002/ws";
 const MAX_RECONNECT_DELAY_MS = 30_000;
 const INITIAL_RECONNECT_DELAY_MS = 1_000;
 const PING_INTERVAL_MS = 25_000;
@@ -194,6 +194,9 @@ export class PulseraWebSocket {
         user_id: this.userId,
         group_ids: this.groupIds,
       });
+
+      // Register as mobile client with the relay server
+      this._send({ type: "register", role: "mobile" });
 
       // Subscribe to any groups
       for (const gid of this.groupIds) {
