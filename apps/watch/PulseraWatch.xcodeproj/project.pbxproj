@@ -30,6 +30,8 @@
 		F05D1877FABF44E6A21F1689 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47578671D3677671063AA10 /* HealthKitManager.swift */; };
 		F2363818A4D5F4E99C3577CA /* PulseraWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668B2E7470760CF6EA562B53 /* PulseraWatchApp.swift */; };
 		F2F859BA6EE4BABE986CC7AD /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1448846B83C8792389BD0C54 /* PairingView.swift */; };
+		AABB0011CCDD2233EEFF4455 /* PulseraTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB0011CCDD2233EEFF0011 /* PulseraTheme.swift */; };
+		AABB0011CCDD2233EEFF4466 /* EventBridgeClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB0011CCDD2233EEFF0022 /* EventBridgeClient.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +60,8 @@
 		CDE15FC1FEE7943201479CAA /* Pulsera Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pulsera Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC8C300144655F4CACA3AC10 /* HeartRateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateView.swift; sourceTree = "<group>"; };
 		F13FB9D3148BE288BFECFD52 /* BreathingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingView.swift; sourceTree = "<group>"; };
+		AABB0011CCDD2233EEFF0011 /* PulseraTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseraTheme.swift; sourceTree = "<group>"; };
+		AABB0011CCDD2233EEFF0022 /* EventBridgeClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventBridgeClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -93,6 +97,7 @@
 				AA11BB22CC33DD44EE55FF10 /* Audio */,
 				A28CF14664F63F4A123F725D /* ContentView.swift */,
 				6517B27625A62E23DD5DC152 /* Pulsera Watch.entitlements */,
+				AABB0011CCDD2233EEFF0011 /* PulseraTheme.swift */,
 				668B2E7470760CF6EA562B53 /* PulseraWatchApp.swift */,
 				69B9875F87828A746E765BB6 /* Models */,
 				85F59D13215370E94CC82778 /* Services */,
@@ -132,6 +137,7 @@
 				D4C3B2A1E5F60718D4C3B2A1 /* AudioPlayerManager.swift */,
 				F1A2B3C4D5E6F708F1A2B3C4 /* ElevenLabsManager.swift */,
 				A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */,
+				AABB0011CCDD2233EEFF0022 /* EventBridgeClient.swift */,
 				2819C14592F377D43DEA4637 /* HapticManager.swift */,
 				C47578671D3677671063AA10 /* HealthKitManager.swift */,
 				04B4FA00EAB2DB5FF14F31A2 /* LocalAnomalyDetector.swift */,
@@ -229,7 +235,9 @@
 				F2F859BA6EE4BABE986CC7AD /* PairingView.swift in Sources */,
 				9045EDD92C04CFA45227DD8D /* PhoneCheckView.swift in Sources */,
 				53F86A0BCEDE096B018FEFC4 /* PulseRingView.swift in Sources */,
+				AABB0011CCDD2233EEFF4455 /* PulseraTheme.swift in Sources */,
 				F2363818A4D5F4E99C3577CA /* PulseraWatchApp.swift in Sources */,
+				AABB0011CCDD2233EEFF4466 /* EventBridgeClient.swift in Sources */,
 				668A5C9F8B27375C5CBE10BB /* StatusView.swift in Sources */,
 				9044A35B1DF69202FBBD5974 /* WebSocketManager.swift in Sources */,
 			);

@@ -12,13 +12,13 @@ struct CalmingMusicView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            PulseraTheme.background.ignoresSafeArea()
 
             VStack(spacing: 10) {
                 // Elapsed time
                 Text(formattedElapsed)
                     .font(.system(size: 12, weight: .medium, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(PulseraTheme.mutedForeground)
 
                 Spacer()
 
@@ -36,11 +36,11 @@ struct CalmingMusicView: View {
                 // Track name
                 Text(audioPlayerManager.currentTrack.name)
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundColor(.purple)
+                    .foregroundColor(PulseraTheme.interactive)
 
                 Text("You're safe")
                     .font(.system(size: 11, weight: .regular, design: .rounded))
-                    .foregroundColor(.gray.opacity(0.7))
+                    .foregroundColor(PulseraTheme.mutedForeground.opacity(0.7))
 
                 // Playback controls: previous / play-pause / next
                 HStack(spacing: 20) {
@@ -50,7 +50,7 @@ struct CalmingMusicView: View {
                     } label: {
                         Image(systemName: "backward.fill")
                             .font(.system(size: 20))
-                            .foregroundColor(.purple)
+                            .foregroundColor(PulseraTheme.interactive)
                     }
                     .buttonStyle(.plain)
 
@@ -59,7 +59,7 @@ struct CalmingMusicView: View {
                     } label: {
                         Image(systemName: audioPlayerManager.isPlayingTrack ? "pause.circle.fill" : "play.circle.fill")
                             .font(.system(size: 36))
-                            .foregroundColor(.purple)
+                            .foregroundColor(PulseraTheme.interactive)
                     }
                     .buttonStyle(.plain)
 
@@ -69,7 +69,7 @@ struct CalmingMusicView: View {
                     } label: {
                         Image(systemName: "forward.fill")
                             .font(.system(size: 20))
-                            .foregroundColor(.purple)
+                            .foregroundColor(PulseraTheme.interactive)
                     }
                     .buttonStyle(.plain)
                 }
@@ -91,7 +91,7 @@ struct CalmingMusicView: View {
                         RoundedRectangle(cornerRadius: 3)
                             .fill(
                                 LinearGradient(
-                                    colors: [.purple, .indigo],
+                                    colors: [PulseraTheme.interactive, PulseraTheme.info],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -156,7 +156,7 @@ private struct WaveformBar: View {
         RoundedRectangle(cornerRadius: 3)
             .fill(
                 LinearGradient(
-                    colors: [.purple, .indigo],
+                    colors: [PulseraTheme.interactive, PulseraTheme.info],
                     startPoint: .bottom,
                     endPoint: .top
                 )
