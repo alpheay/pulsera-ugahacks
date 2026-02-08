@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,29 +9,17 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import {
-  FAMILY_MEMBERS,
-  simulateLocationUpdate,
   timeAgo,
   getStatusColor,
   getBatteryColor,
-  type MemberLocation,
 } from "@/lib/simulatedData";
+import { useMembersStore } from "@/lib/membersStore";
 import GlassCard from "@/components/GlassCard";
 import { glass } from "@/lib/theme";
 
 export default function MemberDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [member, setMember] = useState<MemberLocation | null>(
-    FAMILY_MEMBERS.find((m) => m.id === id) || null
-  );
-
-  useEffect(() => {
-    if (!member) return;
-    const interval = setInterval(() => {
-      setMember((prev) => (prev ? simulateLocationUpdate(prev) : null));
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [member?.id]);
+  const member = useMembersStore((s) => s.members.find((m) => m.id === id) ?? null);
 
   const ringScale = useSharedValue(1);
   useEffect(() => {
@@ -56,7 +44,7 @@ export default function MemberDetailScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: "#0a0a0a" }}
-      contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+      contentContainerStyle={{ padding: 20, paddingTop: 100, paddingBottom: 40 }}
     >
       {/* Pulse ring + avatar */}
       <View style={{ alignItems: "center", marginBottom: 24 }}>

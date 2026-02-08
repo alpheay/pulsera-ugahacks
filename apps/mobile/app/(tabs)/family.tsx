@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect } from "react";
 import { View, Text, ScrollView, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -10,8 +10,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import {
-  FAMILY_MEMBERS,
-  simulateLocationUpdate,
   timeAgo,
   getStatusColor,
   getBatteryColor,
@@ -19,62 +17,36 @@ import {
 } from "@/lib/simulatedData";
 import {
   type Episode,
-  createEpisode,
-  simulateEpisodeProgression,
-  generatePresageData,
   getPhaseLabel,
   getPhaseColor,
 } from "@/lib/episodeSimulator";
+import { useMembersStore } from "@/lib/membersStore";
 import GlassCard from "@/components/GlassCard";
 import { glass } from "@/lib/theme";
 
 export default function FamilyScreen() {
   const router = useRouter();
-  const [members, setMembers] = useState<MemberLocation[]>(FAMILY_MEMBERS);
-  const [demoEpisode, setDemoEpisode] = useState<Episode | null>(null);
+  const members = useMembersStore((s) => s.members);
+  const demoEpisode = useMembersStore((s) => s.demoEpisode);
+  const startTick = useMembersStore((s) => s.startTick);
+  const triggerDemoEpisode = useMembersStore((s) => s.triggerDemoEpisode);
+  const progressDemoEpisode = useMembersStore((s) => s.progressDemoEpisode);
 
-  const [demoMemberId, setDemoMemberId] = useState<string | null>(null);
-
+  // Start the shared simulation tick
   useEffect(() => {
-    const interval = setInterval(() => {
-      setMembers((prev) =>
-        prev.map((m) => {
-          const updated = simulateLocationUpdate(m);
-          if (m.id === demoMemberId && demoEpisode) {
-            return { ...updated, activeEpisode: demoEpisode };
-          }
-          return { ...updated, activeEpisode: undefined };
-        })
-      );
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [demoEpisode, demoMemberId]);
+    startTick();
+  }, []);
 
-  // Auto-trigger demo episode for a random watch-wearing member after 5 seconds
+  // Auto-trigger demo episode after 5 seconds
   useEffect(() => {
-    const watchMembers = FAMILY_MEMBERS.filter((m) => m.isWearingWatch && m.id !== "me");
-    const member = watchMembers[Math.floor(Math.random() * watchMembers.length)];
-    const timer = setTimeout(() => {
-      const hr = 130 + Math.floor(Math.random() * 25);
-      const hrv = 18 + Math.floor(Math.random() * 10);
-      const episode = createEpisode(member.id, member.name, hr, hrv);
-      setDemoMemberId(member.id);
-      setDemoEpisode(episode);
-    }, 5000);
+    const timer = setTimeout(triggerDemoEpisode, 5000);
     return () => clearTimeout(timer);
   }, []);
 
   // Auto-progress demo episode
   useEffect(() => {
     if (!demoEpisode || demoEpisode.phase === "resolved") return;
-
-    const timer = setTimeout(() => {
-      let updated = simulateEpisodeProgression(demoEpisode);
-      if (updated.phase === "visual_check" && !updated.presageData) {
-        updated = { ...updated, presageData: generatePresageData(true) };
-      }
-      setDemoEpisode(updated);
-    }, 6000);
+    const timer = setTimeout(progressDemoEpisode, 6000);
     return () => clearTimeout(timer);
   }, [demoEpisode]);
 
@@ -143,8 +115,8 @@ export default function FamilyScreen() {
         </View>
       </GlassCard>
 
-      {/* Member cards */}
-      {members.map((member) => (
+      {/* Member cards — sorted by highest heart rate */}
+      {[...members].sort((a, b) => b.health.heartRate - a.health.heartRate).map((member) => (
         <MemberCard
           key={member.id}
           member={member}
