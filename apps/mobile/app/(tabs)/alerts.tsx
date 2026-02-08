@@ -74,7 +74,7 @@ export default function AlertsScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: "#0a0a0a" }}
-      contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 40 }}
+      contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 100 }}
     >
       {/* Header */}
       <View

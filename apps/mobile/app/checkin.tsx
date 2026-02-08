@@ -10,6 +10,8 @@ import Animated, {
   withSequence,
 } from "react-native-reanimated";
 import { generatePresageData, type PresageResult } from "@/lib/episodeSimulator";
+import GlassCard from "@/components/GlassCard";
+import { glass } from "@/lib/theme";
 
 type CheckInStage = "ready" | "scanning" | "analyzing" | "complete";
 
@@ -70,15 +72,15 @@ export default function CheckInScreen() {
   const expressionColor = (expr: string) => {
     switch (expr) {
       case "calm":
-        return "#10B981";
+        return "#00bc7d";
       case "confused":
-        return "#F59E0B";
+        return "#fe9a00";
       case "distressed":
-        return "#F97316";
+        return "#fe9a00";
       case "pain":
-        return "#EF4444";
+        return "#ff6467";
       default:
-        return "#94A3B8";
+        return "#a1a1a1";
     }
   };
 
@@ -86,17 +88,17 @@ export default function CheckInScreen() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#0F172A",
+        backgroundColor: "#0a0a0a",
         paddingTop: 60,
         paddingHorizontal: 24,
       }}
     >
       {/* Header */}
       <View style={{ alignItems: "center", marginBottom: 30 }}>
-        <Text style={{ color: "#E2E8F0", fontSize: 24, fontWeight: "800" }}>
+        <Text style={{ color: "#fafafa", fontSize: 24, fontWeight: "800" }}>
           Quick Check-In
         </Text>
-        <Text style={{ color: "#94A3B8", fontSize: 13, marginTop: 4 }}>
+        <Text style={{ color: "#a1a1a1", fontSize: 13, marginTop: 4 }}>
           A brief visual wellness check
         </Text>
       </View>
@@ -104,14 +106,14 @@ export default function CheckInScreen() {
       {/* Camera simulation */}
       <View
         style={{
-          backgroundColor: "#0D1117",
+          backgroundColor: "#050505",
           borderRadius: 20,
           height: 320,
           alignItems: "center",
           justifyContent: "center",
           marginBottom: 24,
           borderWidth: 1,
-          borderColor: stage === "scanning" ? "#06B6D4" : "#334155",
+          borderColor: stage === "scanning" ? "#1447e6" : glass.border,
           overflow: "hidden",
         }}
       >
@@ -124,7 +126,7 @@ export default function CheckInScreen() {
               borderRadius: 70,
               borderWidth: 2,
               borderColor:
-                stage === "scanning" ? "#06B6D4" : "#334155",
+                stage === "scanning" ? "#1447e6" : glass.border,
               borderStyle: "dashed",
               alignItems: "center",
               justifyContent: "center",
@@ -133,7 +135,7 @@ export default function CheckInScreen() {
             <Ionicons
               name="person"
               size={60}
-              color={stage === "scanning" ? "#06B6D4" : "#4A5568"}
+              color={stage === "scanning" ? "#1447e6" : "#737373"}
             />
           </View>
         </Animated.View>
@@ -151,7 +153,7 @@ export default function CheckInScreen() {
             <View
               style={{
                 height: 4,
-                backgroundColor: "#1E293B",
+                backgroundColor: "#171717",
                 borderRadius: 2,
                 overflow: "hidden",
               }}
@@ -160,14 +162,14 @@ export default function CheckInScreen() {
                 style={{
                   width: `${progress}%`,
                   height: "100%",
-                  backgroundColor: "#06B6D4",
+                  backgroundColor: "#1447e6",
                   borderRadius: 2,
                 }}
               />
             </View>
             <Text
               style={{
-                color: "#06B6D4",
+                color: "#1447e6",
                 fontSize: 11,
                 textAlign: "center",
                 marginTop: 6,
@@ -185,10 +187,10 @@ export default function CheckInScreen() {
               alignItems: "center",
             }}
           >
-            <Ionicons name="analytics" size={36} color="#F59E0B" />
+            <Ionicons name="analytics" size={36} color="#fe9a00" />
             <Text
               style={{
-                color: "#F59E0B",
+                color: "#fe9a00",
                 fontSize: 13,
                 fontWeight: "600",
                 marginTop: 8,
@@ -205,7 +207,7 @@ export default function CheckInScreen() {
         <Pressable
           onPress={startScan}
           style={{
-            backgroundColor: "#06B6D4",
+            backgroundColor: "#1447e6",
             borderRadius: 14,
             padding: 16,
             alignItems: "center",
@@ -231,7 +233,7 @@ export default function CheckInScreen() {
         <View>
           <Text
             style={{
-              color: "#10B981",
+              color: "#00bc7d",
               fontSize: 14,
               fontWeight: "700",
               textAlign: "center",
@@ -241,26 +243,20 @@ export default function CheckInScreen() {
             Analysis Complete
           </Text>
 
-          <View
-            style={{
-              backgroundColor: "#1E293B",
-              borderRadius: 14,
-              padding: 16,
-            }}
-          >
+          <GlassCard padding={16} borderRadius={glass.borderRadiusSmall}>
             {/* Readings */}
             <View style={{ gap: 10 }}>
               <ReadingRow
                 icon="heart"
                 label="Visual Heart Rate"
                 value={`${result.visualHeartRate} BPM`}
-                color="#EF4444"
+                color="#ff6467"
               />
               <ReadingRow
                 icon="cloud"
                 label="Breathing Rate"
                 value={`${result.breathingRate} /min`}
-                color="#3B82F6"
+                color="#1447e6"
               />
               <ReadingRow
                 icon="happy"
@@ -274,23 +270,23 @@ export default function CheckInScreen() {
                 value={result.eyeResponsiveness}
                 color={
                   result.eyeResponsiveness === "normal"
-                    ? "#10B981"
-                    : "#F97316"
+                    ? "#00bc7d"
+                    : "#fe9a00"
                 }
               />
               <ReadingRow
                 icon="shield-checkmark"
                 label="Confidence"
                 value={`${(result.confidenceScore * 100).toFixed(0)}%`}
-                color="#F59E0B"
+                color="#fe9a00"
               />
             </View>
-          </View>
+          </GlassCard>
 
           <Pressable
             onPress={() => router.back()}
             style={{
-              backgroundColor: "#10B981",
+              backgroundColor: "#00bc7d",
               borderRadius: 14,
               padding: 14,
               alignItems: "center",
@@ -330,7 +326,7 @@ function ReadingRow({
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <Ionicons name={icon as any} size={16} color={color} />
-        <Text style={{ color: "#94A3B8", fontSize: 13 }}>{label}</Text>
+        <Text style={{ color: "#a1a1a1", fontSize: 13 }}>{label}</Text>
       </View>
       <Text style={{ color, fontSize: 13, fontWeight: "600" }}>{value}</Text>
     </View>

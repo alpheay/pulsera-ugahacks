@@ -7,6 +7,8 @@ import {
   getPhaseLabel,
   getPhaseColor,
 } from "@/lib/episodeSimulator";
+import GlassCard from "@/components/GlassCard";
+import { glass } from "@/lib/theme";
 
 const ANOMALY_LABELS: Record<string, string> = {
   sustained_elevated_hr: "Elevated HR",
@@ -78,15 +80,12 @@ export default function EpisodeDetailScreen() {
       contentContainerStyle={{ padding: 16, paddingTop: 20, paddingBottom: 40 }}
     >
       {/* Episode Header */}
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 16,
-          padding: 18,
-          marginBottom: 16,
-          borderWidth: 1,
-          borderColor: phaseColor + "40",
-        }}
+      <GlassCard
+        padding={18}
+        borderRadius={16}
+        borderColor={phaseColor + "40"}
+        glow={isActive}
+        style={{ marginBottom: 16 }}
       >
         <View
           style={{
@@ -142,18 +141,11 @@ export default function EpisodeDetailScreen() {
             )}
           </View>
         </View>
-      </View>
+      </GlassCard>
 
       {/* Watch Biometrics */}
       <SectionHeader title="Watch Biometrics" icon="watch" color="#fe9a00" />
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 14,
-          padding: 16,
-          marginBottom: 16,
-        }}
-      >
+      <GlassCard padding={16} borderRadius={glass.borderRadiusSmall} style={{ marginBottom: 16 }}>
         <View style={{ flexDirection: "row", gap: 20 }}>
           <StatBox
             label="Heart Rate"
@@ -174,7 +166,7 @@ export default function EpisodeDetailScreen() {
             color="#1447e6"
           />
         </View>
-      </View>
+      </GlassCard>
 
       {/* Presage Data */}
       {episode.presageData && (
@@ -184,14 +176,7 @@ export default function EpisodeDetailScreen() {
             icon="camera"
             color="#1447e6"
           />
-          <View
-            style={{
-              backgroundColor: "#171717",
-              borderRadius: 14,
-              padding: 16,
-              marginBottom: 16,
-            }}
-          >
+          <GlassCard padding={16} borderRadius={glass.borderRadiusSmall} style={{ marginBottom: 16 }}>
             <View style={{ gap: 8 }}>
               <DataRow
                 label="Visual HR"
@@ -227,7 +212,7 @@ export default function EpisodeDetailScreen() {
                 color="#fe9a00"
               />
             </View>
-          </View>
+          </GlassCard>
         </>
       )}
 
@@ -239,20 +224,17 @@ export default function EpisodeDetailScreen() {
             icon="git-merge"
             color="#ad46ff"
           />
-          <View
-            style={{
-              backgroundColor: "#171717",
-              borderRadius: 14,
-              padding: 16,
-              marginBottom: 16,
-              borderWidth: 1,
-              borderColor:
-                episode.fusionResult.decision === "escalate"
-                  ? "#ff646740"
-                  : episode.fusionResult.decision === "false_positive"
-                    ? "#00bc7d40"
-                    : "#fe9a0040",
-            }}
+          <GlassCard
+            padding={16}
+            borderRadius={glass.borderRadiusSmall}
+            borderColor={
+              episode.fusionResult.decision === "escalate"
+                ? "#ff646740"
+                : episode.fusionResult.decision === "false_positive"
+                  ? "#00bc7d40"
+                  : "#fe9a0040"
+            }
+            style={{ marginBottom: 16 }}
           >
             <View
               style={{
@@ -326,20 +308,13 @@ export default function EpisodeDetailScreen() {
             >
               {episode.fusionResult.explanation}
             </Text>
-          </View>
+          </GlassCard>
         </>
       )}
 
       {/* Timeline */}
       <SectionHeader title="Timeline" icon="time" color="#a1a1a1" />
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 14,
-          padding: 16,
-          marginBottom: 16,
-        }}
-      >
+      <GlassCard padding={16} borderRadius={glass.borderRadiusSmall} style={{ marginBottom: 16 }}>
         {episode.timeline.map((entry, index) => (
           <View
             key={index}
@@ -389,7 +364,7 @@ export default function EpisodeDetailScreen() {
             </View>
           </View>
         ))}
-      </View>
+      </GlassCard>
 
       {/* Medical Glossary */}
       <GlossarySection />
@@ -586,15 +561,8 @@ function GlossarySection() {
       </Pressable>
 
       {expanded && (
-        <View
-          style={{
-            backgroundColor: "#171717",
-            borderRadius: 14,
-            padding: 16,
-            marginBottom: 16,
-            gap: 12,
-          }}
-        >
+        <GlassCard padding={16} borderRadius={glass.borderRadiusSmall} style={{ marginBottom: 16 }}>
+          <View style={{ gap: 12 }}>
           {MEDICAL_GLOSSARY.map((item) => (
             <View key={item.term}>
               <Text
@@ -618,7 +586,8 @@ function GlossarySection() {
               </Text>
             </View>
           ))}
-        </View>
+          </View>
+        </GlassCard>
       )}
     </>
   );
