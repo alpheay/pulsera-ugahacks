@@ -16,14 +16,13 @@ struct BreathingView: View {
 
     var body: some View {
         ZStack {
-            // Background
-            Color.black.ignoresSafeArea()
+            PulseraTheme.background.ignoresSafeArea()
 
             VStack(spacing: 10) {
                 // Remaining time
                 Text(timeRemaining)
                     .font(.system(size: 12, weight: .medium, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(PulseraTheme.mutedForeground)
 
                 Spacer()
 
@@ -33,7 +32,7 @@ struct BreathingView: View {
                     Circle()
                         .fill(
                             RadialGradient(
-                                colors: [breatheIn ? .cyan.opacity(0.3) : .blue.opacity(0.2), .clear],
+                                colors: [breatheIn ? PulseraTheme.accent.opacity(0.3) : PulseraTheme.accent.opacity(0.15), .clear],
                                 center: .center,
                                 startRadius: 20,
                                 endRadius: 80
@@ -47,8 +46,8 @@ struct BreathingView: View {
                         .fill(
                             LinearGradient(
                                 colors: breatheIn
-                                    ? [Color.cyan.opacity(0.7), Color.blue.opacity(0.5)]
-                                    : [Color.blue.opacity(0.5), Color.indigo.opacity(0.4)],
+                                    ? [PulseraTheme.accent.opacity(0.7), PulseraTheme.accent.opacity(0.4)]
+                                    : [PulseraTheme.accent.opacity(0.4), PulseraTheme.accent.opacity(0.25)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -61,28 +60,29 @@ struct BreathingView: View {
                 // Instruction text
                 Text(breatheIn ? "Breathe in..." : "Breathe out...")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(breatheIn ? .cyan : .blue)
+                    .foregroundColor(PulseraTheme.accent)
                     .animation(.easeInOut(duration: 0.5), value: breatheIn)
 
                 Text("You're doing great")
                     .font(.system(size: 11, weight: .regular, design: .rounded))
-                    .foregroundColor(.gray.opacity(0.7))
+                    .foregroundColor(PulseraTheme.mutedForeground.opacity(0.7))
 
                 Spacer()
 
                 // Heart rate pill
                 if let hr = healthKitManager.latestData?.heartRate {
                     HeartRatePill(heartRate: hr)
+                        .padding(.bottom, 4)
                 }
 
                 // ElevenLabs status
                 HStack(spacing: 4) {
                     Circle()
-                        .fill(elevenLabsManager.isConnected ? .green : .gray)
+                        .fill(elevenLabsManager.isConnected ? PulseraTheme.accent : PulseraTheme.mutedForeground)
                         .frame(width: 6, height: 6)
                     Text(elevenLabsManager.isConnected ? "Voice active" : "Connecting...")
                         .font(.system(size: 9, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(PulseraTheme.mutedForeground)
                 }
 
                 // Progress bar
@@ -93,13 +93,7 @@ struct BreathingView: View {
                             .frame(height: 4)
 
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(
-                                LinearGradient(
-                                    colors: [.cyan, .blue],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                            .fill(PulseraTheme.accent)
                             .frame(width: geo.size.width * episodeManager.breathingProgress, height: 4)
                             .animation(.linear(duration: 0.5), value: episodeManager.breathingProgress)
                     }
@@ -134,6 +128,7 @@ struct BreathingView: View {
         // Inhale
         breatheIn = true
         hapticManager.playBreathing(phase: .breatheIn)
+        elevenLabsManager.sendBreathingCue(breatheIn: true)
 
         withAnimation(.easeInOut(duration: inhaleTime)) {
             circleScale = 1.0
@@ -146,6 +141,7 @@ struct BreathingView: View {
             // Exhale
             breatheIn = false
             hapticManager.playBreathing(phase: .breatheOut)
+            elevenLabsManager.sendBreathingCue(breatheIn: false)
 
             withAnimation(.easeInOut(duration: exhaleTime)) {
                 circleScale = 0.6

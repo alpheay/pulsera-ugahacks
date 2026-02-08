@@ -7,7 +7,7 @@ struct PairingView: View {
     @State private var authToken: String = ""
     @State private var showSavedConfirmation: Bool = false
 
-    private let amberColor = Color(red: 245/255, green: 158/255, blue: 11/255)
+    private let amberColor = PulseraTheme.accent
 
     var body: some View {
         ScrollView {
@@ -139,10 +139,10 @@ struct PairingView: View {
 
     private var stateColor: Color {
         switch webSocketManager.connectionState {
-        case .connected:    return .green
-        case .connecting:   return amberColor
-        case .disconnected: return .gray
-        case .error:        return .red
+        case .connected:    return PulseraTheme.safe
+        case .connecting:   return PulseraTheme.warning
+        case .disconnected: return PulseraTheme.mutedForeground
+        case .error:        return PulseraTheme.danger
         }
     }
 
