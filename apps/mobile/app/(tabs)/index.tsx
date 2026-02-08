@@ -6,24 +6,16 @@ import { useRouter } from "expo-router";
 import GlassBlurCard from "@/components/GlassBlurCard";
 import { glass } from "@/lib/theme";
 import {
-  FAMILY_MEMBERS,
   SAVED_PLACES,
   MAP_CENTER,
-  simulateLocationUpdate,
-  timeAgo,
   getStatusColor,
-  getBatteryColor,
-  attachEpisodeToMember,
   type MemberLocation,
 } from "@/lib/simulatedData";
 import {
   getPhaseLabel,
   getPhaseColor,
-  createEpisode,
-  simulateEpisodeProgression,
-  generatePresageData,
-  type Episode,
 } from "@/lib/episodeSimulator";
+import { useMembersStore } from "@/lib/membersStore";
 
 const { width } = Dimensions.get("window");
 
@@ -59,60 +51,30 @@ function PulsingRing({ color, size }: { color: string; size: number }) {
 export default function MapScreen() {
   const router = useRouter();
   const mapRef = useRef<MapView>(null);
-  const [members, setMembers] = useState<MemberLocation[]>(FAMILY_MEMBERS);
+  const members = useMembersStore((s) => s.members);
+  const startTick = useMembersStore((s) => s.startTick);
+  const triggerDemoEpisode = useMembersStore((s) => s.triggerDemoEpisode);
+  const demoEpisode = useMembersStore((s) => s.demoEpisode);
+  const progressDemoEpisode = useMembersStore((s) => s.progressDemoEpisode);
   const [selectedMember, setSelectedMember] = useState<MemberLocation | null>(null);
-  const [demoEpisode, setDemoEpisode] = useState<Episode | null>(null);
 
-  // Start a demo episode on Carlos after 5s
+  // Start the shared simulation tick
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const carlos = FAMILY_MEMBERS.find((m) => m.id === "carlos");
-      if (carlos) {
-        const ep = createEpisode("carlos", "Carlos", 142, 28);
-        setDemoEpisode(ep);
-      }
-    }, 5000);
+    startTick();
+  }, []);
+
+  // Auto-trigger demo episode after 5 seconds
+  useEffect(() => {
+    const timer = setTimeout(triggerDemoEpisode, 5000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Auto-progress the demo episode
+  // Auto-progress demo episode
   useEffect(() => {
     if (!demoEpisode || demoEpisode.phase === "resolved") return;
-
-    const timer = setTimeout(() => {
-      let next = simulateEpisodeProgression(demoEpisode);
-      // Add presage data when entering visual_check
-      if (next.phase === "visual_check" && !next.presageData) {
-        next = { ...next, presageData: generatePresageData(true) };
-      }
-      setDemoEpisode(next);
-    }, 8000);
+    const timer = setTimeout(progressDemoEpisode, 8000);
     return () => clearTimeout(timer);
   }, [demoEpisode]);
-
-  // Attach episode to member in members list
-  useEffect(() => {
-    setMembers((prev) =>
-      prev.map((m) => {
-        if (m.id === "carlos" && demoEpisode && demoEpisode.phase !== "resolved") {
-          return attachEpisodeToMember(m, demoEpisode);
-        }
-        if (m.id === "carlos" && (!demoEpisode || demoEpisode.phase === "resolved")) {
-          const { activeEpisode: _, ...rest } = m;
-          return rest as MemberLocation;
-        }
-        return m;
-      })
-    );
-  }, [demoEpisode]);
-
-  // Simulate live location updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMembers((prev) => prev.map(simulateLocationUpdate));
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
 
   const centerOnMember = (member: MemberLocation) => {
     setSelectedMember(member);

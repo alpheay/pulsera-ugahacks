@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { View, Text, ScrollView } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { View, Text, ScrollView, Pressable } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -13,11 +13,16 @@ import {
   getStatusColor,
   getBatteryColor,
 } from "@/lib/simulatedData";
+import {
+  getPhaseLabel,
+  getPhaseColor,
+} from "@/lib/episodeSimulator";
 import { useMembersStore } from "@/lib/membersStore";
 import GlassCard from "@/components/GlassCard";
 import { glass } from "@/lib/theme";
 
 export default function MemberDetailScreen() {
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const member = useMembersStore((s) => s.members.find((m) => m.id === id) ?? null);
 
@@ -85,6 +90,9 @@ export default function MemberDetailScreen() {
         </Text>
         <Text style={{ color: "#a1a1a1", fontSize: 14 }}>
           {member.relation} | {member.locationName}
+        </Text>
+        <Text style={{ color: "#737373", fontSize: 11, marginTop: 4 }}>
+          Updated {timeAgo(member.lastUpdated)}
         </Text>
         <View
           style={{
@@ -158,6 +166,89 @@ export default function MemberDetailScreen() {
           </Text>
         </GlassCard>
       )}
+
+      {/* Episode Alert Banner */}
+      {member.activeEpisode && member.activeEpisode.phase !== "resolved" && (() => {
+        const episode = member.activeEpisode;
+        const episodePhaseColor = getPhaseColor(episode.phase);
+        return (
+          <GlassCard
+            padding={14}
+            borderRadius={12}
+            borderColor={episodePhaseColor + "40"}
+            glow
+            style={{ marginBottom: 20 }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                <Ionicons name="alert-circle" size={18} color={episodePhaseColor} />
+                <View>
+                  <Text style={{ color: episodePhaseColor, fontSize: 14, fontWeight: "700" }}>
+                    {getPhaseLabel(episode.phase)}
+                  </Text>
+                  <Text style={{ color: "#a1a1a1", fontSize: 11, marginTop: 2 }}>
+                    Severity: {(episode.severityScore * 100).toFixed(0)}%
+                  </Text>
+                </View>
+              </View>
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/episode/[id]",
+                    params: { id: episode.id, data: JSON.stringify(episode) },
+                  })
+                }
+                style={{
+                  backgroundColor: episodePhaseColor + "20",
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 8,
+                }}
+              >
+                <Text style={{ color: episodePhaseColor, fontSize: 12, fontWeight: "600" }}>
+                  View Details
+                </Text>
+              </Pressable>
+            </View>
+
+            {/* Watch biometrics from episode trigger */}
+            <View style={{ flexDirection: "row", gap: 16, marginTop: 12 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                <Ionicons name="heart" size={14} color="#ff6467" />
+                <Text style={{ color: "#ff6467", fontWeight: "700", fontSize: 14 }}>
+                  {episode.triggerData.heartRate}
+                </Text>
+                <Text style={{ color: "#737373", fontSize: 10 }}>BPM</Text>
+              </View>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+                <Ionicons name="pulse" size={14} color="#fe9a00" />
+                <Text style={{ color: "#fe9a00", fontWeight: "600", fontSize: 13 }}>
+                  {Number(episode.triggerData.hrv).toFixed(1)}
+                </Text>
+                <Text style={{ color: "#737373", fontSize: 10 }}>HRV</Text>
+              </View>
+            </View>
+
+            {/* Check-In button during visual_check phase */}
+            {episode.phase === "visual_check" && (
+              <Pressable
+                onPress={() => router.push("/checkin")}
+                style={{
+                  backgroundColor: "#1447e6",
+                  borderRadius: 8,
+                  padding: 12,
+                  alignItems: "center",
+                  marginTop: 10,
+                }}
+              >
+                <Text style={{ color: "#FFFFFF", fontSize: 13, fontWeight: "700" }}>
+                  Check In Requested
+                </Text>
+              </Pressable>
+            )}
+          </GlassCard>
+        );
+      })()}
 
       {/* Location history */}
       <Text style={{ color: "#fafafa", fontWeight: "700", fontSize: 18, marginBottom: 12 }}>
