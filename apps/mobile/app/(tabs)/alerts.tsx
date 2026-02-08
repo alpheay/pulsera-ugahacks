@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import EpisodeCard from "@/components/EpisodeCard";
+import { FAMILY_MEMBERS } from "@/lib/simulatedData";
 import {
   type Episode,
   createEpisode,
@@ -10,15 +11,20 @@ import {
   generatePresageData,
 } from "@/lib/episodeSimulator";
 
+const WATCH_MEMBERS = FAMILY_MEMBERS.filter((m) => m.isWearingWatch && m.id !== "me");
+
 export default function AlertsScreen() {
   const router = useRouter();
   const [activeEpisodes, setActiveEpisodes] = useState<Episode[]>([]);
   const [resolvedEpisodes, setResolvedEpisodes] = useState<Episode[]>([]);
 
-  // Auto-trigger a demo episode on mount
+  // Auto-trigger a demo episode for a random member on mount
   useEffect(() => {
     const timer = setTimeout(() => {
-      const episode = createEpisode("carlos", "Carlos", 142, 22);
+      const member = WATCH_MEMBERS[Math.floor(Math.random() * WATCH_MEMBERS.length)];
+      const hr = 130 + Math.floor(Math.random() * 25);
+      const hrv = 18 + Math.floor(Math.random() * 10);
+      const episode = createEpisode(member.id, member.name, hr, hrv);
       setActiveEpisodes([episode]);
     }, 2000);
     return () => clearTimeout(timer);
@@ -61,18 +67,13 @@ export default function AlertsScreen() {
     return () => clearInterval(interval);
   }, [activeEpisodes.length]);
 
-  const triggerDemoEpisode = useCallback(() => {
-    const episode = createEpisode("carlos", "Carlos", 148, 18);
-    setActiveEpisodes((prev) => [...prev, episode]);
-  }, []);
-
   const activeCount = activeEpisodes.filter(
     (e) => e.phase !== "resolved"
   ).length;
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: "#0F172A" }}
+      style={{ flex: 1, backgroundColor: "#0a0a0a" }}
       contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 40 }}
     >
       {/* Header */}
@@ -87,14 +88,14 @@ export default function AlertsScreen() {
         <View>
           <Text
             style={{
-              color: "#E2E8F0",
+              color: "#fafafa",
               fontSize: 28,
               fontWeight: "800",
             }}
           >
             Alerts
           </Text>
-          <Text style={{ color: "#94A3B8", fontSize: 14, marginTop: 2 }}>
+          <Text style={{ color: "#a1a1a1", fontSize: 14, marginTop: 2 }}>
             Detection & response episodes
           </Text>
         </View>
@@ -103,7 +104,7 @@ export default function AlertsScreen() {
         {activeCount > 0 && (
           <View
             style={{
-              backgroundColor: "#EF4444",
+              backgroundColor: "#ff6467",
               borderRadius: 16,
               paddingHorizontal: 12,
               paddingVertical: 6,
@@ -125,7 +126,7 @@ export default function AlertsScreen() {
         <View style={{ marginBottom: 24 }}>
           <Text
             style={{
-              color: "#EF4444",
+              color: "#ff6467",
               fontSize: 13,
               fontWeight: "700",
               marginBottom: 10,
@@ -157,10 +158,10 @@ export default function AlertsScreen() {
             paddingVertical: 40,
           }}
         >
-          <Ionicons name="shield-checkmark" size={48} color="#10B981" />
+          <Ionicons name="shield-checkmark" size={48} color="#00bc7d" />
           <Text
             style={{
-              color: "#E2E8F0",
+              color: "#fafafa",
               fontSize: 16,
               fontWeight: "700",
               marginTop: 12,
@@ -170,44 +171,23 @@ export default function AlertsScreen() {
           </Text>
           <Text
             style={{
-              color: "#94A3B8",
+              color: "#a1a1a1",
               fontSize: 13,
               textAlign: "center",
               marginTop: 6,
             }}
           >
-            No active episodes. Your family is safe.
+            No active episodes. Your ring is safe.
           </Text>
         </View>
       )}
-
-      {/* Demo button */}
-      <Pressable
-        onPress={triggerDemoEpisode}
-        style={{
-          backgroundColor: "#F59E0B20",
-          borderRadius: 12,
-          padding: 14,
-          alignItems: "center",
-          marginBottom: 24,
-          borderWidth: 1,
-          borderColor: "#F59E0B40",
-        }}
-      >
-        <Text style={{ color: "#F59E0B", fontWeight: "700", fontSize: 14 }}>
-          Trigger Demo Episode
-        </Text>
-        <Text style={{ color: "#94A3B8", fontSize: 11, marginTop: 2 }}>
-          Simulates a detection event for Carlos
-        </Text>
-      </Pressable>
 
       {/* Resolved Episodes */}
       {resolvedEpisodes.length > 0 && (
         <View>
           <Text
             style={{
-              color: "#94A3B8",
+              color: "#a1a1a1",
               fontSize: 13,
               fontWeight: "700",
               marginBottom: 10,

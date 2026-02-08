@@ -43,8 +43,8 @@ export default function MemberDetailScreen() {
 
   if (!member) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#0F172A", alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ color: "#94A3B8" }}>Member not found</Text>
+      <View style={{ flex: 1, backgroundColor: "#0a0a0a", alignItems: "center", justifyContent: "center" }}>
+        <Text style={{ color: "#a1a1a1" }}>Member not found</Text>
       </View>
     );
   }
@@ -53,7 +53,7 @@ export default function MemberDetailScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: "#0F172A" }}
+      style={{ flex: 1, backgroundColor: "#0a0a0a" }}
       contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
     >
       {/* Pulse ring + avatar */}
@@ -90,10 +90,10 @@ export default function MemberDetailScreen() {
           </View>
         </View>
 
-        <Text style={{ color: "#E2E8F0", fontWeight: "800", fontSize: 24, marginTop: 12 }}>
+        <Text style={{ color: "#fafafa", fontWeight: "800", fontSize: 24, marginTop: 12 }}>
           {member.name}
         </Text>
-        <Text style={{ color: "#94A3B8", fontSize: 14 }}>
+        <Text style={{ color: "#a1a1a1", fontSize: 14 }}>
           {member.relation} | {member.locationName}
         </Text>
         <View
@@ -116,35 +116,35 @@ export default function MemberDetailScreen() {
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 20 }}>
           <VitalCard
             icon="heart"
-            iconColor="#EF4444"
+            iconColor="#ff6467"
             label="Heart Rate"
             value={`${member.health.heartRate}`}
             unit="BPM"
           />
           <VitalCard
             icon="pulse"
-            iconColor="#F59E0B"
+            iconColor="#fe9a00"
             label="HRV"
-            value={`${member.health.hrv}`}
+            value={`${Number(member.health.hrv).toFixed(1)}`}
             unit="ms"
           />
           <VitalCard
             icon="thermometer"
-            iconColor="#8B5CF6"
+            iconColor="#ad46ff"
             label="Skin Temp"
             value={member.health.skinTemp.toFixed(1)}
             unit="°C"
           />
           <VitalCard
             icon="footsteps"
-            iconColor="#3B82F6"
+            iconColor="#1447e6"
             label="Steps"
             value={member.health.steps.toLocaleString()}
             unit="today"
           />
           <VitalCard
             icon="analytics"
-            iconColor="#F59E0B"
+            iconColor="#fe9a00"
             label="Anomaly Score"
             value={`${(member.health.anomalyScore * 100).toFixed(0)}%`}
             unit=""
@@ -160,41 +160,41 @@ export default function MemberDetailScreen() {
       ) : (
         <View
           style={{
-            backgroundColor: "#1E293B",
+            backgroundColor: "#171717",
             borderRadius: 16,
             padding: 24,
             alignItems: "center",
             marginBottom: 20,
             borderWidth: 1,
-            borderColor: "#334155",
+            borderColor: "rgba(255, 255, 255, 0.10)",
           }}
         >
-          <Ionicons name="watch-outline" size={40} color="#64748B" />
-          <Text style={{ color: "#94A3B8", fontSize: 14, marginTop: 8 }}>
+          <Ionicons name="watch-outline" size={40} color="#737373" />
+          <Text style={{ color: "#a1a1a1", fontSize: 14, marginTop: 8 }}>
             Watch not connected
           </Text>
-          <Text style={{ color: "#64748B", fontSize: 12, marginTop: 4 }}>
+          <Text style={{ color: "#737373", fontSize: 12, marginTop: 4 }}>
             No health data available
           </Text>
         </View>
       )}
 
       {/* Location history */}
-      <Text style={{ color: "#E2E8F0", fontWeight: "700", fontSize: 18, marginBottom: 12 }}>
+      <Text style={{ color: "#fafafa", fontWeight: "700", fontSize: 18, marginBottom: 12 }}>
         Location History
       </Text>
       <View
         style={{
-          backgroundColor: "#1E293B",
+          backgroundColor: "#171717",
           borderRadius: 16,
           borderWidth: 1,
-          borderColor: "#334155",
+          borderColor: "rgba(255, 255, 255, 0.10)",
           overflow: "hidden",
         }}
       >
         {member.history.map((entry, i) => (
           <View key={i}>
-            {i > 0 && <View style={{ height: 1, backgroundColor: "#334155" }} />}
+            {i > 0 && <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />}
             <View
               style={{
                 flexDirection: "row",
@@ -208,18 +208,18 @@ export default function MemberDetailScreen() {
                   width: 32,
                   height: 32,
                   borderRadius: 16,
-                  backgroundColor: "#F59E0B15",
+                  backgroundColor: "#fe9a0015",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <Ionicons name="location" size={16} color="#F59E0B" />
+                <Ionicons name="location" size={16} color="#fe9a00" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: "#E2E8F0", fontWeight: "600", fontSize: 14 }}>
+                <Text style={{ color: "#fafafa", fontWeight: "600", fontSize: 14 }}>
                   {entry.locationName}
                 </Text>
-                <Text style={{ color: "#64748B", fontSize: 11 }}>
+                <Text style={{ color: "#737373", fontSize: 11 }}>
                   {timeAgo(entry.timestamp)}
                 </Text>
               </View>
@@ -247,19 +247,19 @@ function VitalCard({
   return (
     <View
       style={{
-        backgroundColor: "#1E293B",
+        backgroundColor: "#171717",
         borderRadius: 14,
         padding: 14,
         width: "48%",
         borderWidth: 1,
-        borderColor: "#334155",
+        borderColor: "rgba(255, 255, 255, 0.10)",
       }}
     >
       <Ionicons name={icon} size={18} color={iconColor} />
-      <Text style={{ color: "#64748B", fontSize: 11, marginTop: 6 }}>{label}</Text>
+      <Text style={{ color: "#737373", fontSize: 11, marginTop: 6 }}>{label}</Text>
       <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4, marginTop: 2 }}>
-        <Text style={{ color: "#E2E8F0", fontWeight: "800", fontSize: 22 }}>{value}</Text>
-        {unit ? <Text style={{ color: "#64748B", fontSize: 12 }}>{unit}</Text> : null}
+        <Text style={{ color: "#fafafa", fontWeight: "800", fontSize: 22 }}>{value}</Text>
+        {unit ? <Text style={{ color: "#737373", fontSize: 12 }}>{unit}</Text> : null}
       </View>
     </View>
   );
