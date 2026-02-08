@@ -1,0 +1,420 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA11BB22CC33DD44EE55FF66 /* deep_calm.m4a in Resources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF01 /* deep_calm.m4a */; };
+		AA11BB22CC33DD44EE55FF67 /* ocean_drift.m4a in Resources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF02 /* ocean_drift.m4a */; };
+		AA11BB22CC33DD44EE55FF68 /* starlight.m4a in Resources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF03 /* starlight.m4a */; };
+		13863EECD4A90E1B0184EA02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C966550B3F674C93C72FBB33 /* Assets.xcassets */; };
+		A1B2C3D4E5F60718A1B2C3D4 /* AudioPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C3B2A1E5F60718D4C3B2A1 /* AudioPlayerManager.swift */; };
+		E1A2B3C4D5E6F708E1A2B3C4 /* ElevenLabsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F708F1A2B3C4 /* ElevenLabsManager.swift */; };
+		D1E2F3A4B5C60798D1E2F3A4 /* DemoControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F3A4B5C6D70819E2F3A4B5 /* DemoControlView.swift */; };
+		4A9B199C199A457B95417C2A /* BreathingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13FB9D3148BE288BFECFD52 /* BreathingView.swift */; };
+		B7A1C2D3E4F506789A0B1C2D /* CalmingMusicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F6A7B809102C3D4E5F /* CalmingMusicView.swift */; };
+		53F86A0BCEDE096B018FEFC4 /* PulseRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8375639FC9B56C3C096EC1B /* PulseRingView.swift */; };
+		5F5E969CD263B2B74F597A1B /* EpisodeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */; };
+		668A5C9F8B27375C5CBE10BB /* StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08182F8BC0D082C6C92CD1FC /* StatusView.swift */; };
+		7BF7BF0132B6023BE14EAFC9 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2819C14592F377D43DEA4637 /* HapticManager.swift */; };
+		9044A35B1DF69202FBBD5974 /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C33FC2115C30BF7D7C4617 /* WebSocketManager.swift */; };
+		9045EDD92C04CFA45227DD8D /* PhoneCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A934043D0B18210DD3EB78C3 /* PhoneCheckView.swift */; };
+		B1D0071C04C2F34D419B1129 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334E504B0C0534957C748ADD /* ConnectionState.swift */; };
+		BC36D68D35B390255DF64FF3 /* HeartRateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8C300144655F4CACA3AC10 /* HeartRateView.swift */; };
+		C657803F5D0EB3B71897A36D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A28CF14664F63F4A123F725D /* ContentView.swift */; };
+		DBB0673C4C018E3FE57C465E /* LocalAnomalyDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04B4FA00EAB2DB5FF14F31A2 /* LocalAnomalyDetector.swift */; };
+		E5B740E6459F21D8B3C62761 /* HealthData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 256C13607E6DDBBBE728CCD9 /* HealthData.swift */; };
+		F05D1877FABF44E6A21F1689 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47578671D3677671063AA10 /* HealthKitManager.swift */; };
+		F2363818A4D5F4E99C3577CA /* PulseraWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 668B2E7470760CF6EA562B53 /* PulseraWatchApp.swift */; };
+		F2F859BA6EE4BABE986CC7AD /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1448846B83C8792389BD0C54 /* PairingView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA11BB22CC33DD44EE55FF01 /* deep_calm.m4a */ = {isa = PBXFileReference; lastKnownFileType = audio.m4a; path = deep_calm.m4a; sourceTree = "<group>"; };
+		AA11BB22CC33DD44EE55FF02 /* ocean_drift.m4a */ = {isa = PBXFileReference; lastKnownFileType = audio.m4a; path = ocean_drift.m4a; sourceTree = "<group>"; };
+		AA11BB22CC33DD44EE55FF03 /* starlight.m4a */ = {isa = PBXFileReference; lastKnownFileType = audio.m4a; path = starlight.m4a; sourceTree = "<group>"; };
+		04B4FA00EAB2DB5FF14F31A2 /* LocalAnomalyDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAnomalyDetector.swift; sourceTree = "<group>"; };
+		D4C3B2A1E5F60718D4C3B2A1 /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F708F1A2B3C4 /* ElevenLabsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevenLabsManager.swift; sourceTree = "<group>"; };
+		E2F3A4B5C6D70819E2F3A4B5 /* DemoControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoControlView.swift; sourceTree = "<group>"; };
+		08182F8BC0D082C6C92CD1FC /* StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusView.swift; sourceTree = "<group>"; };
+		C3D4E5F6A7B809102C3D4E5F /* CalmingMusicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalmingMusicView.swift; sourceTree = "<group>"; };
+		1448846B83C8792389BD0C54 /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
+		17C33FC2115C30BF7D7C4617 /* WebSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketManager.swift; sourceTree = "<group>"; };
+		256C13607E6DDBBBE728CCD9 /* HealthData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthData.swift; sourceTree = "<group>"; };
+		2819C14592F377D43DEA4637 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		334E504B0C0534957C748ADD /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
+		6517B27625A62E23DD5DC152 /* Pulsera Watch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Pulsera Watch.entitlements"; sourceTree = "<group>"; };
+		668B2E7470760CF6EA562B53 /* PulseraWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseraWatchApp.swift; sourceTree = "<group>"; };
+		A28CF14664F63F4A123F725D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A8375639FC9B56C3C096EC1B /* PulseRingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseRingView.swift; sourceTree = "<group>"; };
+		A934043D0B18210DD3EB78C3 /* PhoneCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneCheckView.swift; sourceTree = "<group>"; };
+		A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeManager.swift; sourceTree = "<group>"; };
+		C47578671D3677671063AA10 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		C966550B3F674C93C72FBB33 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CDE15FC1FEE7943201479CAA /* Pulsera Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pulsera Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC8C300144655F4CACA3AC10 /* HeartRateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartRateView.swift; sourceTree = "<group>"; };
+		F13FB9D3148BE288BFECFD52 /* BreathingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreathingView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		AA11BB22CC33DD44EE55FF10 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				AA11BB22CC33DD44EE55FF01 /* deep_calm.m4a */,
+				AA11BB22CC33DD44EE55FF02 /* ocean_drift.m4a */,
+				AA11BB22CC33DD44EE55FF03 /* starlight.m4a */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		445C4ECA49724A5BD954B542 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F13FB9D3148BE288BFECFD52 /* BreathingView.swift */,
+				C3D4E5F6A7B809102C3D4E5F /* CalmingMusicView.swift */,
+				E2F3A4B5C6D70819E2F3A4B5 /* DemoControlView.swift */,
+				EC8C300144655F4CACA3AC10 /* HeartRateView.swift */,
+				1448846B83C8792389BD0C54 /* PairingView.swift */,
+				A934043D0B18210DD3EB78C3 /* PhoneCheckView.swift */,
+				A8375639FC9B56C3C096EC1B /* PulseRingView.swift */,
+				08182F8BC0D082C6C92CD1FC /* StatusView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6173995FFB5E5FFB3D883010 /* Pulsera Watch */ = {
+			isa = PBXGroup;
+			children = (
+				C966550B3F674C93C72FBB33 /* Assets.xcassets */,
+				AA11BB22CC33DD44EE55FF10 /* Audio */,
+				A28CF14664F63F4A123F725D /* ContentView.swift */,
+				6517B27625A62E23DD5DC152 /* Pulsera Watch.entitlements */,
+				668B2E7470760CF6EA562B53 /* PulseraWatchApp.swift */,
+				69B9875F87828A746E765BB6 /* Models */,
+				85F59D13215370E94CC82778 /* Services */,
+				445C4ECA49724A5BD954B542 /* Views */,
+			);
+			path = "Pulsera Watch";
+			sourceTree = "<group>";
+		};
+		69B9875F87828A746E765BB6 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				334E504B0C0534957C748ADD /* ConnectionState.swift */,
+				256C13607E6DDBBBE728CCD9 /* HealthData.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		7A77C83F667212610049683A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CDE15FC1FEE7943201479CAA /* Pulsera Watch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		83250C9F21C8FB0E40AAFEC0 = {
+			isa = PBXGroup;
+			children = (
+				6173995FFB5E5FFB3D883010 /* Pulsera Watch */,
+				7A77C83F667212610049683A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		85F59D13215370E94CC82778 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				D4C3B2A1E5F60718D4C3B2A1 /* AudioPlayerManager.swift */,
+				F1A2B3C4D5E6F708F1A2B3C4 /* ElevenLabsManager.swift */,
+				A9C91CBF4FC63AF39AE6E61E /* EpisodeManager.swift */,
+				2819C14592F377D43DEA4637 /* HapticManager.swift */,
+				C47578671D3677671063AA10 /* HealthKitManager.swift */,
+				04B4FA00EAB2DB5FF14F31A2 /* LocalAnomalyDetector.swift */,
+				17C33FC2115C30BF7D7C4617 /* WebSocketManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C6E53A3248CE849000AA136C /* Pulsera Watch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1FF7B7976CB8B6573B3B6DD8 /* Build configuration list for PBXNativeTarget "Pulsera Watch" */;
+			buildPhases = (
+				2F5A90463C670D4898E8A90D /* Sources */,
+				CC95ED5402DAD498B2D3A532 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pulsera Watch";
+			packageProductDependencies = (
+			);
+			productName = "Pulsera Watch";
+			productReference = CDE15FC1FEE7943201479CAA /* Pulsera Watch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		50B0202EACF03AB5AE7DF6E0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					C6E53A3248CE849000AA136C = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = 9572D2A159EB04F6F79A9649 /* Build configuration list for PBXProject "PulseraWatch" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 83250C9F21C8FB0E40AAFEC0;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C6E53A3248CE849000AA136C /* Pulsera Watch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CC95ED5402DAD498B2D3A532 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				13863EECD4A90E1B0184EA02 /* Assets.xcassets in Resources */,
+				AA11BB22CC33DD44EE55FF66 /* deep_calm.m4a in Resources */,
+				AA11BB22CC33DD44EE55FF67 /* ocean_drift.m4a in Resources */,
+				AA11BB22CC33DD44EE55FF68 /* starlight.m4a in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2F5A90463C670D4898E8A90D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F60718A1B2C3D4 /* AudioPlayerManager.swift in Sources */,
+				4A9B199C199A457B95417C2A /* BreathingView.swift in Sources */,
+				E1A2B3C4D5E6F708E1A2B3C4 /* ElevenLabsManager.swift in Sources */,
+				B7A1C2D3E4F506789A0B1C2D /* CalmingMusicView.swift in Sources */,
+				B1D0071C04C2F34D419B1129 /* ConnectionState.swift in Sources */,
+				C657803F5D0EB3B71897A36D /* ContentView.swift in Sources */,
+				D1E2F3A4B5C60798D1E2F3A4 /* DemoControlView.swift in Sources */,
+				5F5E969CD263B2B74F597A1B /* EpisodeManager.swift in Sources */,
+				7BF7BF0132B6023BE14EAFC9 /* HapticManager.swift in Sources */,
+				E5B740E6459F21D8B3C62761 /* HealthData.swift in Sources */,
+				F05D1877FABF44E6A21F1689 /* HealthKitManager.swift in Sources */,
+				BC36D68D35B390255DF64FF3 /* HeartRateView.swift in Sources */,
+				DBB0673C4C018E3FE57C465E /* LocalAnomalyDetector.swift in Sources */,
+				F2F859BA6EE4BABE986CC7AD /* PairingView.swift in Sources */,
+				9045EDD92C04CFA45227DD8D /* PhoneCheckView.swift in Sources */,
+				53F86A0BCEDE096B018FEFC4 /* PulseRingView.swift in Sources */,
+				F2363818A4D5F4E99C3577CA /* PulseraWatchApp.swift in Sources */,
+				668A5C9F8B27375C5CBE10BB /* StatusView.swift in Sources */,
+				9044A35B1DF69202FBBD5974 /* WebSocketManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		7E7ECCCF523441107917E2B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		C2C2B316E79DE1019F25049A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		DCEC610C4D87BA260659C446 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Pulsera Watch/Pulsera Watch.entitlements";
+				INFOPLIST_FILE = "Pulsera Watch/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pulsera.watchapp;
+				PRODUCT_NAME = "Pulsera Watch";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		EE9EB2B90472D309614CF58E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Pulsera Watch/Pulsera Watch.entitlements";
+				INFOPLIST_FILE = "Pulsera Watch/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pulsera.watchapp;
+				PRODUCT_NAME = "Pulsera Watch";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1FF7B7976CB8B6573B3B6DD8 /* Build configuration list for PBXNativeTarget "Pulsera Watch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EE9EB2B90472D309614CF58E /* Debug */,
+				DCEC610C4D87BA260659C446 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9572D2A159EB04F6F79A9649 /* Build configuration list for PBXProject "PulseraWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2C2B316E79DE1019F25049A /* Debug */,
+				7E7ECCCF523441107917E2B3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 50B0202EACF03AB5AE7DF6E0 /* Project object */;
+}
