@@ -1,0 +1,249 @@
+import SwiftUI
+
+struct DemoControlView: View {
+    @EnvironmentObject var healthKitManager: HealthKitManager
+    @EnvironmentObject var webSocketManager: WebSocketManager
+    @EnvironmentObject var episodeManager: EpisodeManager
+    @EnvironmentObject var hapticManager: HapticManager
+    @EnvironmentObject var elevenLabsManager: ElevenLabsManager
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                headerSection
+                healthDataSection
+                episodeControlsSection
+                connectionSection
+                statusSection
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 12)
+        }
+    }
+
+    // MARK: - Header
+
+    private var headerSection: some View {
+        VStack(spacing: 2) {
+            Image(systemName: "hammer.fill")
+                .font(.system(size: 18))
+                .foregroundColor(.orange)
+            Text("Demo Mode")
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundColor(.orange)
+        }
+    }
+
+    // MARK: - Section 1: Simulated Health Data
+
+    private var healthDataSection: some View {
+        VStack(spacing: 8) {
+            sectionLabel("Simulated Vitals")
+
+            if let hr = healthKitManager.latestData?.heartRate {
+                Text("HR: \(Int(hr)) bpm")
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.7))
+            }
+
+            Button {
+                injectVitals(hr: 72, hrv: 45, accel: 0.3, temp: 36.5, status: .normal)
+            } label: {
+                demoButtonLabel("Normal Vitals", color: .green)
+            }
+
+            Button {
+                injectVitals(hr: 135, hrv: 20, accel: 0.5, temp: 37.2, status: .elevated)
+            } label: {
+                demoButtonLabel("Elevated Vitals", color: .yellow)
+            }
+
+            Button {
+                injectVitals(hr: 175, hrv: 10, accel: 0.1, temp: 37.8, status: .critical)
+            } label: {
+                demoButtonLabel("Critical Vitals", color: .red)
+            }
+        }
+    }
+
+    // MARK: - Section 2: Episode Controls
+
+    private var episodeControlsSection: some View {
+        VStack(spacing: 8) {
+            sectionLabel("Episode Controls")
+
+            Button {
+                let criticalData = HealthData(
+                    heartRate: 175, hrv: 10, acceleration: 0.1,
+                    skinTemp: 37.8, status: .critical
+                )
+                episodeManager.startEpisode(trigger: .sustainedElevatedHR, data: criticalData)
+                if webSocketManager.connectionState.isConnected {
+                    webSocketManager.sendEpisodeStart(triggerData: criticalData.toJSON())
+                }
+            } label: {
+                demoButtonLabel("Trigger Episode", color: .orange)
+            }
+
+            Button {
+                episodeManager.currentPhase = .calming
+                episodeManager.breathingProgress = 0
+            } label: {
+                demoButtonLabel("Skip to Calming", color: .cyan)
+            }
+
+            Button {
+                episodeManager.startCalmingMusic()
+            } label: {
+                demoButtonLabel("Calming Music", color: .purple)
+            }
+
+            Button {
+                episodeManager.currentPhase = .reEvaluating
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    episodeManager.requestPhoneCheck()
+                }
+            } label: {
+                demoButtonLabel("Finish (elevated)", color: .yellow)
+            }
+
+            Button {
+                episodeManager.resolveEpisode(reason: "calming_resolved")
+            } label: {
+                demoButtonLabel("Finish (normal)", color: .green)
+            }
+
+            Button {
+                episodeManager.requestPhoneCheck()
+            } label: {
+                demoButtonLabel("Phone Check", color: .purple)
+            }
+
+            Button {
+                episodeManager.resolveEpisode(reason: "false_positive")
+            } label: {
+                demoButtonLabel("Resolve Episode", color: .green)
+            }
+
+            Button {
+                resetToIdle()
+            } label: {
+                demoButtonLabel("Reset to Idle", color: .gray)
+            }
+        }
+    }
+
+    // MARK: - Section 3: Connection
+
+    private var connectionSection: some View {
+        VStack(spacing: 4) {
+            sectionLabel("Connection")
+
+            Text(webSocketManager.connectionState.displayText)
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundColor(connectionColor)
+        }
+    }
+
+    // MARK: - Section 4: Status Display
+
+    private var statusSection: some View {
+        VStack(spacing: 4) {
+            sectionLabel("Status")
+
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(phaseColor)
+                    .frame(width: 8, height: 8)
+                Text(episodeManager.currentPhase.rawValue)
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.7))
+            }
+
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(elevenLabsManager.isConnected ? .green : .gray)
+                    .frame(width: 8, height: 8)
+                Text("ElevenLabs")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.7))
+            }
+
+            if let episodeId = episodeManager.currentEpisodeId {
+                Text("ID: \(episodeId.prefix(8))...")
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.5))
+            }
+        }
+    }
+
+    // MARK: - Actions
+
+    private func injectVitals(hr: Double, hrv: Double, accel: Double, temp: Double, status: HealthStatus) {
+        let data = HealthData(
+            heartRate: hr, hrv: hrv, acceleration: accel,
+            skinTemp: temp, status: status
+        )
+        healthKitManager.injectSimulatedData(data)
+        hapticManager.playTap()
+    }
+
+    private func resetToIdle() {
+        episodeManager.currentPhase = .idle
+        episodeManager.currentEpisodeId = nil
+        episodeManager.resolutionMessage = nil
+        episodeManager.breathingProgress = 0
+        episodeManager.showPhoneCheckPrompt = false
+        hapticManager.playTap()
+    }
+
+    // MARK: - UI Helpers
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 11, weight: .semibold))
+            .foregroundColor(.white.opacity(0.5))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 4)
+    }
+
+    private func demoButtonLabel(_ title: String, color: Color) -> some View {
+        Text(title)
+            .font(.system(size: 13, weight: .medium, design: .rounded))
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(color.opacity(0.3))
+            .cornerRadius(8)
+    }
+
+    private var connectionColor: Color {
+        switch webSocketManager.connectionState {
+        case .connected: return .green
+        case .connecting: return .yellow
+        case .disconnected: return .gray
+        case .error: return .red
+        }
+    }
+
+    private var phaseColor: Color {
+        switch episodeManager.currentPhase {
+        case .idle: return .green
+        case .anomalyDetected: return .orange
+        case .calming: return .cyan
+        case .calmingMusic: return .purple
+        case .reEvaluating: return .yellow
+        case .requestingPhoneCheck, .waitingForPhone: return .purple
+        case .resolved: return .green
+        }
+    }
+}
+
+#Preview {
+    DemoControlView()
+        .environmentObject(HealthKitManager())
+        .environmentObject(WebSocketManager())
+        .environmentObject(EpisodeManager())
+        .environmentObject(HapticManager())
+        .environmentObject(ElevenLabsManager())
+}
