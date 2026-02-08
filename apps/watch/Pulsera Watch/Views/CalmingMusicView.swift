@@ -36,7 +36,7 @@ struct CalmingMusicView: View {
                 // Track name
                 Text(audioPlayerManager.currentTrack.name)
                     .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .foregroundColor(PulseraTheme.interactive)
+                    .foregroundColor(PulseraTheme.accent)
 
                 Text("You're safe")
                     .font(.system(size: 11, weight: .regular, design: .rounded))
@@ -50,7 +50,7 @@ struct CalmingMusicView: View {
                     } label: {
                         Image(systemName: "backward.fill")
                             .font(.system(size: 20))
-                            .foregroundColor(PulseraTheme.interactive)
+                            .foregroundColor(PulseraTheme.accent)
                     }
                     .buttonStyle(.plain)
 
@@ -59,7 +59,7 @@ struct CalmingMusicView: View {
                     } label: {
                         Image(systemName: audioPlayerManager.isPlayingTrack ? "pause.circle.fill" : "play.circle.fill")
                             .font(.system(size: 36))
-                            .foregroundColor(PulseraTheme.interactive)
+                            .foregroundColor(PulseraTheme.accent)
                     }
                     .buttonStyle(.plain)
 
@@ -69,7 +69,7 @@ struct CalmingMusicView: View {
                     } label: {
                         Image(systemName: "forward.fill")
                             .font(.system(size: 20))
-                            .foregroundColor(PulseraTheme.interactive)
+                            .foregroundColor(PulseraTheme.accent)
                     }
                     .buttonStyle(.plain)
                 }
@@ -91,7 +91,7 @@ struct CalmingMusicView: View {
                         RoundedRectangle(cornerRadius: 3)
                             .fill(
                                 LinearGradient(
-                                    colors: [PulseraTheme.interactive, PulseraTheme.info],
+                                    colors: [PulseraTheme.accent, PulseraTheme.accent],
                                     startPoint: .leading,
                                     endPoint: .trailing
                                 )
@@ -156,7 +156,7 @@ private struct WaveformBar: View {
         RoundedRectangle(cornerRadius: 3)
             .fill(
                 LinearGradient(
-                    colors: [PulseraTheme.interactive, PulseraTheme.info],
+                    colors: [PulseraTheme.accent, PulseraTheme.accent],
                     startPoint: .bottom,
                     endPoint: .top
                 )

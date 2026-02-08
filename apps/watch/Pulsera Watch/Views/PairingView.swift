@@ -7,7 +7,7 @@ struct PairingView: View {
     @State private var authToken: String = ""
     @State private var showSavedConfirmation: Bool = false
 
-    private let amberColor = PulseraTheme.warning
+    private let amberColor = PulseraTheme.accent
 
     var body: some View {
         ScrollView {
