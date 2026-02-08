@@ -5,8 +5,10 @@ struct ContentView: View {
     @EnvironmentObject var webSocketManager: WebSocketManager
     @EnvironmentObject var episodeManager: EpisodeManager
     @EnvironmentObject var hapticManager: HapticManager
+    @EnvironmentObject var eventBridge: EventBridgeClient
 
     @State private var selectedTab: Tab = .pulse
+    @State private var pulseSent: Bool = false
 
     enum Tab: Hashable {
         case pulse
@@ -32,6 +34,7 @@ struct ContentView: View {
             if episodeManager.currentPhase != .idle {
                 episodeOverlay
                     .transition(.opacity)
+                    .animation(.easeInOut(duration: 0.8), value: episodeManager.currentPhase)
                     .zIndex(100)
             }
         }
@@ -55,10 +58,10 @@ struct ContentView: View {
                     status: currentStatus
                 )
 
-                // Start demo button — visible when HR is elevated and no active episode
-                if episodeManager.currentPhase == .idle,
-                   let hr = healthKitManager.latestData?.heartRate, hr >= 80 {
+                // Start demo button — always visible when idle
+                if episodeManager.currentPhase == .idle {
                     Button {
+                        let hr = healthKitManager.latestData?.heartRate ?? 58
                         let data = HealthData(
                             heartRate: hr, hrv: 20, acceleration: 0.1,
                             skinTemp: 37.2, status: .elevated
@@ -72,12 +75,12 @@ struct ContentView: View {
                             Text("Start")
                                 .font(.system(size: 14, weight: .semibold, design: .rounded))
                         }
-                        .foregroundColor(.white)
+                        .foregroundColor(PulseraTheme.foreground)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 10)
                         .background(
                             LinearGradient(
-                                colors: [.orange, .red.opacity(0.8)],
+                                colors: [PulseraTheme.warning, PulseraTheme.danger.opacity(0.8)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -122,25 +125,25 @@ struct ContentView: View {
 
     private var anomalyDetectedView: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            PulseraTheme.background.ignoresSafeArea()
             VStack(spacing: 12) {
                 Spacer()
 
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.system(size: 36))
-                    .foregroundColor(.orange)
+                    .foregroundColor(PulseraTheme.warning)
 
                 Text("Anomaly Detected")
                     .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(PulseraTheme.foreground)
 
                 Text("Starting calming exercise...")
                     .font(.system(size: 12))
-                    .foregroundColor(.gray)
+                    .foregroundColor(PulseraTheme.mutedForeground)
 
                 ProgressView()
                     .progressViewStyle(.circular)
-                    .tint(.orange)
+                    .tint(PulseraTheme.warning)
 
                 Spacer()
 
@@ -154,25 +157,25 @@ struct ContentView: View {
 
     private var reEvaluatingView: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            PulseraTheme.background.ignoresSafeArea()
             VStack(spacing: 12) {
                 Spacer()
 
                 Image(systemName: "waveform.path.ecg")
                     .font(.system(size: 36))
-                    .foregroundColor(.cyan)
+                    .foregroundColor(PulseraTheme.info)
 
                 Text("Re-evaluating...")
                     .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(PulseraTheme.foreground)
 
                 Text("Checking your vitals")
                     .font(.system(size: 12))
-                    .foregroundColor(.gray)
+                    .foregroundColor(PulseraTheme.mutedForeground)
 
                 ProgressView()
                     .progressViewStyle(.circular)
-                    .tint(.cyan)
+                    .tint(PulseraTheme.info)
 
                 Spacer()
 
@@ -186,27 +189,74 @@ struct ContentView: View {
 
     private var resolvedView: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
-            VStack(spacing: 12) {
+            PulseraTheme.background.ignoresSafeArea()
+            VStack(spacing: 8) {
                 Spacer()
 
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 40))
-                    .foregroundColor(.green)
+                // Animated green pulse ring
+                SafePulseRingView()
+                    .frame(height: 80)
 
-                Text(episodeManager.resolutionMessage ?? "All Clear")
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 16)
+                Text("You're Safe")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(PulseraTheme.foreground)
+
+                if let hr = healthKitManager.latestData?.heartRate {
+                    Text("\(Int(hr)) BPM")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundColor(PulseraTheme.safe.opacity(0.8))
+                }
+
+                // Send Pulse button
+                Button {
+                    let presage: [String: Any] = [
+                        "visual_heart_rate": 78,
+                        "breathing_rate": 16,
+                        "facial_expression": "calm",
+                        "eye_responsiveness": "normal",
+                        "confidence_score": 0.92
+                    ]
+                    webSocketManager.sendPulseCheckin(message: "I'm okay!", presageData: presage)
+                    eventBridge.sendEvent(type: "pulse-checkin", data: [
+                        "message": "I'm okay!",
+                        "photo_url": "https://i.pravatar.cc/200?img=3",
+                        "presage_data": presage
+                    ])
+                    pulseSent = true
+                    // Reset after 3s
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        pulseSent = false
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: pulseSent ? "checkmark.circle.fill" : "heart.circle.fill")
+                            .font(.system(size: 14))
+                        Text(pulseSent ? "Sent!" : "Send Pulse")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    }
+                    .foregroundColor(PulseraTheme.foreground)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        pulseSent
+                            ? PulseraTheme.safe.opacity(0.6)
+                            : PulseraTheme.interactive.opacity(0.8)
+                    )
+                    .cornerRadius(12)
+                }
+                .padding(.horizontal, 16)
+                .disabled(pulseSent)
 
                 Spacer()
 
                 if let hr = healthKitManager.latestData?.heartRate {
                     HeartRatePill(heartRate: hr)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 8)
                 }
             }
+        }
+        .onAppear {
+            pulseSent = false
         }
     }
 
@@ -214,6 +264,58 @@ struct ContentView: View {
 
     private var currentStatus: HealthStatus {
         healthKitManager.latestData?.status ?? .normal
+    }
+}
+
+// MARK: - Safe Pulse Ring (green animated ring for resolved screen)
+
+private struct SafePulseRingView: View {
+    @State private var outerScale: CGFloat = 1.0
+    @State private var middleScale: CGFloat = 1.0
+    @State private var innerScale: CGFloat = 1.0
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(PulseraTheme.safe.opacity(0.2), lineWidth: 3)
+                .scaleEffect(outerScale)
+                .frame(width: 70, height: 70)
+
+            Circle()
+                .stroke(PulseraTheme.safe.opacity(0.4), lineWidth: 4)
+                .scaleEffect(middleScale)
+                .frame(width: 50, height: 50)
+
+            Circle()
+                .fill(
+                    RadialGradient(
+                        gradient: Gradient(colors: [
+                            PulseraTheme.safe.opacity(0.7),
+                            PulseraTheme.safe.opacity(0.2)
+                        ]),
+                        center: .center,
+                        startRadius: 2,
+                        endRadius: 18
+                    )
+                )
+                .scaleEffect(innerScale)
+                .frame(width: 30, height: 30)
+
+            Image(systemName: "checkmark")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.white)
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+                outerScale = 1.15
+            }
+            withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true).delay(0.2)) {
+                middleScale = 1.1
+            }
+            withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true).delay(0.4)) {
+                innerScale = 1.08
+            }
+        }
     }
 }
 

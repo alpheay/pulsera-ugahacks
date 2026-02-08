@@ -193,8 +193,28 @@ final class WebSocketManager: ObservableObject {
             "type": "episode-start",
             "device_id": deviceID,
             "user_id": userID,
+            "group_id": "family-demo",
             "trigger_data": triggerData,
         ]
+
+        sendJSON(payload)
+    }
+
+    func sendPulseCheckin(message: String, presageData: [String: Any]? = nil) {
+        guard connectionState.isConnected else { return }
+
+        var payload: [String: Any] = [
+            "type": "pulse-checkin",
+            "device_id": deviceID,
+            "user_id": userID,
+            "group_id": "family-demo",
+            "photo_url": "https://i.pravatar.cc/200?img=3",
+            "message": message,
+        ]
+
+        if let presageData = presageData {
+            payload["presage_data"] = presageData
+        }
 
         sendJSON(payload)
     }

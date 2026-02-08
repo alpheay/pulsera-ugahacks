@@ -245,6 +245,78 @@ function NotificationCard({ notification, onDismiss }: CardProps) {
                 "{notification.message}"
               </Text>
             )}
+
+            {/* Presage AI Analysis */}
+            {notification.presageData && (
+              <View
+                style={{
+                  width: "100%",
+                  marginTop: 12,
+                  backgroundColor: "rgba(139, 92, 246, 0.1)",
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: "rgba(139, 92, 246, 0.25)",
+                  padding: 14,
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+                  <Ionicons name="shield-checkmark" size={16} color="#8b5cf6" style={{ marginRight: 6 }} />
+                  <Text style={{ color: "#8b5cf6", fontSize: 13, fontWeight: "700" }}>
+                    Presage AI Analysis
+                  </Text>
+                </View>
+
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: colors.textMuted, fontSize: 10, marginBottom: 2 }}>Heart Rate</Text>
+                    <Text style={{ color: colors.text, fontSize: 15, fontWeight: "700" }}>
+                      {notification.presageData.visualHeartRate} <Text style={{ fontSize: 10, color: colors.textMuted }}>BPM</Text>
+                    </Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: colors.textMuted, fontSize: 10, marginBottom: 2 }}>Breathing</Text>
+                    <Text style={{ color: colors.text, fontSize: 15, fontWeight: "700" }}>
+                      {notification.presageData.breathingRate} <Text style={{ fontSize: 10, color: colors.textMuted }}>/min</Text>
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 6 }}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: colors.textMuted, fontSize: 10, marginBottom: 2 }}>Expression</Text>
+                    <Text style={{ color: colors.text, fontSize: 13, fontWeight: "600", textTransform: "capitalize" }}>
+                      {notification.presageData.facialExpression}
+                    </Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: colors.textMuted, fontSize: 10, marginBottom: 2 }}>Eye Response</Text>
+                    <Text style={{ color: colors.text, fontSize: 13, fontWeight: "600", textTransform: "capitalize" }}>
+                      {notification.presageData.eyeResponsiveness}
+                    </Text>
+                  </View>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 6,
+                    paddingTop: 8,
+                    borderTopWidth: 1,
+                    borderTopColor: "rgba(139, 92, 246, 0.15)",
+                  }}
+                >
+                  <Ionicons name="checkmark-circle" size={14} color="#22c55e" style={{ marginRight: 4 }} />
+                  <Text style={{ color: "#22c55e", fontSize: 11, fontWeight: "600" }}>
+                    Verified by Presage AI
+                  </Text>
+                  <Text style={{ color: colors.textMuted, fontSize: 11, marginLeft: 6 }}>
+                    {Math.round(notification.presageData.confidenceScore * 100)}% confidence
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
         )}
 
