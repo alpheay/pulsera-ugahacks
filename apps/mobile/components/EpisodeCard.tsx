@@ -6,6 +6,7 @@ import {
   getPhaseLabel,
   getPhaseColor,
 } from "@/lib/episodeSimulator";
+import GlassCard from "@/components/GlassCard";
 
 interface EpisodeCardProps {
   episode: Episode;
@@ -23,16 +24,17 @@ export default function EpisodeCard({
   const borderColor = isActive ? phaseColor : "rgba(255, 255, 255, 0.10)";
 
   return (
+    <GlassCard
+      glow={isActive}
+      borderWidth={isActive ? 1.5 : 1}
+      borderColor={borderColor}
+      borderRadius={14}
+      padding={0}
+      style={{ marginBottom: 10 }}
+    >
     <Pressable
       onPress={onPress}
-      style={{
-        backgroundColor: "#171717",
-        borderRadius: 14,
-        padding: compact ? 12 : 16,
-        marginBottom: 10,
-        borderWidth: isActive ? 1.5 : 1,
-        borderColor,
-      }}
+      style={{ padding: compact ? 12 : 16 }}
     >
       {/* Header */}
       <View
@@ -187,6 +189,7 @@ export default function EpisodeCard({
         </View>
       </View>
     </Pressable>
+    </GlassCard>
   );
 }
 

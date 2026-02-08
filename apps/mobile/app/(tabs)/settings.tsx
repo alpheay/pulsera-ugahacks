@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, Switch, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import GlassCard from "@/components/GlassCard";
+import { glass } from "@/lib/theme";
 
 export default function SettingsScreen() {
   const [alertsEnabled, setAlertsEnabled] = useState(true);
@@ -10,26 +12,15 @@ export default function SettingsScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: "#0a0a0a" }}
-      contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 60 }}
+      contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 100 }}
     >
       <Text style={{ color: "#fafafa", fontSize: 28, fontWeight: "800", marginBottom: 20 }}>
         Settings
       </Text>
 
       {/* Profile */}
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 16,
-          padding: 16,
-          marginBottom: 20,
-          borderWidth: 1,
-          borderColor: "rgba(255, 255, 255, 0.10)",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 14,
-        }}
-      >
+      <GlassCard elevated padding={16} borderRadius={16} style={{ marginBottom: 20 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 14 }}>
         <View
           style={{
             width: 56,
@@ -60,22 +51,14 @@ export default function SettingsScreen() {
         >
           <Text style={{ color: "#00bc7d", fontSize: 11, fontWeight: "600" }}>ACTIVE</Text>
         </View>
-      </View>
+        </View>
+      </GlassCard>
 
       {/* Notifications */}
       <Text style={{ color: "#a1a1a1", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
         NOTIFICATIONS
       </Text>
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 16,
-          marginBottom: 20,
-          borderWidth: 1,
-          borderColor: "rgba(255, 255, 255, 0.10)",
-          overflow: "hidden",
-        }}
-      >
+      <GlassCard padding={0} borderRadius={16} style={{ marginBottom: 20 }}>
         <SettingToggle
           icon="notifications"
           label="Push Alerts"
@@ -84,7 +67,7 @@ export default function SettingsScreen() {
           onToggle={setAlertsEnabled}
           color="#fe9a00"
         />
-        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
+        <View style={{ height: 1, backgroundColor: glass.borderSubtle }} />
         <SettingToggle
           icon="alert-circle"
           label="Critical Only"
@@ -93,7 +76,7 @@ export default function SettingsScreen() {
           onToggle={setCriticalOnly}
           color="#ff6467"
         />
-        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
+        <View style={{ height: 1, backgroundColor: glass.borderSubtle }} />
         <SettingToggle
           icon="location"
           label="Location Sharing"
@@ -102,47 +85,29 @@ export default function SettingsScreen() {
           onToggle={setLocationSharing}
           color="#1447e6"
         />
-      </View>
+      </GlassCard>
 
       {/* Watch */}
       <Text style={{ color: "#a1a1a1", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
         APPLE WATCH
       </Text>
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 16,
-          marginBottom: 20,
-          borderWidth: 1,
-          borderColor: "rgba(255, 255, 255, 0.10)",
-          overflow: "hidden",
-        }}
-      >
+      <GlassCard padding={0} borderRadius={16} style={{ marginBottom: 20 }}>
         <SettingRow icon="watch" label="Pulsera Watch" value="Connected" valueColor="#00bc7d" />
-        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
+        <View style={{ height: 1, backgroundColor: glass.borderSubtle }} />
         <SettingRow icon="heart" label="Health Monitoring" value="Active" valueColor="#ff6467" />
-        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
+        <View style={{ height: 1, backgroundColor: glass.borderSubtle }} />
         <SettingRow icon="battery-full" label="Watch Battery" value="78%" valueColor="#00bc7d" />
-      </View>
+      </GlassCard>
 
       {/* About */}
       <Text style={{ color: "#a1a1a1", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
         ABOUT
       </Text>
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 16,
-          marginBottom: 20,
-          borderWidth: 1,
-          borderColor: "rgba(255, 255, 255, 0.10)",
-          overflow: "hidden",
-        }}
-      >
+      <GlassCard padding={0} borderRadius={16} style={{ marginBottom: 20 }}>
         <SettingRow icon="information-circle" label="Version" value="1.0.0" />
-        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
+        <View style={{ height: 1, backgroundColor: glass.borderSubtle }} />
         <SettingRow icon="shield-checkmark" label="PulseNet AI" value="Active" valueColor="#fe9a00" />
-      </View>
+      </GlassCard>
     </ScrollView>
   );
 }

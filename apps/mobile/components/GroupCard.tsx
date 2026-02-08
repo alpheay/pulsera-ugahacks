@@ -10,6 +10,7 @@ import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import StatusIndicator from "./StatusIndicator";
 import { colors, type StatusLevel } from "@/lib/theme";
+import GlassCard from "@/components/GlassCard";
 
 interface GroupCardProps {
   name: string;
@@ -32,10 +33,10 @@ export default function GroupCard({
   const iconName = isFamily ? "people" : "earth";
 
   return (
+    <GlassCard padding={0} borderRadius={16} style={{ marginBottom: 12 }}>
     <Pressable
       onPress={onPress}
-      className="rounded-2xl p-4 mb-3 active:opacity-80"
-      style={{ backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }}
+      className="p-4 active:opacity-80"
     >
       <View className="flex-row items-center justify-between">
         {/* Left section */}
@@ -89,5 +90,6 @@ export default function GroupCard({
         </View>
       </View>
     </Pressable>
+    </GlassCard>
   );
 }

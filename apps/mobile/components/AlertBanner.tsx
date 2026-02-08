@@ -11,6 +11,7 @@ import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/lib/theme";
+import GlassCard from "@/components/GlassCard";
 
 interface AlertBannerProps {
   id: string;
@@ -51,13 +52,11 @@ export default function AlertBanner({
   const cfg = severityConfig[severity] || severityConfig.info;
 
   return (
-    <View
-      className="rounded-xl p-3 mb-2"
-      style={{
-        backgroundColor: cfg.bg,
-        borderLeftWidth: 3,
-        borderLeftColor: cfg.border,
-      }}
+    <GlassCard
+      padding={12}
+      borderRadius={12}
+      borderColor={cfg.border}
+      style={{ marginBottom: 8, borderLeftWidth: 3, borderLeftColor: cfg.border }}
     >
       <View className="flex-row items-start">
         <Ionicons
@@ -89,6 +88,6 @@ export default function AlertBanner({
           <Ionicons name="close" size={18} color={colors.textMuted} />
         </Pressable>
       </View>
-    </View>
+    </GlassCard>
   );
 }

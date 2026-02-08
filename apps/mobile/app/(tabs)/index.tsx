@@ -3,6 +3,8 @@ import { View, Text, Pressable, Dimensions, Animated } from "react-native";
 import MapView, { Marker, Circle, Callout } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import GlassBlurCard from "@/components/GlassBlurCard";
+import { glass } from "@/lib/theme";
 import {
   FAMILY_MEMBERS,
   SAVED_PLACES,
@@ -131,7 +133,7 @@ export default function MapScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#0F172A" }}>
+    <View style={{ flex: 1, backgroundColor: "#0a0a0a" }}>
       {/* Map */}
       <MapView
         ref={mapRef}
@@ -147,8 +149,8 @@ export default function MapScreen() {
             key={place.id}
             center={{ latitude: place.latitude, longitude: place.longitude }}
             radius={place.radius}
-            fillColor="rgba(245, 158, 11, 0.08)"
-            strokeColor="rgba(245, 158, 11, 0.3)"
+            fillColor="rgba(0, 188, 125, 0.08)"
+            strokeColor="rgba(0, 188, 125, 0.3)"
             strokeWidth={1}
           />
         ))}
@@ -182,7 +184,7 @@ export default function MapScreen() {
                     alignItems: "center",
                     justifyContent: "center",
                     borderWidth: 3,
-                    borderColor: "#1E293B",
+                    borderColor: "#171717",
                     shadowColor: ep ? epColor! : getStatusColor(member.health.status),
                     shadowOffset: { width: 0, height: 0 },
                     shadowOpacity: 0.6,
@@ -191,7 +193,7 @@ export default function MapScreen() {
                 >
                   <Text
                     style={{
-                      color: "#0F172A",
+                      color: "#171717",
                       fontWeight: "800",
                       fontSize: 14,
                     }}
@@ -202,16 +204,18 @@ export default function MapScreen() {
                 {/* Name label */}
                 <View
                   style={{
-                    backgroundColor: "#1E293B",
+                    backgroundColor: glass.cardBg,
                     paddingHorizontal: 6,
                     paddingVertical: 2,
                     borderRadius: 4,
                     marginTop: 2,
+                    borderWidth: 0.5,
+                    borderColor: glass.borderSubtle,
                   }}
                 >
                   <Text
                     style={{
-                      color: "#E2E8F0",
+                      color: "#fafafa",
                       fontSize: 10,
                       fontWeight: "600",
                     }}
@@ -223,17 +227,17 @@ export default function MapScreen() {
               <Callout tooltip onPress={() => router.push(`/member/${member.id}`)}>
                 <View
                   style={{
-                    backgroundColor: "#1E293B",
-                    borderRadius: 12,
+                    backgroundColor: glass.cardBgElevated,
+                    borderRadius: glass.borderRadiusSmall,
                     padding: 12,
                     width: 220,
                     borderWidth: 1,
-                    borderColor: ep ? epColor! : "#334155",
+                    borderColor: ep ? epColor! : glass.border,
                   }}
                 >
                   <Text
                     style={{
-                      color: "#E2E8F0",
+                      color: "#fafafa",
                       fontWeight: "700",
                       fontSize: 15,
                       marginBottom: 4,
@@ -242,7 +246,7 @@ export default function MapScreen() {
                     {member.name}
                     {member.relation !== "self" ? ` (${member.relation})` : ""}
                   </Text>
-                  <Text style={{ color: "#94A3B8", fontSize: 12, marginBottom: 6 }}>
+                  <Text style={{ color: "#a1a1a1", fontSize: 12, marginBottom: 6 }}>
                     {member.locationName}
                   </Text>
 
@@ -264,7 +268,7 @@ export default function MapScreen() {
                           {getPhaseLabel(ep.phase)}
                         </Text>
                       </View>
-                      <Text style={{ color: "#94A3B8", fontSize: 10, marginTop: 3 }}>
+                      <Text style={{ color: "#a1a1a1", fontSize: 10, marginTop: 3 }}>
                         Severity: {(ep.severityScore * 100).toFixed(0)}%
                       </Text>
                     </View>
@@ -273,8 +277,8 @@ export default function MapScreen() {
                   {member.isWearingWatch && (
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                       <View style={{ flexDirection: "row", alignItems: "center", gap: 3 }}>
-                        <Ionicons name="heart" size={12} color="#EF4444" />
-                        <Text style={{ color: "#EF4444", fontSize: 12, fontWeight: "600" }}>
+                        <Ionicons name="heart" size={12} color="#ff6467" />
+                        <Text style={{ color: "#ff6467", fontSize: 12, fontWeight: "600" }}>
                           {member.health.heartRate}
                         </Text>
                       </View>
@@ -299,11 +303,11 @@ export default function MapScreen() {
                     </View>
                   )}
                   {!member.isWearingWatch && (
-                    <Text style={{ color: "#64748B", fontSize: 11, fontStyle: "italic" }}>
+                    <Text style={{ color: "#737373", fontSize: 11, fontStyle: "italic" }}>
                       Watch not connected
                     </Text>
                   )}
-                  <Text style={{ color: "#64748B", fontSize: 10, marginTop: 4 }}>
+                  <Text style={{ color: "#737373", fontSize: 10, marginTop: 4 }}>
                     Tap for details
                   </Text>
                 </View>
@@ -325,47 +329,44 @@ export default function MapScreen() {
           alignItems: "center",
         }}
       >
-        <View
-          style={{
-            backgroundColor: "#1E293Bee",
-            borderRadius: 12,
-            paddingHorizontal: 14,
-            paddingVertical: 10,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 8,
-            borderWidth: 1,
-            borderColor: "#334155",
-          }}
+        <GlassBlurCard
+          borderRadius={12}
+          padding={0}
         >
           <View
             style={{
-              width: 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: "#10B981",
+              paddingHorizontal: 14,
+              paddingVertical: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
             }}
-          />
-          <Text style={{ color: "#E2E8F0", fontWeight: "700", fontSize: 15 }}>
-            Pulsera
-          </Text>
-          <Text style={{ color: "#94A3B8", fontSize: 12 }}>
-            {members.filter((m) => m.isWearingWatch).length}/{members.length} active
-          </Text>
-        </View>
+          >
+            <View
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: "#00bc7d",
+              }}
+            />
+            <Text style={{ color: "#fafafa", fontWeight: "700", fontSize: 15 }}>
+              Pulsera46832648632
+            </Text>
+            <Text style={{ color: "#a1a1a1", fontSize: 12 }}>
+              {members.filter((m) => m.isWearingWatch).length}/{members.length} active
+            </Text>
+          </View>
+        </GlassBlurCard>
 
-        <Pressable
-          onPress={resetView}
-          style={{
-            backgroundColor: "#1E293Bee",
-            borderRadius: 12,
-            padding: 10,
-            borderWidth: 1,
-            borderColor: "#334155",
-          }}
+        <GlassBlurCard
+          borderRadius={12}
+          padding={10}
         >
-          <Ionicons name="locate" size={20} color="#F59E0B" />
-        </Pressable>
+          <Pressable onPress={resetView}>
+            <Ionicons name="locate" size={20} color="#e5e5e5" />
+          </Pressable>
+        </GlassBlurCard>
       </View>
 
       {/* Bottom member chips */}
@@ -378,94 +379,99 @@ export default function MapScreen() {
           paddingHorizontal: 12,
         }}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 8,
-            justifyContent: "center",
-            flexWrap: "wrap",
-          }}
+        <GlassBlurCard
+          borderRadius={glass.borderRadius}
+          padding={10}
         >
-          {members.map((member) => {
-            const hasEpisode = !!member.activeEpisode;
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 8,
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            {members.map((member) => {
+              const hasEpisode = !!member.activeEpisode;
 
-            return (
-              <Pressable
-                key={member.id}
-                onPress={() => centerOnMember(member)}
-                style={{
-                  backgroundColor:
-                    selectedMember?.id === member.id ? "#F59E0B" : "#1E293Bee",
-                  borderRadius: 20,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 6,
-                  borderWidth: 1,
-                  borderColor:
-                    selectedMember?.id === member.id
-                      ? "#F59E0B"
-                      : hasEpisode
-                        ? "#EF4444"
-                        : getStatusColor(member.health.status) + "50",
-                }}
-              >
-                {/* Status dot with red overlay for episodes */}
-                <View style={{ position: "relative" }}>
-                  <View
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: 4,
-                      backgroundColor:
-                        selectedMember?.id === member.id
-                          ? "#0F172A"
-                          : getStatusColor(member.health.status),
-                    }}
-                  />
-                  {hasEpisode && selectedMember?.id !== member.id && (
-                    <View
-                      style={{
-                        position: "absolute",
-                        top: -2,
-                        right: -2,
-                        width: 6,
-                        height: 6,
-                        borderRadius: 3,
-                        backgroundColor: "#EF4444",
-                        borderWidth: 1,
-                        borderColor: "#1E293B",
-                      }}
-                    />
-                  )}
-                </View>
-                <Text
+              return (
+                <Pressable
+                  key={member.id}
+                  onPress={() => centerOnMember(member)}
                   style={{
-                    color:
-                      selectedMember?.id === member.id ? "#0F172A" : "#E2E8F0",
-                    fontSize: 12,
-                    fontWeight: "600",
+                    backgroundColor:
+                      selectedMember?.id === member.id ? "#e5e5e5" : glass.cardBg,
+                    borderRadius: 20,
+                    paddingHorizontal: 12,
+                    paddingVertical: 8,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 6,
+                    borderWidth: 1,
+                    borderColor:
+                      selectedMember?.id === member.id
+                        ? "#e5e5e5"
+                        : hasEpisode
+                          ? "#ff6467"
+                          : getStatusColor(member.health.status) + "50",
                   }}
                 >
-                  {member.name}
-                </Text>
-                {member.isWearingWatch && member.health.heartRate > 0 && (
+                  {/* Status dot with red overlay for episodes */}
+                  <View style={{ position: "relative" }}>
+                    <View
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: 4,
+                        backgroundColor:
+                          selectedMember?.id === member.id
+                            ? "#171717"
+                            : getStatusColor(member.health.status),
+                      }}
+                    />
+                    {hasEpisode && selectedMember?.id !== member.id && (
+                      <View
+                        style={{
+                          position: "absolute",
+                          top: -2,
+                          right: -2,
+                          width: 6,
+                          height: 6,
+                          borderRadius: 3,
+                          backgroundColor: "#ff6467",
+                          borderWidth: 1,
+                          borderColor: "#171717",
+                        }}
+                      />
+                    )}
+                  </View>
                   <Text
                     style={{
                       color:
-                        selectedMember?.id === member.id ? "#0F172A" : "#EF4444",
-                      fontSize: 11,
-                      fontWeight: "700",
+                        selectedMember?.id === member.id ? "#171717" : "#fafafa",
+                      fontSize: 12,
+                      fontWeight: "600",
                     }}
                   >
-                    {member.health.heartRate}
+                    {member.name}
                   </Text>
-                )}
-              </Pressable>
-            );
-          })}
-        </View>
+                  {member.isWearingWatch && member.health.heartRate > 0 && (
+                    <Text
+                      style={{
+                        color:
+                          selectedMember?.id === member.id ? "#171717" : "#ff6467",
+                        fontSize: 11,
+                        fontWeight: "700",
+                      }}
+                    >
+                      {member.health.heartRate}
+                    </Text>
+                  )}
+                </Pressable>
+              );
+            })}
+          </View>
+        </GlassBlurCard>
       </View>
     </View>
   );
