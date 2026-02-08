@@ -8,6 +8,14 @@ export type RingNotificationType =
   | "episode-resolved"
   | "pulse-checkin";
 
+export interface PresageData {
+  visualHeartRate: number;
+  breathingRate: number;
+  facialExpression: string;
+  eyeResponsiveness: string;
+  confidenceScore: number;
+}
+
 export interface RingNotification {
   id: string;
   type: RingNotificationType;
@@ -16,6 +24,7 @@ export interface RingNotification {
   triggerType?: string;
   photoUrl?: string;
   message?: string;
+  presageData?: PresageData;
   timestamp: string;
   dismissed: boolean;
 }
