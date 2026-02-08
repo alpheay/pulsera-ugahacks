@@ -5,12 +5,16 @@ struct StatusView: View {
     let anomalyScore: Double?
     let lastUpdated: Date?
 
-    private let amberColor = Color(red: 245/255, green: 158/255, blue: 11/255)
+    @State private var uptimeSeconds: Int = 0
+    @State private var uptimeTimer: Timer?
 
     var body: some View {
         VStack(spacing: 8) {
             // Connection status row
             connectionRow
+
+            // Uptime counter
+            uptimeRow
 
             // Anomaly score bar
             if let score = anomalyScore {
@@ -26,8 +30,15 @@ struct StatusView: View {
         .padding(.vertical, 6)
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color.white.opacity(0.06))
+                .fill(PulseraTheme.glassBg)
         )
+        .onAppear {
+            startUptimeTimer()
+        }
+        .onDisappear {
+            uptimeTimer?.invalidate()
+            uptimeTimer = nil
+        }
     }
 
     // MARK: - Connection Row
@@ -40,7 +51,7 @@ struct StatusView: View {
 
             Text(connectionState.displayText)
                 .font(.system(size: 11, weight: .medium))
-                .foregroundColor(.gray)
+                .foregroundColor(PulseraTheme.mutedForeground)
                 .lineLimit(1)
 
             Spacer()
@@ -49,10 +60,43 @@ struct StatusView: View {
 
     private var connectionDotColor: Color {
         switch connectionState {
-        case .connected:    return .green
-        case .connecting:   return amberColor
-        case .disconnected: return .gray
-        case .error:        return .red
+        case .connected:    return PulseraTheme.safe
+        case .connecting:   return PulseraTheme.warning
+        case .disconnected: return PulseraTheme.mutedForeground
+        case .error:        return PulseraTheme.danger
+        }
+    }
+
+    // MARK: - Uptime Row
+
+    private var uptimeRow: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "timer")
+                .font(.system(size: 9))
+                .foregroundColor(PulseraTheme.mutedForeground)
+
+            Text(formattedUptime)
+                .font(.system(size: 10, weight: .medium, design: .monospaced))
+                .foregroundColor(PulseraTheme.mutedForeground)
+                .monospacedDigit()
+
+            Spacer()
+        }
+    }
+
+    private var formattedUptime: String {
+        let minutes = uptimeSeconds / 60
+        let seconds = uptimeSeconds % 60
+        if minutes > 0 {
+            return "\(minutes)m \(String(format: "%02d", seconds))s"
+        }
+        return "\(seconds) sec"
+    }
+
+    private func startUptimeTimer() {
+        uptimeTimer?.invalidate()
+        uptimeTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            uptimeSeconds += 1
         }
     }
 
@@ -63,7 +107,7 @@ struct StatusView: View {
             HStack {
                 Text("Anomaly")
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(.gray)
+                    .foregroundColor(PulseraTheme.mutedForeground)
 
                 Spacer()
 
@@ -93,11 +137,11 @@ struct StatusView: View {
 
     private func anomalyColor(for score: Double) -> Color {
         if score >= 0.8 {
-            return .red
+            return PulseraTheme.danger
         } else if score >= 0.5 {
-            return amberColor
+            return PulseraTheme.warning
         }
-        return .green
+        return PulseraTheme.safe
     }
 
     // MARK: - Last Updated
@@ -106,15 +150,15 @@ struct StatusView: View {
         HStack {
             Image(systemName: "clock")
                 .font(.system(size: 9))
-                .foregroundColor(.gray)
+                .foregroundColor(PulseraTheme.mutedForeground)
 
             Text(time, style: .relative)
                 .font(.system(size: 10))
-                .foregroundColor(.gray)
+                .foregroundColor(PulseraTheme.mutedForeground)
 
             Text("ago")
                 .font(.system(size: 10))
-                .foregroundColor(.gray)
+                .foregroundColor(PulseraTheme.mutedForeground)
 
             Spacer()
         }

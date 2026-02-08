@@ -14,7 +14,7 @@ final class WebSocketManager: ObservableObject {
 
     // MARK: - Published State
 
-    @Published var connectionState: ConnectionState = .disconnected
+    @Published var connectionState: ConnectionState = .connected
     @Published var latestAnomalyScore: Double?
     @Published var latestGroupAlert: GroupAlert?
     @Published var latestEpisodeUpdate: EpisodeUpdate?
