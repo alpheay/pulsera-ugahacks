@@ -93,7 +93,7 @@ export default function AlertsScreen() {
               fontWeight: "800",
             }}
           >
-            Alerts
+            Pulses
           </Text>
           <Text style={{ color: "#a1a1a1", fontSize: 14, marginTop: 2 }}>
             Detection & response episodes
