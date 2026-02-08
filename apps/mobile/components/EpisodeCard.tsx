@@ -20,13 +20,13 @@ export default function EpisodeCard({
 }: EpisodeCardProps) {
   const phaseColor = getPhaseColor(episode.phase);
   const isActive = episode.phase !== "resolved";
-  const borderColor = isActive ? phaseColor : "#334155";
+  const borderColor = isActive ? phaseColor : "rgba(255, 255, 255, 0.10)";
 
   return (
     <Pressable
       onPress={onPress}
       style={{
-        backgroundColor: "#1E293B",
+        backgroundColor: "#171717",
         borderRadius: 14,
         padding: compact ? 12 : 16,
         marginBottom: 10,
@@ -53,7 +53,7 @@ export default function EpisodeCard({
           />
           <Text
             style={{
-              color: "#E2E8F0",
+              color: "#fafafa",
               fontSize: compact ? 14 : 16,
               fontWeight: "700",
             }}
@@ -83,13 +83,13 @@ export default function EpisodeCard({
         {episode.escalationLevel > 0 && (
           <View
             style={{
-              backgroundColor: "#EF444420",
+              backgroundColor: "#ff646720",
               paddingHorizontal: 6,
               paddingVertical: 2,
               borderRadius: 4,
             }}
           >
-            <Text style={{ color: "#EF4444", fontSize: 10, fontWeight: "700" }}>
+            <Text style={{ color: "#ff6467", fontSize: 10, fontWeight: "700" }}>
               L{episode.escalationLevel}
             </Text>
           </View>
@@ -106,20 +106,20 @@ export default function EpisodeCard({
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
             >
-              <Ionicons name="heart" size={14} color="#EF4444" />
-              <Text style={{ color: "#EF4444", fontWeight: "700", fontSize: 14 }}>
+              <Ionicons name="heart" size={14} color="#ff6467" />
+              <Text style={{ color: "#ff6467", fontWeight: "700", fontSize: 14 }}>
                 {episode.triggerData.heartRate}
               </Text>
-              <Text style={{ color: "#64748B", fontSize: 10 }}>BPM</Text>
+              <Text style={{ color: "#737373", fontSize: 10 }}>BPM</Text>
             </View>
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
             >
-              <Ionicons name="pulse" size={14} color="#F59E0B" />
-              <Text style={{ color: "#F59E0B", fontWeight: "600", fontSize: 13 }}>
-                {episode.triggerData.hrv}
+              <Ionicons name="pulse" size={14} color="#fe9a00" />
+              <Text style={{ color: "#fe9a00", fontWeight: "600", fontSize: 13 }}>
+                {Number(episode.triggerData.hrv).toFixed(1)}
               </Text>
-              <Text style={{ color: "#64748B", fontSize: 10 }}>HRV</Text>
+              <Text style={{ color: "#737373", fontSize: 10 }}>HRV</Text>
             </View>
             {episode.severityScore > 0 && (
               <View
@@ -137,7 +137,7 @@ export default function EpisodeCard({
           {episode.fusionResult && (
             <Text
               style={{
-                color: "#94A3B8",
+                color: "#a1a1a1",
                 fontSize: 11,
                 marginTop: 8,
                 lineHeight: 16,
@@ -158,8 +158,8 @@ export default function EpisodeCard({
                 marginTop: 6,
               }}
             >
-              <Ionicons name="checkmark-circle" size={14} color="#10B981" />
-              <Text style={{ color: "#10B981", fontSize: 11, fontWeight: "600" }}>
+              <Ionicons name="checkmark-circle" size={14} color="#00bc7d" />
+              <Text style={{ color: "#00bc7d", fontSize: 11, fontWeight: "600" }}>
                 {episode.resolution.replace(/_/g, " ")}
               </Text>
             </View>
@@ -176,14 +176,14 @@ export default function EpisodeCard({
           marginTop: compact ? 6 : 10,
         }}
       >
-        <Text style={{ color: "#64748B", fontSize: 10 }}>
+        <Text style={{ color: "#737373", fontSize: 10 }}>
           {episode.timeline.length} events
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-          <Text style={{ color: "#64748B", fontSize: 10 }}>
+          <Text style={{ color: "#737373", fontSize: 10 }}>
             {formatTime(episode.createdAt)}
           </Text>
-          <Ionicons name="chevron-forward" size={14} color="#64748B" />
+          <Ionicons name="chevron-forward" size={14} color="#737373" />
         </View>
       </View>
     </Pressable>

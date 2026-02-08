@@ -115,7 +115,7 @@ export const FAMILY_MEMBERS: MemberLocation[] = [
   {
     id: "maria",
     name: "Maria",
-    avatar: "MG",
+    avatar: "MS",
     relation: "Mom",
     latitude: 33.9520,
     longitude: -83.3850,
@@ -140,7 +140,7 @@ export const FAMILY_MEMBERS: MemberLocation[] = [
   {
     id: "carlos",
     name: "Carlos",
-    avatar: "CG",
+    avatar: "CS",
     relation: "Dad",
     latitude: 33.9445,
     longitude: -83.3740,
@@ -165,7 +165,7 @@ export const FAMILY_MEMBERS: MemberLocation[] = [
   {
     id: "sofia",
     name: "Sofia",
-    avatar: "SG",
+    avatar: "SS",
     relation: "Sister",
     latitude: 33.9490,
     longitude: -83.3760,
@@ -190,7 +190,7 @@ export const FAMILY_MEMBERS: MemberLocation[] = [
   {
     id: "diego",
     name: "Diego",
-    avatar: "DG",
+    avatar: "DS",
     relation: "Brother",
     latitude: 33.9460,
     longitude: -83.3800,
@@ -250,18 +250,18 @@ export function timeAgo(date: Date): string {
 
 export function getStatusColor(status: string): string {
   switch (status) {
-    case "safe": return "#10B981";
-    case "elevated": return "#F59E0B";
-    case "warning": return "#F97316";
-    case "critical": return "#EF4444";
-    default: return "#94A3B8";
+    case "safe": return "#00bc7d";
+    case "elevated": return "#fe9a00";
+    case "warning": return "#fe9a00";
+    case "critical": return "#ff6467";
+    default: return "#a1a1a1";
   }
 }
 
 export function getBatteryColor(level: number): string {
-  if (level > 50) return "#10B981";
-  if (level > 20) return "#F59E0B";
-  return "#EF4444";
+  if (level > 50) return "#00bc7d";
+  if (level > 20) return "#fe9a00";
+  return "#ff6467";
 }
 
 export function attachEpisodeToMember(member: MemberLocation, episode: Episode): MemberLocation {
