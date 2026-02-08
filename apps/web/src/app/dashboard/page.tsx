@@ -31,10 +31,13 @@ import {
   X,
   Signal,
   Eye,
+  Box,
+  Map as MapIcon,
 } from "lucide-react";
 
 const MapScreen = dynamic(() => import("@/components/MapScreen"), { ssr: false });
-import { FAMILY_MEMBERS, type FamilyMember } from "@/lib/simulatedData";
+const TerrainView3D = dynamic(() => import("@/components/TerrainView3D"), { ssr: false });
+import { FAMILY_MEMBERS, SAVED_PLACES, type FamilyMember } from "@/lib/simulatedData";
 
 /* ═══════════════════════════════════════════
    MOCK DATA & TYPES
@@ -396,6 +399,7 @@ export default function Dashboard() {
   const [expandedPanic, setExpandedPanic] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState("");
   const [activeTab, setActiveTab] = useState<"map" | "alerts">("map");
+  const [viewMode, setViewMode] = useState<"map" | "3d">("map");
 
   useEffect(() => {
     const updateTime = () => {
@@ -733,16 +737,46 @@ export default function Dashboard() {
               boxShadow: "0 8px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,241,230,0.05)",
             }}
           >
-            <MapScreen
-              members={FAMILY_MEMBERS}
-              selectedMember={selectedMember}
-              onSelectMember={setSelectedMember}
-            />
+            <AnimatePresence mode="wait">
+              {viewMode === "map" ? (
+                <motion.div
+                  key="map-view"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="absolute inset-0"
+                >
+                  <MapScreen
+                    members={FAMILY_MEMBERS}
+                    selectedMember={selectedMember}
+                    onSelectMember={setSelectedMember}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="terrain-view"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="absolute inset-0"
+                >
+                  <TerrainView3D
+                    members={FAMILY_MEMBERS}
+                    selectedMember={selectedMember}
+                    onSelectMember={setSelectedMember}
+                    savedPlaces={SAVED_PLACES}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            {/* Live View pill overlay */}
-            <div className="absolute top-4 left-4 flex items-center gap-2 z-10 pointer-events-none">
+            {/* Top-left overlays */}
+            <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
+              {/* Live View pill */}
               <div
-                className="px-3 py-1.5 rounded-full text-[9px] font-medium tracking-[0.15em] uppercase flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-full text-[9px] font-medium tracking-[0.15em] uppercase flex items-center gap-1.5 pointer-events-none"
                 style={{
                   background: "rgba(12,6,4,0.8)",
                   border: "1px solid rgba(232,82,74,0.15)",
@@ -752,8 +786,43 @@ export default function Dashboard() {
                 }}
               >
                 <Eye size={10} className="opacity-50" />
-                Live View
+                {viewMode === "map" ? "Live View" : "3D Terrain"}
                 <span className="w-1.5 h-1.5 rounded-full bg-[#E8524A] ml-1 animate-pulse" />
+              </div>
+
+              {/* 2D/3D Toggle */}
+              <div
+                className="flex items-center gap-0.5 p-0.5 rounded-full pointer-events-auto"
+                style={{
+                  background: "rgba(12,6,4,0.8)",
+                  border: "1px solid rgba(232,82,74,0.15)",
+                  backdropFilter: "blur(12px)",
+                }}
+              >
+                <button
+                  onClick={() => setViewMode("map")}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[9px] font-medium transition-all duration-300"
+                  style={{
+                    background: viewMode === "map" ? "rgba(232,82,74,0.2)" : "transparent",
+                    color: viewMode === "map" ? "#E8524A" : "rgba(255,241,230,0.35)",
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  <MapIcon size={9} />
+                  2D
+                </button>
+                <button
+                  onClick={() => setViewMode("3d")}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[9px] font-medium transition-all duration-300"
+                  style={{
+                    background: viewMode === "3d" ? "rgba(232,82,74,0.2)" : "transparent",
+                    color: viewMode === "3d" ? "#E8524A" : "rgba(255,241,230,0.35)",
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  <Box size={9} />
+                  3D
+                </button>
               </div>
             </div>
 
