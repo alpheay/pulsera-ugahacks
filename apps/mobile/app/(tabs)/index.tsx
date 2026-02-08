@@ -351,7 +351,7 @@ export default function MapScreen() {
               }}
             />
             <Text style={{ color: "#fafafa", fontWeight: "700", fontSize: 15 }}>
-              Pulsera46832648632
+              Aritra Ring
             </Text>
             <Text style={{ color: "#a1a1a1", fontSize: 12 }}>
               {members.filter((m) => m.isWearingWatch).length}/{members.length} active

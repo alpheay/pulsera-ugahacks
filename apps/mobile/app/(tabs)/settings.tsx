@@ -61,7 +61,7 @@ export default function SettingsScreen() {
       <GlassCard padding={0} borderRadius={16} style={{ marginBottom: 20 }}>
         <SettingToggle
           icon="notifications"
-          label="Push Alerts"
+          label="Push Pulses"
           description="Get notified when a family member's status changes"
           value={alertsEnabled}
           onToggle={setAlertsEnabled}
