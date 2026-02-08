@@ -28,6 +28,11 @@ export default function StatusIndicator({
         height: size,
         borderRadius: size / 2,
         backgroundColor: color,
+        shadowColor: color,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 6,
+        elevation: 4,
       }}
     />
   );

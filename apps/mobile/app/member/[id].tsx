@@ -16,6 +16,8 @@ import {
   getBatteryColor,
   type MemberLocation,
 } from "@/lib/simulatedData";
+import GlassCard from "@/components/GlassCard";
+import { glass } from "@/lib/theme";
 
 export default function MemberDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -158,17 +160,7 @@ export default function MemberDetailScreen() {
           />
         </View>
       ) : (
-        <View
-          style={{
-            backgroundColor: "#171717",
-            borderRadius: 16,
-            padding: 24,
-            alignItems: "center",
-            marginBottom: 20,
-            borderWidth: 1,
-            borderColor: "rgba(255, 255, 255, 0.10)",
-          }}
-        >
+        <GlassCard padding={24} borderRadius={16} style={{ marginBottom: 20, alignItems: "center" }}>
           <Ionicons name="watch-outline" size={40} color="#737373" />
           <Text style={{ color: "#a1a1a1", fontSize: 14, marginTop: 8 }}>
             Watch not connected
@@ -176,25 +168,17 @@ export default function MemberDetailScreen() {
           <Text style={{ color: "#737373", fontSize: 12, marginTop: 4 }}>
             No health data available
           </Text>
-        </View>
+        </GlassCard>
       )}
 
       {/* Location history */}
       <Text style={{ color: "#fafafa", fontWeight: "700", fontSize: 18, marginBottom: 12 }}>
         Location History
       </Text>
-      <View
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 16,
-          borderWidth: 1,
-          borderColor: "rgba(255, 255, 255, 0.10)",
-          overflow: "hidden",
-        }}
-      >
+      <GlassCard padding={0} borderRadius={16}>
         {member.history.map((entry, i) => (
           <View key={i}>
-            {i > 0 && <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />}
+            {i > 0 && <View style={{ height: 1, backgroundColor: glass.borderSubtle }} />}
             <View
               style={{
                 flexDirection: "row",
@@ -226,7 +210,7 @@ export default function MemberDetailScreen() {
             </View>
           </View>
         ))}
-      </View>
+      </GlassCard>
     </ScrollView>
   );
 }
@@ -245,22 +229,13 @@ function VitalCard({
   unit: string;
 }) {
   return (
-    <View
-      style={{
-        backgroundColor: "#171717",
-        borderRadius: 14,
-        padding: 14,
-        width: "48%",
-        borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.10)",
-      }}
-    >
+    <GlassCard borderRadius={glass.borderRadiusSmall} padding={14} style={{ width: "48%" }}>
       <Ionicons name={icon} size={18} color={iconColor} />
       <Text style={{ color: "#737373", fontSize: 11, marginTop: 6 }}>{label}</Text>
       <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4, marginTop: 2 }}>
         <Text style={{ color: "#fafafa", fontWeight: "800", fontSize: 22 }}>{value}</Text>
         {unit ? <Text style={{ color: "#737373", fontSize: 12 }}>{unit}</Text> : null}
       </View>
-    </View>
+    </GlassCard>
   );
 }

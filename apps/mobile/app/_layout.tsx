@@ -6,6 +6,7 @@ import "../global.css";
 import NotificationOverlay from "@/components/NotificationOverlay";
 import { pulseraWS, type IncomingMessage } from "@/lib/websocket";
 import { pushNotification } from "@/lib/notificationStore";
+import { glass } from "@/lib/theme";
 
 function useRingNotifications() {
   useEffect(() => {
@@ -71,7 +72,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: "#0F172A" },
+          contentStyle: { backgroundColor: "#0a0a0a" },
           animation: "slide_from_right",
         }}
       >
@@ -82,8 +83,10 @@ export default function RootLayout() {
             presentation: "modal",
             headerShown: true,
             headerTitle: "Member Details",
-            headerStyle: { backgroundColor: "#1E293B" },
-            headerTintColor: "#E2E8F0",
+            headerStyle: { backgroundColor: glass.tabBarBg },
+            headerTintColor: "#fafafa",
+            headerBlurEffect: "dark",
+            headerTransparent: true,
           }}
         />
         <Stack.Screen
@@ -99,8 +102,10 @@ export default function RootLayout() {
             presentation: "modal",
             headerShown: true,
             headerTitle: "Episode Details",
-            headerStyle: { backgroundColor: "#1E293B" },
-            headerTintColor: "#E2E8F0",
+            headerStyle: { backgroundColor: glass.tabBarBg },
+            headerTintColor: "#fafafa",
+            headerBlurEffect: "dark",
+            headerTransparent: true,
           }}
         />
       </Stack>

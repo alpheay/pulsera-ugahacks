@@ -25,6 +25,8 @@ import {
   getPhaseLabel,
   getPhaseColor,
 } from "@/lib/episodeSimulator";
+import GlassCard from "@/components/GlassCard";
+import { glass } from "@/lib/theme";
 
 export default function FamilyScreen() {
   const router = useRouter();
@@ -87,7 +89,7 @@ export default function FamilyScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: "#0a0a0a" }}
-      contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 40 }}
+      contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 100 }}
     >
       {/* Header */}
       <Text style={{ color: "#fafafa", fontSize: 28, fontWeight: "800", marginBottom: 4 }}>
@@ -98,27 +100,13 @@ export default function FamilyScreen() {
       </Text>
 
       {/* Status banner */}
-      <View
-        style={{
-          backgroundColor: hasActiveEpisode
-            ? "#ff646715"
-            : allSafe
-              ? "#00bc7d15"
-              : "#fe9a0015",
-          borderRadius: 12,
-          padding: 14,
-          marginBottom: 20,
-          borderLeftWidth: 3,
-          borderLeftColor: hasActiveEpisode
-            ? "#ff6467"
-            : allSafe
-              ? "#00bc7d"
-              : "#fe9a00",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-        }}
+      <GlassCard
+        padding={14}
+        borderRadius={12}
+        borderColor={hasActiveEpisode ? "#ff6467" : allSafe ? "#00bc7d" : "#fe9a00"}
+        style={{ marginBottom: 20, borderLeftWidth: 3, borderLeftColor: hasActiveEpisode ? "#ff6467" : allSafe ? "#00bc7d" : "#fe9a00" }}
       >
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <Ionicons
           name={
             hasActiveEpisode
@@ -152,7 +140,8 @@ export default function FamilyScreen() {
                 : "One or more ring members show elevated heart rate"}
           </Text>
         </View>
-      </View>
+        </View>
+      </GlassCard>
 
       {/* Member cards */}
       {members.map((member) => (
@@ -230,16 +219,17 @@ function MemberCard({
 
   return (
     <Animated.View style={cardPulseStyle}>
+      <GlassCard
+        glow={!!hasEpisode}
+        borderWidth={hasEpisode ? 1.5 : 1}
+        borderColor={hasEpisode ? episodePhaseColor : undefined}
+        borderRadius={16}
+        padding={0}
+        style={{ marginBottom: 12 }}
+      >
       <Pressable
         onPress={onPress}
-        style={{
-          backgroundColor: "#171717",
-          borderRadius: 16,
-          padding: 16,
-          marginBottom: 12,
-          borderWidth: hasEpisode ? 1.5 : 1,
-          borderColor: hasEpisode ? episodePhaseColor : "rgba(255, 255, 255, 0.10)",
-        }}
+        style={{ padding: 16 }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {/* Avatar */}
@@ -422,6 +412,7 @@ function MemberCard({
           </View>
         )}
       </Pressable>
+      </GlassCard>
     </Animated.View>
   );
 }
