@@ -7,6 +7,7 @@ import { View, Text } from "react-native";
 import HeartRateDisplay from "./HeartRateDisplay";
 import StatusIndicator from "./StatusIndicator";
 import { colors, type StatusLevel } from "@/lib/theme";
+import GlassCard from "@/components/GlassCard";
 
 interface PulseCardProps {
   name: string;
@@ -38,10 +39,7 @@ export default function PulseCard({
     : "No data";
 
   return (
-    <View
-      className="rounded-2xl p-4"
-      style={{ backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 }}
-    >
+    <GlassCard padding={16} borderRadius={16}>
       {/* Header: name + status dot */}
       <View className="flex-row items-center justify-between mb-3">
         <View className="flex-1 mr-2">
@@ -99,7 +97,7 @@ export default function PulseCard({
       >
         {timeLabel}
       </Text>
-    </View>
+    </GlassCard>
   );
 }
 

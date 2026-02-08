@@ -10,7 +10,7 @@
  */
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { View, Text, Pressable, Image, Dimensions } from "react-native";
+import { View, Text, Pressable, Image, Dimensions, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, {
   useSharedValue,
@@ -20,7 +20,9 @@ import Animated, {
   withSequence,
   Easing,
 } from "react-native-reanimated";
-import { colors } from "@/lib/theme";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors, glass } from "@/lib/theme";
 import {
   type RingNotification,
   subscribe,
@@ -63,7 +65,7 @@ export default function NotificationOverlay() {
         zIndex: 9999,
         justifyContent: "flex-start",
         alignItems: "center",
-        backgroundColor: "rgba(0,0,0,0.6)",
+        backgroundColor: glass.overlayBg,
       }}
       pointerEvents="box-none"
     >
@@ -118,7 +120,7 @@ function NotificationCard({ notification, onDismiss }: CardProps) {
   const borderStyle = useAnimatedStyle(() => ({
     borderColor:
       notification.type === "episode-alert"
-        ? `rgba(249, 115, 22, ${borderOpacity.value})`
+        ? `rgba(254, 154, 0, ${borderOpacity.value})`
         : "transparent",
   }));
 
@@ -131,18 +133,27 @@ function NotificationCard({ notification, onDismiss }: CardProps) {
           slideStyle,
           borderStyle,
           {
-            backgroundColor: cfg.bg,
-            borderRadius: 20,
-            borderWidth: notification.type === "episode-alert" ? 2 : 0,
-            padding: 20,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.4,
-            shadowRadius: 16,
-            elevation: 12,
+            borderRadius: glass.borderRadius,
+            borderWidth: notification.type === "episode-alert" ? 2 : 1,
+            borderColor: notification.type === "episode-alert" ? undefined : glass.border,
+            overflow: "hidden",
+            ...glass.glowShadow,
           },
         ]}
       >
+        {/* Blur backdrop */}
+        <BlurView
+          tint="dark"
+          intensity={Platform.OS === "ios" ? glass.blurIntensityIOS : glass.blurIntensityAndroid}
+          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+        />
+        <LinearGradient
+          colors={[glass.gradientStart, glass.gradientEnd]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+        />
+      <View style={{ padding: 20 }}>
         {/* Header row */}
         <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 12 }}>
           <View
@@ -221,13 +232,13 @@ function NotificationCard({ notification, onDismiss }: CardProps) {
                 width: 80,
                 height: 80,
                 borderRadius: 40,
-                backgroundColor: "#7C3AED30",
+                backgroundColor: `${colors.interactive}30`,
                 justifyContent: "center",
                 alignItems: "center",
                 marginBottom: 8,
               }}
             >
-              <Ionicons name="happy" size={44} color="#A78BFA" />
+              <Ionicons name="happy" size={44} color={colors.interactive} />
             </View>
             {notification.message && (
               <Text style={{ color: colors.text, fontSize: 16, fontWeight: "600" }}>
@@ -248,6 +259,7 @@ function NotificationCard({ notification, onDismiss }: CardProps) {
         >
           Tap to dismiss
         </Text>
+      </View>
       </Animated.View>
     </Pressable>
   );
@@ -268,7 +280,7 @@ type CardConfig = {
 
 const cardConfig: Record<RingNotification["type"], CardConfig> = {
   "episode-alert": {
-    bg: "#1E293B",
+    bg: "#171717",
     iconBg: `${colors.elevated}30`,
     icon: "warning",
     iconColor: colors.elevated,
@@ -276,7 +288,7 @@ const cardConfig: Record<RingNotification["type"], CardConfig> = {
     subtitle: () => "Elevated heart rate detected",
   },
   "episode-resolved": {
-    bg: "#1E293B",
+    bg: "#171717",
     iconBg: `${colors.safe}30`,
     icon: "checkmark-circle",
     iconColor: colors.safe,
@@ -284,10 +296,10 @@ const cardConfig: Record<RingNotification["type"], CardConfig> = {
     subtitle: () => "Episode resolved",
   },
   "pulse-checkin": {
-    bg: "#1E293B",
-    iconBg: "#7C3AED30",
+    bg: "#171717",
+    iconBg: `${colors.interactive}30`,
     icon: "heart-circle",
-    iconColor: "#A78BFA",
+    iconColor: colors.interactive,
     title: (n) => `${n.memberName} sent a Pulse`,
     subtitle: () => "Check-in received",
   },
