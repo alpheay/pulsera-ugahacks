@@ -7,7 +7,11 @@ struct HeartRateView: View {
     @State private var heartScale: CGFloat = 1.0
 
     private var heartColor: Color {
-        PulseraTheme.statusColor(for: status)
+        switch status {
+        case .normal:   return PulseraTheme.safe
+        case .elevated: return PulseraTheme.warning
+        case .critical: return PulseraTheme.danger
+        }
     }
 
     private var beatSpeed: Double {

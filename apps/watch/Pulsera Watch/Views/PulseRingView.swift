@@ -11,7 +11,11 @@ struct PulseRingView: View {
     @State private var innerOpacity: Double = 0.7
 
     private var ringColor: Color {
-        PulseraTheme.statusColor(for: status)
+        switch status {
+        case .normal:   return PulseraTheme.safe
+        case .elevated: return PulseraTheme.warning
+        case .critical: return PulseraTheme.danger
+        }
     }
 
     private var animationSpeed: Double {
