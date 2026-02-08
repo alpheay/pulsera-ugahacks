@@ -21,6 +21,11 @@ import SwiftUI
 
 struct PulseraTheme {
 
+    // MARK: - Brand Accent
+
+    /// Primary brand accent — deep maroon (#942626)
+    static let accent = Color(red: 148/255, green: 38/255, blue: 38/255)
+
     // MARK: - Core Palette
 
     /// Primary text — near white (#FCFCFC)
@@ -80,8 +85,8 @@ struct PulseraTheme {
     static func statusColor(for status: HealthStatus) -> Color {
         switch status {
         case .normal:   return safe
-        case .elevated: return warning
-        case .critical: return danger
+        case .elevated: return accent
+        case .critical: return accent
         }
     }
 }

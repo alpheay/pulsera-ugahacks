@@ -32,7 +32,7 @@ struct BreathingView: View {
                     Circle()
                         .fill(
                             RadialGradient(
-                                colors: [breatheIn ? PulseraTheme.info.opacity(0.3) : PulseraTheme.interactive.opacity(0.2), .clear],
+                                colors: [breatheIn ? PulseraTheme.accent.opacity(0.3) : PulseraTheme.accent.opacity(0.15), .clear],
                                 center: .center,
                                 startRadius: 20,
                                 endRadius: 80
@@ -46,8 +46,8 @@ struct BreathingView: View {
                         .fill(
                             LinearGradient(
                                 colors: breatheIn
-                                    ? [PulseraTheme.info.opacity(0.7), PulseraTheme.info.opacity(0.4)]
-                                    : [PulseraTheme.interactive.opacity(0.5), PulseraTheme.interactive.opacity(0.3)],
+                                    ? [PulseraTheme.accent.opacity(0.7), PulseraTheme.accent.opacity(0.4)]
+                                    : [PulseraTheme.accent.opacity(0.4), PulseraTheme.accent.opacity(0.25)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -60,7 +60,7 @@ struct BreathingView: View {
                 // Instruction text
                 Text(breatheIn ? "Breathe in..." : "Breathe out...")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    .foregroundColor(breatheIn ? PulseraTheme.info : PulseraTheme.interactive)
+                    .foregroundColor(PulseraTheme.accent)
                     .animation(.easeInOut(duration: 0.5), value: breatheIn)
 
                 Text("You're doing great")
@@ -77,7 +77,7 @@ struct BreathingView: View {
                 // ElevenLabs status
                 HStack(spacing: 4) {
                     Circle()
-                        .fill(elevenLabsManager.isConnected ? PulseraTheme.safe : PulseraTheme.mutedForeground)
+                        .fill(elevenLabsManager.isConnected ? PulseraTheme.accent : PulseraTheme.mutedForeground)
                         .frame(width: 6, height: 6)
                     Text(elevenLabsManager.isConnected ? "Voice active" : "Connecting...")
                         .font(.system(size: 9, design: .rounded))
@@ -92,13 +92,7 @@ struct BreathingView: View {
                             .frame(height: 4)
 
                         RoundedRectangle(cornerRadius: 3)
-                            .fill(
-                                LinearGradient(
-                                    colors: [PulseraTheme.info, PulseraTheme.interactive],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                            .fill(PulseraTheme.accent)
                             .frame(width: geo.size.width * episodeManager.breathingProgress, height: 4)
                             .animation(.linear(duration: 0.5), value: episodeManager.breathingProgress)
                     }
@@ -133,6 +127,7 @@ struct BreathingView: View {
         // Inhale
         breatheIn = true
         hapticManager.playBreathing(phase: .breatheIn)
+        elevenLabsManager.sendBreathingCue(breatheIn: true)
 
         withAnimation(.easeInOut(duration: inhaleTime)) {
             circleScale = 1.0
@@ -145,6 +140,7 @@ struct BreathingView: View {
             // Exhale
             breatheIn = false
             hapticManager.playBreathing(phase: .breatheOut)
+            elevenLabsManager.sendBreathingCue(breatheIn: false)
 
             withAnimation(.easeInOut(duration: exhaleTime)) {
                 circleScale = 0.6
