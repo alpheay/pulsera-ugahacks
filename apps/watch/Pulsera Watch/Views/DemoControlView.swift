@@ -27,10 +27,10 @@ struct DemoControlView: View {
         VStack(spacing: 2) {
             Image(systemName: "hammer.fill")
                 .font(.system(size: 18))
-                .foregroundColor(.orange)
+                .foregroundColor(PulseraTheme.warning)
             Text("Demo Mode")
                 .font(.system(size: 14, weight: .bold, design: .rounded))
-                .foregroundColor(.orange)
+                .foregroundColor(PulseraTheme.warning)
         }
     }
 
@@ -49,19 +49,19 @@ struct DemoControlView: View {
             Button {
                 injectVitals(hr: 72, hrv: 45, accel: 0.3, temp: 36.5, status: .normal)
             } label: {
-                demoButtonLabel("Normal Vitals", color: .green)
+                demoButtonLabel("Normal Vitals", color: PulseraTheme.safe)
             }
 
             Button {
                 injectVitals(hr: 135, hrv: 20, accel: 0.5, temp: 37.2, status: .elevated)
             } label: {
-                demoButtonLabel("Elevated Vitals", color: .yellow)
+                demoButtonLabel("Elevated Vitals", color: PulseraTheme.warning)
             }
 
             Button {
                 injectVitals(hr: 175, hrv: 10, accel: 0.1, temp: 37.8, status: .critical)
             } label: {
-                demoButtonLabel("Critical Vitals", color: .red)
+                demoButtonLabel("Critical Vitals", color: PulseraTheme.danger)
             }
         }
     }
@@ -82,20 +82,20 @@ struct DemoControlView: View {
                     webSocketManager.sendEpisodeStart(triggerData: criticalData.toJSON())
                 }
             } label: {
-                demoButtonLabel("Trigger Episode", color: .orange)
+                demoButtonLabel("Trigger Episode", color: PulseraTheme.warning)
             }
 
             Button {
                 episodeManager.currentPhase = .calming
                 episodeManager.breathingProgress = 0
             } label: {
-                demoButtonLabel("Skip to Calming", color: .cyan)
+                demoButtonLabel("Skip to Calming", color: PulseraTheme.info)
             }
 
             Button {
                 episodeManager.startCalmingMusic()
             } label: {
-                demoButtonLabel("Calming Music", color: .purple)
+                demoButtonLabel("Calming Music", color: PulseraTheme.interactive)
             }
 
             Button {
@@ -104,31 +104,31 @@ struct DemoControlView: View {
                     episodeManager.requestPhoneCheck()
                 }
             } label: {
-                demoButtonLabel("Finish (elevated)", color: .yellow)
+                demoButtonLabel("Finish (elevated)", color: PulseraTheme.warning)
             }
 
             Button {
                 episodeManager.resolveEpisode(reason: "calming_resolved")
             } label: {
-                demoButtonLabel("Finish (normal)", color: .green)
+                demoButtonLabel("Finish (normal)", color: PulseraTheme.safe)
             }
 
             Button {
                 episodeManager.requestPhoneCheck()
             } label: {
-                demoButtonLabel("Phone Check", color: .purple)
+                demoButtonLabel("Phone Check", color: PulseraTheme.interactive)
             }
 
             Button {
                 episodeManager.resolveEpisode(reason: "false_positive")
             } label: {
-                demoButtonLabel("Resolve Episode", color: .green)
+                demoButtonLabel("Resolve Episode", color: PulseraTheme.safe)
             }
 
             Button {
                 resetToIdle()
             } label: {
-                demoButtonLabel("Reset to Idle", color: .gray)
+                demoButtonLabel("Reset to Idle", color: PulseraTheme.mutedForeground)
             }
         }
     }
@@ -213,28 +213,28 @@ struct DemoControlView: View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
-            .background(color.opacity(0.3))
+            .background(color.opacity(0.85))
             .cornerRadius(8)
     }
 
     private var connectionColor: Color {
         switch webSocketManager.connectionState {
-        case .connected: return .green
-        case .connecting: return .yellow
-        case .disconnected: return .gray
-        case .error: return .red
+        case .connected: return PulseraTheme.safe
+        case .connecting: return PulseraTheme.warning
+        case .disconnected: return PulseraTheme.mutedForeground
+        case .error: return PulseraTheme.danger
         }
     }
 
     private var phaseColor: Color {
         switch episodeManager.currentPhase {
-        case .idle: return .green
-        case .anomalyDetected: return .orange
-        case .calming: return .cyan
-        case .calmingMusic: return .purple
-        case .reEvaluating: return .yellow
-        case .requestingPhoneCheck, .waitingForPhone: return .purple
-        case .resolved: return .green
+        case .idle: return PulseraTheme.safe
+        case .anomalyDetected: return PulseraTheme.warning
+        case .calming: return PulseraTheme.info
+        case .calmingMusic: return PulseraTheme.interactive
+        case .reEvaluating: return PulseraTheme.warning
+        case .requestingPhoneCheck, .waitingForPhone: return PulseraTheme.interactive
+        case .resolved: return PulseraTheme.safe
         }
     }
 }
