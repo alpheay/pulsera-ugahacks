@@ -114,6 +114,23 @@ final class ElevenLabsManager: NSObject, ObservableObject, URLSessionWebSocketDe
         }
     }
 
+    // MARK: - Breathing Cue (sync with BreathingView)
+
+    func sendBreathingCue(breatheIn: Bool) {
+        guard running, webSocketTask != nil else { return }
+        let text = breatheIn
+            ? "I'm breathing in now, slowly through my nose."
+            : "I'm breathing out now, slowly and gently."
+        let escaped = text.replacingOccurrences(of: "\"", with: "\\\"")
+        let jsonStr = "{\"type\":\"user_message\",\"text\":\"\(escaped)\"}"
+        logger.info("sending breathing cue: \(breatheIn ? "inhale" : "exhale")")
+        webSocketTask?.send(.string(jsonStr)) { error in
+            if let error {
+                logger.error("failed to send breathing cue: \(error.localizedDescription)")
+            }
+        }
+    }
+
     // MARK: - Scripted user message (sent as text, no mic needed)
 
     private func sendScriptedUserMessage() {

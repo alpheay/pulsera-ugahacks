@@ -9,6 +9,7 @@ struct PulseraWatchApp: App {
     @StateObject private var episodeManager = EpisodeManager()
     @StateObject private var audioPlayerManager = AudioPlayerManager()
     @StateObject private var elevenLabsManager = ElevenLabsManager()
+    @StateObject private var eventBridge = EventBridgeClient()
 
     var body: some Scene {
         WindowGroup {
@@ -20,6 +21,7 @@ struct PulseraWatchApp: App {
                 .environmentObject(episodeManager)
                 .environmentObject(audioPlayerManager)
                 .environmentObject(elevenLabsManager)
+                .environmentObject(eventBridge)
                 .onAppear {
                     healthKitManager.startDemoMode()
                     webSocketManager.connectIfConfigured()
