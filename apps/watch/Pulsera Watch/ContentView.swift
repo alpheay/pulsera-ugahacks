@@ -92,8 +92,7 @@ struct ContentView: View {
 
                 StatusView(
                     connectionState: webSocketManager.connectionState,
-                    anomalyScore: webSocketManager.latestAnomalyScore,
-                    lastUpdated: healthKitManager.latestData?.timestamp
+                    anomalyScore: webSocketManager.latestAnomalyScore
                 )
             }
             .padding(.horizontal, 4)
