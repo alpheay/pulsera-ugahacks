@@ -68,6 +68,11 @@ struct ContentView: View {
                                 skinTemp: 37.2, status: .elevated
                             )
                             episodeManager.startEpisode(trigger: .sustainedElevatedHR, data: data)
+                            webSocketManager.sendEpisodeStart(triggerData: [
+                                "heartRate": hr,
+                                "hrv": 20.0,
+                                "anomalyType": "sustained_elevated_hr"
+                            ])
                         }
                     } label: {
                         HStack(spacing: 6) {

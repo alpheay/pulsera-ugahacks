@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -52,6 +53,7 @@ export default function CheckInScreen() {
   const [errorMsg, setErrorMsg] = useState("");
   const [isDemoMode, setIsDemoMode] = useState(false);
   const demoTimerRef = useRef<ReturnType<typeof setInterval>>();
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
   // Check SDK availability on mount
   const sdkAvailable = useRef(false);
@@ -62,6 +64,9 @@ export default function CheckInScreen() {
       sdkAvailable.current = false;
     }
     setIsDemoMode(!sdkAvailable.current);
+    if (!cameraPermission?.granted) {
+      requestCameraPermission();
+    }
   }, []);
 
   // Pulse animation for face guide
@@ -232,96 +237,107 @@ export default function CheckInScreen() {
           { borderColor: isScanning ? colors.info : glass.border },
         ]}
       >
-        {/* Dark background with face guide */}
-        <View style={styles.scanBackground}>
-          {(stage === "ready" || isScanning) && (
+        {/* Camera preview (or dark fallback) with face guide */}
+        {cameraPermission?.granted ? (
+          <CameraView style={styles.scanBackground} facing="front" mirror>
+            {(stage === "ready" || isScanning) && (
+              <View style={styles.faceGuideContainer}>
+                {/* Progress ring */}
+                {isScanning && (
+                  <Svg
+                    width={PROGRESS_RING_SIZE}
+                    height={PROGRESS_RING_SIZE}
+                    style={styles.progressRing}
+                  >
+                    <Circle
+                      cx={PROGRESS_RING_SIZE / 2}
+                      cy={PROGRESS_RING_SIZE / 2}
+                      r={RADIUS}
+                      stroke="rgba(255,255,255,0.1)"
+                      strokeWidth={STROKE_WIDTH}
+                      fill="none"
+                    />
+                    <AnimatedCircle
+                      cx={PROGRESS_RING_SIZE / 2}
+                      cy={PROGRESS_RING_SIZE / 2}
+                      r={RADIUS}
+                      stroke={colors.info}
+                      strokeWidth={STROKE_WIDTH}
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeDasharray={CIRCUMFERENCE}
+                      animatedProps={animatedCircleProps}
+                      transform={`rotate(-90 ${PROGRESS_RING_SIZE / 2} ${PROGRESS_RING_SIZE / 2})`}
+                    />
+                  </Svg>
+                )}
+
+                <Animated.View style={[styles.faceOvalWrapper, pulseStyle]}>
+                  <View
+                    style={[
+                      styles.faceOval,
+                      {
+                        borderColor: isScanning
+                          ? colors.info
+                          : "rgba(255,255,255,0.25)",
+                      },
+                    ]}
+                  />
+                </Animated.View>
+
+                {isScanning && (
+                  <View style={styles.countdownContainer}>
+                    <Text style={styles.countdownText}>{secondsLeft}s</Text>
+                    <Text style={styles.instructionText}>
+                      {secondsLeft > scanDuration - 3
+                        ? "Hold still, face the camera"
+                        : `${secondsLeft} seconds remaining`}
+                    </Text>
+                  </View>
+                )}
+
+                {stage === "ready" && (
+                  <View style={styles.countdownContainer}>
+                    <Ionicons name="scan-outline" size={28} color="rgba(255,255,255,0.4)" />
+                    <Text style={[styles.instructionText, { marginTop: 8 }]}>
+                      Position your face in the oval
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
+
+            {stage === "analyzing" && (
+              <View style={styles.analyzingOverlay}>
+                <Ionicons name="analytics" size={36} color={colors.warning} />
+                <Text style={styles.analyzingText}>Analyzing vitals...</Text>
+              </View>
+            )}
+
+            {stage === "error" && (
+              <View style={styles.analyzingOverlay}>
+                <Ionicons name="alert-circle" size={42} color={colors.critical} />
+                <Text style={styles.errorText}>Could not capture vitals</Text>
+                <Text style={styles.errorSubtext}>{errorMsg}</Text>
+              </View>
+            )}
+          </CameraView>
+        ) : (
+          <View style={styles.scanBackground}>
             <View style={styles.faceGuideContainer}>
-              {/* Progress ring */}
-              {isScanning && (
-                <Svg
-                  width={PROGRESS_RING_SIZE}
-                  height={PROGRESS_RING_SIZE}
-                  style={styles.progressRing}
-                >
-                  {/* Background circle */}
-                  <Circle
-                    cx={PROGRESS_RING_SIZE / 2}
-                    cy={PROGRESS_RING_SIZE / 2}
-                    r={RADIUS}
-                    stroke="rgba(255,255,255,0.1)"
-                    strokeWidth={STROKE_WIDTH}
-                    fill="none"
-                  />
-                  {/* Animated progress circle */}
-                  <AnimatedCircle
-                    cx={PROGRESS_RING_SIZE / 2}
-                    cy={PROGRESS_RING_SIZE / 2}
-                    r={RADIUS}
-                    stroke={colors.info}
-                    strokeWidth={STROKE_WIDTH}
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeDasharray={CIRCUMFERENCE}
-                    animatedProps={animatedCircleProps}
-                    transform={`rotate(-90 ${PROGRESS_RING_SIZE / 2} ${PROGRESS_RING_SIZE / 2})`}
-                  />
-                </Svg>
-              )}
-
-              {/* Face oval guide */}
-              <Animated.View style={[styles.faceOvalWrapper, pulseStyle]}>
-                <View
-                  style={[
-                    styles.faceOval,
-                    {
-                      borderColor: isScanning
-                        ? colors.info
-                        : "rgba(255,255,255,0.25)",
-                    },
-                  ]}
-                />
-              </Animated.View>
-
-              {/* Countdown / instructions */}
-              {isScanning && (
-                <View style={styles.countdownContainer}>
-                  <Text style={styles.countdownText}>{secondsLeft}s</Text>
-                  <Text style={styles.instructionText}>
-                    {secondsLeft > scanDuration - 3
-                      ? "Hold still, face the camera"
-                      : `${secondsLeft} seconds remaining`}
-                  </Text>
-                </View>
-              )}
-
-              {stage === "ready" && (
-                <View style={styles.countdownContainer}>
-                  <Ionicons name="scan-outline" size={28} color="rgba(255,255,255,0.4)" />
-                  <Text style={[styles.instructionText, { marginTop: 8 }]}>
-                    Position your face in the oval
-                  </Text>
-                </View>
-              )}
+              <Ionicons name="camera-outline" size={48} color="rgba(255,255,255,0.3)" />
+              <Text style={[styles.instructionText, { marginTop: 12 }]}>
+                Camera permission required
+              </Text>
+              <Pressable
+                onPress={requestCameraPermission}
+                style={styles.permissionButton}
+              >
+                <Text style={styles.permissionButtonText}>Grant Access</Text>
+              </Pressable>
             </View>
-          )}
-
-          {/* Analyzing overlay */}
-          {stage === "analyzing" && (
-            <View style={styles.analyzingOverlay}>
-              <Ionicons name="analytics" size={36} color={colors.warning} />
-              <Text style={styles.analyzingText}>Analyzing vitals...</Text>
-            </View>
-          )}
-
-          {/* Error overlay */}
-          {stage === "error" && (
-            <View style={styles.analyzingOverlay}>
-              <Ionicons name="alert-circle" size={42} color={colors.critical} />
-              <Text style={styles.errorText}>Could not capture vitals</Text>
-              <Text style={styles.errorSubtext}>{errorMsg}</Text>
-            </View>
-          )}
-        </View>
+          </View>
+        )}
 
         {/* Cancel button during scan */}
         {isScanning && (
@@ -354,7 +370,6 @@ export default function CheckInScreen() {
         <View>
           <Text style={styles.completeHeader}>
             Analysis Complete
-            {isDemoMode ? " (Simulated)" : ""}
           </Text>
 
           <GlassCard padding={16} borderRadius={glass.borderRadiusSmall}>
@@ -537,6 +552,18 @@ const styles = StyleSheet.create({
     marginTop: 6,
     textAlign: "center",
     paddingHorizontal: 32,
+  },
+  permissionButton: {
+    marginTop: 16,
+    backgroundColor: colors.info,
+    borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  permissionButtonText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "700",
   },
   cancelButton: {
     position: "absolute",

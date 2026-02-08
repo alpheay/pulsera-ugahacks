@@ -70,6 +70,13 @@ export interface RingPulseCheckin {
   member_name: string;
   photo_url: string;
   message: string;
+  presage_data?: {
+    visual_heart_rate: number;
+    breathing_rate: number;
+    facial_expression: string;
+    eye_responsiveness: string;
+    confidence_score: number;
+  };
   timestamp: string;
 }
 
@@ -84,7 +91,7 @@ export type IncomingMessage =
 
 export type MessageCallback = (message: IncomingMessage) => void;
 
-const DEFAULT_WS_URL = "ws://localhost:3002/ws";
+const DEFAULT_WS_URL = "ws://localhost:8765/ws";
 const MAX_RECONNECT_DELAY_MS = 30_000;
 const INITIAL_RECONNECT_DELAY_MS = 1_000;
 const PING_INTERVAL_MS = 25_000;
