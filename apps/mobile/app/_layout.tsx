@@ -48,6 +48,13 @@ function useRingNotifications() {
           photo_url: string;
           message: string;
           timestamp: string;
+          presage_data?: {
+            visual_heart_rate: number;
+            breathing_rate: number;
+            facial_expression: string;
+            eye_responsiveness: string;
+            confidence_score: number;
+          };
         };
         pushNotification({
           type: "pulse-checkin",
@@ -55,6 +62,15 @@ function useRingNotifications() {
           photoUrl: m.photo_url,
           message: m.message,
           timestamp: m.timestamp,
+          ...(m.presage_data && {
+            presageData: {
+              visualHeartRate: m.presage_data.visual_heart_rate,
+              breathingRate: m.presage_data.breathing_rate,
+              facialExpression: m.presage_data.facial_expression,
+              eyeResponsiveness: m.presage_data.eye_responsiveness,
+              confidenceScore: m.presage_data.confidence_score,
+            },
+          }),
         });
       }
     });
