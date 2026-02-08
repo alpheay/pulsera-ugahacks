@@ -3,7 +3,6 @@ import SwiftUI
 struct StatusView: View {
     let connectionState: ConnectionState
     let anomalyScore: Double?
-    let lastUpdated: Date?
 
     @State private var uptimeSeconds: Int = 0
     @State private var uptimeTimer: Timer?
@@ -19,11 +18,6 @@ struct StatusView: View {
             // Anomaly score bar
             if let score = anomalyScore {
                 anomalyBar(score: score)
-            }
-
-            // Last updated
-            if let time = lastUpdated {
-                lastUpdatedRow(time: time)
             }
         }
         .padding(.horizontal, 8)
@@ -144,25 +138,6 @@ struct StatusView: View {
         return PulseraTheme.safe
     }
 
-    // MARK: - Last Updated
-
-    private func lastUpdatedRow(time: Date) -> some View {
-        HStack {
-            Image(systemName: "clock")
-                .font(.system(size: 9))
-                .foregroundColor(PulseraTheme.mutedForeground)
-
-            Text(time, style: .relative)
-                .font(.system(size: 10))
-                .foregroundColor(PulseraTheme.mutedForeground)
-
-            Text("ago")
-                .font(.system(size: 10))
-                .foregroundColor(PulseraTheme.mutedForeground)
-
-            Spacer()
-        }
-    }
 }
 
 #Preview {
@@ -170,18 +145,15 @@ struct StatusView: View {
         VStack(spacing: 12) {
             StatusView(
                 connectionState: .connected,
-                anomalyScore: 0.23,
-                lastUpdated: Date().addingTimeInterval(-12)
+                anomalyScore: 0.23
             )
             StatusView(
                 connectionState: .connecting,
-                anomalyScore: 0.67,
-                lastUpdated: Date().addingTimeInterval(-45)
+                anomalyScore: 0.67
             )
             StatusView(
                 connectionState: .error("Timeout"),
-                anomalyScore: 0.92,
-                lastUpdated: Date().addingTimeInterval(-120)
+                anomalyScore: 0.92
             )
         }
     }
