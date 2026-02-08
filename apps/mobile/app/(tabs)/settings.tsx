@@ -9,22 +9,22 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: "#0F172A" }}
+      style={{ flex: 1, backgroundColor: "#0a0a0a" }}
       contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 60 }}
     >
-      <Text style={{ color: "#E2E8F0", fontSize: 28, fontWeight: "800", marginBottom: 20 }}>
+      <Text style={{ color: "#fafafa", fontSize: 28, fontWeight: "800", marginBottom: 20 }}>
         Settings
       </Text>
 
       {/* Profile */}
       <View
         style={{
-          backgroundColor: "#1E293B",
+          backgroundColor: "#171717",
           borderRadius: 16,
           padding: 16,
           marginBottom: 20,
           borderWidth: 1,
-          borderColor: "#334155",
+          borderColor: "rgba(255, 255, 255, 0.10)",
           flexDirection: "row",
           alignItems: "center",
           gap: 14,
@@ -35,44 +35,44 @@ export default function SettingsScreen() {
             width: 56,
             height: 56,
             borderRadius: 28,
-            backgroundColor: "#F59E0B20",
+            backgroundColor: "#e5e5e520",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Text style={{ color: "#F59E0B", fontWeight: "800", fontSize: 20 }}>ME</Text>
+          <Text style={{ color: "#e5e5e5", fontWeight: "800", fontSize: 20 }}>ME</Text>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ color: "#E2E8F0", fontWeight: "700", fontSize: 18 }}>
-            Garcia Family
+          <Text style={{ color: "#fafafa", fontWeight: "700", fontSize: 18 }}>
+            Saha Ring
           </Text>
-          <Text style={{ color: "#94A3B8", fontSize: 13 }}>
+          <Text style={{ color: "#a1a1a1", fontSize: 13 }}>
             5 members | 4 watches active
           </Text>
         </View>
         <View
           style={{
-            backgroundColor: "#10B98120",
+            backgroundColor: "#00bc7d20",
             paddingHorizontal: 10,
             paddingVertical: 4,
             borderRadius: 8,
           }}
         >
-          <Text style={{ color: "#10B981", fontSize: 11, fontWeight: "600" }}>ACTIVE</Text>
+          <Text style={{ color: "#00bc7d", fontSize: 11, fontWeight: "600" }}>ACTIVE</Text>
         </View>
       </View>
 
       {/* Notifications */}
-      <Text style={{ color: "#94A3B8", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
+      <Text style={{ color: "#a1a1a1", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
         NOTIFICATIONS
       </Text>
       <View
         style={{
-          backgroundColor: "#1E293B",
+          backgroundColor: "#171717",
           borderRadius: 16,
           marginBottom: 20,
           borderWidth: 1,
-          borderColor: "#334155",
+          borderColor: "rgba(255, 255, 255, 0.10)",
           overflow: "hidden",
         }}
       >
@@ -82,66 +82,66 @@ export default function SettingsScreen() {
           description="Get notified when a family member's status changes"
           value={alertsEnabled}
           onToggle={setAlertsEnabled}
-          color="#F59E0B"
+          color="#fe9a00"
         />
-        <View style={{ height: 1, backgroundColor: "#334155" }} />
+        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
         <SettingToggle
           icon="alert-circle"
           label="Critical Only"
           description="Only alert for critical health events"
           value={criticalOnly}
           onToggle={setCriticalOnly}
-          color="#EF4444"
+          color="#ff6467"
         />
-        <View style={{ height: 1, backgroundColor: "#334155" }} />
+        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
         <SettingToggle
           icon="location"
           label="Location Sharing"
           description="Share your location with family members"
           value={locationSharing}
           onToggle={setLocationSharing}
-          color="#3B82F6"
+          color="#1447e6"
         />
       </View>
 
       {/* Watch */}
-      <Text style={{ color: "#94A3B8", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
+      <Text style={{ color: "#a1a1a1", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
         APPLE WATCH
       </Text>
       <View
         style={{
-          backgroundColor: "#1E293B",
+          backgroundColor: "#171717",
           borderRadius: 16,
           marginBottom: 20,
           borderWidth: 1,
-          borderColor: "#334155",
+          borderColor: "rgba(255, 255, 255, 0.10)",
           overflow: "hidden",
         }}
       >
-        <SettingRow icon="watch" label="Pulsera Watch" value="Connected" valueColor="#10B981" />
-        <View style={{ height: 1, backgroundColor: "#334155" }} />
-        <SettingRow icon="heart" label="Health Monitoring" value="Active" valueColor="#EF4444" />
-        <View style={{ height: 1, backgroundColor: "#334155" }} />
-        <SettingRow icon="battery-full" label="Watch Battery" value="78%" valueColor="#10B981" />
+        <SettingRow icon="watch" label="Pulsera Watch" value="Connected" valueColor="#00bc7d" />
+        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
+        <SettingRow icon="heart" label="Health Monitoring" value="Active" valueColor="#ff6467" />
+        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
+        <SettingRow icon="battery-full" label="Watch Battery" value="78%" valueColor="#00bc7d" />
       </View>
 
       {/* About */}
-      <Text style={{ color: "#94A3B8", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
+      <Text style={{ color: "#a1a1a1", fontSize: 12, fontWeight: "600", marginBottom: 8, marginLeft: 4 }}>
         ABOUT
       </Text>
       <View
         style={{
-          backgroundColor: "#1E293B",
+          backgroundColor: "#171717",
           borderRadius: 16,
           marginBottom: 20,
           borderWidth: 1,
-          borderColor: "#334155",
+          borderColor: "rgba(255, 255, 255, 0.10)",
           overflow: "hidden",
         }}
       >
         <SettingRow icon="information-circle" label="Version" value="1.0.0" />
-        <View style={{ height: 1, backgroundColor: "#334155" }} />
-        <SettingRow icon="shield-checkmark" label="PulseNet AI" value="Active" valueColor="#F59E0B" />
+        <View style={{ height: 1, backgroundColor: "rgba(255, 255, 255, 0.10)" }} />
+        <SettingRow icon="shield-checkmark" label="PulseNet AI" value="Active" valueColor="#fe9a00" />
       </View>
     </ScrollView>
   );
@@ -166,14 +166,14 @@ function SettingToggle({
     <View style={{ flexDirection: "row", alignItems: "center", padding: 14, gap: 12 }}>
       <Ionicons name={icon} size={20} color={color} />
       <View style={{ flex: 1 }}>
-        <Text style={{ color: "#E2E8F0", fontSize: 15, fontWeight: "600" }}>{label}</Text>
-        <Text style={{ color: "#64748B", fontSize: 11, marginTop: 1 }}>{description}</Text>
+        <Text style={{ color: "#fafafa", fontSize: 15, fontWeight: "600" }}>{label}</Text>
+        <Text style={{ color: "#737373", fontSize: 11, marginTop: 1 }}>{description}</Text>
       </View>
       <Switch
         value={value}
         onValueChange={onToggle}
-        trackColor={{ false: "#334155", true: color + "60" }}
-        thumbColor={value ? color : "#94A3B8"}
+        trackColor={{ false: "rgba(255, 255, 255, 0.10)", true: color + "60" }}
+        thumbColor={value ? color : "#a1a1a1"}
       />
     </View>
   );
@@ -192,9 +192,9 @@ function SettingRow({
 }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", padding: 14, gap: 12 }}>
-      <Ionicons name={icon} size={20} color="#94A3B8" />
-      <Text style={{ color: "#E2E8F0", fontSize: 15, flex: 1 }}>{label}</Text>
-      <Text style={{ color: valueColor || "#94A3B8", fontSize: 14, fontWeight: "600" }}>
+      <Ionicons name={icon} size={20} color="#a1a1a1" />
+      <Text style={{ color: "#fafafa", fontSize: 15, flex: 1 }}>{label}</Text>
+      <Text style={{ color: valueColor || "#a1a1a1", fontSize: 14, fontWeight: "600" }}>
         {value}
       </Text>
     </View>
