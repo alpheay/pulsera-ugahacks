@@ -5,8 +5,6 @@ struct StatusView: View {
     let anomalyScore: Double?
     let lastUpdated: Date?
 
-    private let amberColor = Color(red: 245/255, green: 158/255, blue: 11/255)
-
     var body: some View {
         VStack(spacing: 8) {
             // Connection status row
@@ -49,10 +47,10 @@ struct StatusView: View {
 
     private var connectionDotColor: Color {
         switch connectionState {
-        case .connected:    return .green
-        case .connecting:   return amberColor
-        case .disconnected: return .gray
-        case .error:        return .red
+        case .connected:    return PulseraTheme.safe
+        case .connecting:   return PulseraTheme.warning
+        case .disconnected: return PulseraTheme.mutedForeground
+        case .error:        return PulseraTheme.danger
         }
     }
 
@@ -93,11 +91,11 @@ struct StatusView: View {
 
     private func anomalyColor(for score: Double) -> Color {
         if score >= 0.8 {
-            return .red
+            return PulseraTheme.danger
         } else if score >= 0.5 {
-            return amberColor
+            return PulseraTheme.warning
         }
-        return .green
+        return PulseraTheme.safe
     }
 
     // MARK: - Last Updated

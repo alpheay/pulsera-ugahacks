@@ -219,22 +219,22 @@ struct DemoControlView: View {
 
     private var connectionColor: Color {
         switch webSocketManager.connectionState {
-        case .connected: return .green
-        case .connecting: return .yellow
-        case .disconnected: return .gray
-        case .error: return .red
+        case .connected: return PulseraTheme.safe
+        case .connecting: return PulseraTheme.warning
+        case .disconnected: return PulseraTheme.mutedForeground
+        case .error: return PulseraTheme.danger
         }
     }
 
     private var phaseColor: Color {
         switch episodeManager.currentPhase {
-        case .idle: return .green
-        case .anomalyDetected: return .orange
-        case .calming: return .cyan
-        case .calmingMusic: return .purple
-        case .reEvaluating: return .yellow
-        case .requestingPhoneCheck, .waitingForPhone: return .purple
-        case .resolved: return .green
+        case .idle: return PulseraTheme.safe
+        case .anomalyDetected: return PulseraTheme.warning
+        case .calming: return PulseraTheme.info
+        case .calmingMusic: return PulseraTheme.interactive
+        case .reEvaluating: return PulseraTheme.warning
+        case .requestingPhoneCheck, .waitingForPhone: return PulseraTheme.interactive
+        case .resolved: return PulseraTheme.safe
         }
     }
 }
