@@ -233,7 +233,7 @@ struct ContentView: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         pulseSent = false
                         episodeManager.returnToIdle()
-                        healthKitManager.setDemoDecline()
+                        healthKitManager.startDemoMode()
                     }
                 } label: {
                     HStack(spacing: 6) {
