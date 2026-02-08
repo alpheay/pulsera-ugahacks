@@ -6,13 +6,11 @@ struct HeartRateView: View {
 
     @State private var heartScale: CGFloat = 1.0
 
-    private let amberColor = Color(red: 245/255, green: 158/255, blue: 11/255)
-
     private var heartColor: Color {
         switch status {
-        case .normal:   return .green
-        case .elevated: return amberColor
-        case .critical: return .red
+        case .normal:   return PulseraTheme.safe
+        case .elevated: return PulseraTheme.warning
+        case .critical: return PulseraTheme.danger
         }
     }
 
