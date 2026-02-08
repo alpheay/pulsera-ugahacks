@@ -79,6 +79,7 @@ struct CalmingMusicView: View {
                 // Heart rate pill
                 if let hr = healthKitManager.latestData?.heartRate {
                     HeartRatePill(heartRate: hr)
+                        .padding(.bottom, 4)
                 }
 
                 // Progress bar

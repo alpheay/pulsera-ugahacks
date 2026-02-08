@@ -155,7 +155,7 @@ struct ContentView: View {
 
                 if let hr = healthKitManager.latestData?.heartRate {
                     HeartRatePill(heartRate: hr)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 28)
                 }
             }
         }
@@ -187,7 +187,7 @@ struct ContentView: View {
 
                 if let hr = healthKitManager.latestData?.heartRate {
                     HeartRatePill(heartRate: hr)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 28)
                 }
             }
         }
@@ -260,7 +260,7 @@ struct ContentView: View {
 
                 if let hr = healthKitManager.latestData?.heartRate {
                     HeartRatePill(heartRate: hr)
-                        .padding(.bottom, 8)
+                        .padding(.bottom, 28)
                 }
             }
         }
