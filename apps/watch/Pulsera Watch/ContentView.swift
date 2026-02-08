@@ -224,9 +224,11 @@ struct ContentView: View {
                         "presage_data": presage
                     ])
                     pulseSent = true
-                    // Reset after 3s
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    // Return to start screen after brief confirmation
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         pulseSent = false
+                        episodeManager.returnToIdle()
+                        healthKitManager.setDemoDecline()
                     }
                 } label: {
                     HStack(spacing: 6) {

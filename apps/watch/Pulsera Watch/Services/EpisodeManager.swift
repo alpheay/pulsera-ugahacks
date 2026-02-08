@@ -178,14 +178,9 @@ final class EpisodeManager: ObservableObject {
             self.showPhoneCheckPrompt = false
             self.breathingProgress = 0
         }
-
-        // Return to idle after showing resolution message
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) { [weak self] in
-            self?.returnToIdle()
-        }
     }
 
-    private func returnToIdle() {
+    func returnToIdle() {
         DispatchQueue.main.async {
             self.currentPhase = .idle
             self.currentEpisodeId = nil
