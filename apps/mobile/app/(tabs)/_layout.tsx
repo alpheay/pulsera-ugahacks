@@ -7,15 +7,15 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#1E293B",
-          borderTopColor: "#334155",
+          backgroundColor: "#171717",
+          borderTopColor: "rgba(255, 255, 255, 0.10)",
           borderTopWidth: 0.5,
           height: 88,
           paddingBottom: 30,
           paddingTop: 8,
         },
-        tabBarActiveTintColor: "#F59E0B",
-        tabBarInactiveTintColor: "#64748B",
+        tabBarActiveTintColor: "#e5e5e5",
+        tabBarInactiveTintColor: "#737373",
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: "600",
@@ -34,7 +34,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="family"
         options={{
-          title: "Family",
+          title: "Ring",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="people" size={size} color={color} />
           ),

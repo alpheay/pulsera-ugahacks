@@ -31,13 +31,14 @@ export default function FamilyScreen() {
   const [members, setMembers] = useState<MemberLocation[]>(FAMILY_MEMBERS);
   const [demoEpisode, setDemoEpisode] = useState<Episode | null>(null);
 
+  const [demoMemberId, setDemoMemberId] = useState<string | null>(null);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setMembers((prev) =>
         prev.map((m) => {
           const updated = simulateLocationUpdate(m);
-          // Attach demo episode to Carlos
-          if (m.id === "carlos" && demoEpisode) {
+          if (m.id === demoMemberId && demoEpisode) {
             return { ...updated, activeEpisode: demoEpisode };
           }
           return { ...updated, activeEpisode: undefined };
@@ -45,12 +46,17 @@ export default function FamilyScreen() {
       );
     }, 3000);
     return () => clearInterval(interval);
-  }, [demoEpisode]);
+  }, [demoEpisode, demoMemberId]);
 
-  // Auto-trigger demo episode for Carlos after 5 seconds
+  // Auto-trigger demo episode for a random watch-wearing member after 5 seconds
   useEffect(() => {
+    const watchMembers = FAMILY_MEMBERS.filter((m) => m.isWearingWatch && m.id !== "me");
+    const member = watchMembers[Math.floor(Math.random() * watchMembers.length)];
     const timer = setTimeout(() => {
-      const episode = createEpisode("carlos", "Carlos", 142, 22);
+      const hr = 130 + Math.floor(Math.random() * 25);
+      const hrv = 18 + Math.floor(Math.random() * 10);
+      const episode = createEpisode(member.id, member.name, hr, hrv);
+      setDemoMemberId(member.id);
       setDemoEpisode(episode);
     }, 5000);
     return () => clearTimeout(timer);
@@ -80,14 +86,14 @@ export default function FamilyScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: "#0F172A" }}
+      style={{ flex: 1, backgroundColor: "#0a0a0a" }}
       contentContainerStyle={{ padding: 16, paddingTop: 60, paddingBottom: 40 }}
     >
       {/* Header */}
-      <Text style={{ color: "#E2E8F0", fontSize: 28, fontWeight: "800", marginBottom: 4 }}>
-        Garcia Family
+      <Text style={{ color: "#fafafa", fontSize: 28, fontWeight: "800", marginBottom: 4 }}>
+        Saha Ring
       </Text>
-      <Text style={{ color: "#94A3B8", fontSize: 14, marginBottom: 20 }}>
+      <Text style={{ color: "#a1a1a1", fontSize: 14, marginBottom: 20 }}>
         {members.length} members | {members.filter((m) => m.isWearingWatch).length} watches active
       </Text>
 
@@ -95,19 +101,19 @@ export default function FamilyScreen() {
       <View
         style={{
           backgroundColor: hasActiveEpisode
-            ? "#EF444415"
+            ? "#ff646715"
             : allSafe
-              ? "#10B98115"
-              : "#F59E0B15",
+              ? "#00bc7d15"
+              : "#fe9a0015",
           borderRadius: 12,
           padding: 14,
           marginBottom: 20,
           borderLeftWidth: 3,
           borderLeftColor: hasActiveEpisode
-            ? "#EF4444"
+            ? "#ff6467"
             : allSafe
-              ? "#10B981"
-              : "#F59E0B",
+              ? "#00bc7d"
+              : "#fe9a00",
           flexDirection: "row",
           alignItems: "center",
           gap: 10,
@@ -124,26 +130,26 @@ export default function FamilyScreen() {
           size={22}
           color={
             hasActiveEpisode
-              ? "#EF4444"
+              ? "#ff6467"
               : allSafe
-                ? "#10B981"
-                : "#F59E0B"
+                ? "#00bc7d"
+                : "#fe9a00"
           }
         />
         <View style={{ flex: 1 }}>
-          <Text style={{ color: "#E2E8F0", fontWeight: "700", fontSize: 14 }}>
+          <Text style={{ color: "#fafafa", fontWeight: "700", fontSize: 14 }}>
             {hasActiveEpisode
               ? "Active episode detected"
               : allSafe
                 ? "Everyone is safe"
                 : "Elevated activity detected"}
           </Text>
-          <Text style={{ color: "#94A3B8", fontSize: 12 }}>
+          <Text style={{ color: "#a1a1a1", fontSize: 12 }}>
             {hasActiveEpisode
               ? "An episode is in progress — check the Alerts tab"
               : allSafe
                 ? "All watch-connected members show normal vitals"
-                : "One or more members show elevated heart rate"}
+                : "One or more ring members show elevated heart rate"}
           </Text>
         </View>
       </View>
@@ -227,12 +233,12 @@ function MemberCard({
       <Pressable
         onPress={onPress}
         style={{
-          backgroundColor: "#1E293B",
+          backgroundColor: "#171717",
           borderRadius: 16,
           padding: 16,
           marginBottom: 12,
           borderWidth: hasEpisode ? 1.5 : 1,
-          borderColor: hasEpisode ? episodePhaseColor : "#334155",
+          borderColor: hasEpisode ? episodePhaseColor : "rgba(255, 255, 255, 0.10)",
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -258,7 +264,7 @@ function MemberCard({
           {/* Info */}
           <View style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <Text style={{ color: "#E2E8F0", fontWeight: "700", fontSize: 16 }}>
+              <Text style={{ color: "#fafafa", fontWeight: "700", fontSize: 16 }}>
                 {member.name}
               </Text>
               <View
@@ -275,7 +281,7 @@ function MemberCard({
               </View>
             </View>
 
-            <Text style={{ color: "#94A3B8", fontSize: 12, marginTop: 2 }}>
+            <Text style={{ color: "#a1a1a1", fontSize: 12, marginTop: 2 }}>
               {member.relation} | {member.locationName}
             </Text>
 
@@ -285,29 +291,29 @@ function MemberCard({
                 <>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
                     <Animated.View style={heartStyle}>
-                      <Ionicons name="heart" size={14} color="#EF4444" />
+                      <Ionicons name="heart" size={14} color="#ff6467" />
                     </Animated.View>
-                    <Text style={{ color: "#EF4444", fontWeight: "700", fontSize: 14 }}>
+                    <Text style={{ color: "#ff6467", fontWeight: "700", fontSize: 14 }}>
                       {member.health.heartRate}
                     </Text>
-                    <Text style={{ color: "#64748B", fontSize: 10 }}>BPM</Text>
+                    <Text style={{ color: "#737373", fontSize: 10 }}>BPM</Text>
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                    <Ionicons name="pulse" size={14} color="#F59E0B" />
-                    <Text style={{ color: "#F59E0B", fontWeight: "600", fontSize: 13 }}>
-                      {member.health.hrv}
+                    <Ionicons name="pulse" size={14} color="#fe9a00" />
+                    <Text style={{ color: "#fe9a00", fontWeight: "600", fontSize: 13 }}>
+                      {Number(member.health.hrv).toFixed(1)}
                     </Text>
-                    <Text style={{ color: "#64748B", fontSize: 10 }}>HRV</Text>
+                    <Text style={{ color: "#737373", fontSize: 10 }}>HRV</Text>
                   </View>
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-                    <Ionicons name="footsteps" size={14} color="#3B82F6" />
-                    <Text style={{ color: "#3B82F6", fontWeight: "600", fontSize: 13 }}>
+                    <Ionicons name="footsteps" size={14} color="#1447e6" />
+                    <Text style={{ color: "#1447e6", fontWeight: "600", fontSize: 13 }}>
                       {member.health.steps.toLocaleString()}
                     </Text>
                   </View>
                 </>
               ) : (
-                <Text style={{ color: "#64748B", fontSize: 12, fontStyle: "italic" }}>
+                <Text style={{ color: "#737373", fontSize: 12, fontStyle: "italic" }}>
                   Watch not connected
                 </Text>
               )}
@@ -338,10 +344,10 @@ function MemberCard({
                 {member.batteryLevel}%
               </Text>
             </View>
-            <Text style={{ color: "#64748B", fontSize: 10 }}>
+            <Text style={{ color: "#737373", fontSize: 10 }}>
               {timeAgo(member.lastUpdated)}
             </Text>
-            <Ionicons name="chevron-forward" size={16} color="#64748B" />
+            <Ionicons name="chevron-forward" size={16} color="#737373" />
           </View>
         </View>
 
@@ -382,7 +388,7 @@ function MemberCard({
                     onViewEpisode(episode);
                   }}
                 >
-                  <Text style={{ color: "#94A3B8", fontSize: 11 }}>View Details</Text>
+                  <Text style={{ color: "#a1a1a1", fontSize: 11 }}>View Details</Text>
                 </Pressable>
               </View>
 
@@ -394,7 +400,7 @@ function MemberCard({
                     onCheckIn();
                   }}
                   style={{
-                    backgroundColor: "#06B6D4",
+                    backgroundColor: "#1447e6",
                     borderRadius: 8,
                     padding: 10,
                     alignItems: "center",
